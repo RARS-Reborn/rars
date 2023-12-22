@@ -3,7 +3,6 @@ package rars;
 import rars.venus.VenusUI;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -15,6 +14,12 @@ public class ReflectionDumper {
     public static class Node {
         String name;
         String type;
+
+        public void setParentType(String parentType) {
+            this.parentType = parentType;
+        }
+
+        String parentType;
 
         public void setChildren(List<Node> children) {
             this.children = children;
@@ -38,6 +43,11 @@ public class ReflectionDumper {
             sb.append(name);
             sb.append(":");
             sb.append(type);
+            if(parentType != null){
+                sb.append(" (");
+                sb.append(parentType);
+                sb.append(")");
+            }
             sb.append("\n");
             for (Node child : (children == null? new ArrayList<Node>() : children)) {
                 sb.append(child.printNode(depth + 1));
@@ -66,7 +76,7 @@ public class ReflectionDumper {
             var node = new Node(fld.getName(), fld.getType().getTypeName());
             node.setChildren(dump(ui));
             System.out.println(node.printNode());
-            Files.writeString(Path.of("literally-all-nodes-dump.txt"), node.printNode());
+            Files.writeString(Path.of("all-nodes-with-parents-dump.txt"), node.printNode());
         } catch (NoSuchFieldException | IllegalAccessException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -96,6 +106,10 @@ public class ReflectionDumper {
             var fieldName = field.getName();
             var fieldType = field.getType().getTypeName();
             var node = new Node(fieldName, fieldType);
+            var parent = field.getType().getSuperclass();
+            if(parent != null){
+                node.setParentType(parent.getTypeName());
+            }
             List<Node> nodeChildren = dump(fieldValue);
             node.setChildren(nodeChildren);
             children.add(node);
