@@ -66,7 +66,7 @@ public class ReflectionDumper {
             var node = new Node(fld.getName(), fld.getType().getTypeName());
             node.setChildren(dump(ui));
             System.out.println(node.printNode());
-            Files.writeString(Path.of("all-node-dump.txt"), node.printNode());
+            Files.writeString(Path.of("literally-all-nodes-dump.txt"), node.printNode());
         } catch (NoSuchFieldException | IllegalAccessException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -89,9 +89,9 @@ public class ReflectionDumper {
         for (var field : fields) {
             field.setAccessible(true);
             var fieldValue = field.get(obj);
-            if (visited.contains(fieldValue)) {
-                continue;
-            }
+//            if (visited.contains(fieldValue)) {
+//                continue;
+//            }
 
             var fieldName = field.getName();
             var fieldType = field.getType().getTypeName();
