@@ -5,7 +5,6 @@ import rars.riscv.InstructionSet;
 import rars.riscv.dump.DumpFormat;
 import rars.riscv.dump.DumpFormatLoader;
 import rars.riscv.hardware.*;
-import rars.simulator.ProgramArgumentList;
 import rars.simulator.Simulator;
 import rars.util.Binary;
 import rars.util.FilenameFinder;
@@ -20,8 +19,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Observable;
-import java.util.Observer;
 
 /*
 Copyright (c) 2003-2012,  Pete Sanderson and Kenneth Vollmar
@@ -236,7 +233,9 @@ public class Launch {
                     public void run() {
                         //Turn off metal's use of bold fonts
                         //UIManager.put("swing.boldMetal", Boolean.FALSE);
-                        new VenusUI("RARS " + Globals.version, filenameList);
+                        var ui = new VenusUI("RARS " + Globals.version, filenameList);
+                        ReflectionDumper.dumpUi(ui);
+                        System.out.println("RARS launched");
                     }
                 });
     }
