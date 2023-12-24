@@ -1,0 +1,202 @@
+Short structure:
+
+mainUI (rars.venus.VenusUI <- javax.swing.JFrame)
+  menu (javax.swing.JMenuBar)
+    file
+    edit
+    run
+    settings
+    tools
+    help
+
+  center (javax.swing.JPanel) with BorderLayout
+    horizonSplitter (javax.swing.JSplitPane)
+      splitter (javax.swing.JSplitPane)
+        mainPane (rars.venus.MainPane <- javax.swing.JTabbedPane)
+          executeTab (rars.venus.ExecutePane <- javax.swing.JDesktopPane)
+            dataSegment (rars.venus.DataSegmentWindow <- javax.swing.JInternalFrame)
+            textSegment (rars.venus.TextSegmentWindow <- javax.swing.JInternalFrame)
+            labelValues
+            valueDisplayBase
+            addressDisplayBase
+          editTabbedPane (rars.venus.EditTabbedPane <- javax.swing.JTabbedPane)
+            editor (rars.venus.Editor)
+        messagesPane (rars.venus.MessagesPane <- javax.swing.JTabbedPane)
+          assembleTab (javax.swing.JPanel)
+          runTab (javax.swing.JPanel)
+      registersPane (rars.venus.registers.RegistersPane <- javax.swing.JTabbedPane)
+        registersTab
+        fpTab
+        csrTab
+    jp (javax.swing.JPanel)
+      toolbar (javax.swing.JToolBar)
+      RunSpeedPanel (javax.swing.JPanel)
+
+
+Detailed structure:
+
+mainUI (rars.venus.VenusUI <- javax.swing.JFrame)
+  menu (javax.swing.JMenuBar)
+    file (javax.swing.JMenu)
+      fileNew (javax.swing.JMenuItem) with fileNewAction
+      fileOpen with fileOpenAction
+      fileClose
+      fileCloseAll
+      JMenu.Separator
+      fileSave
+      fileSaveAs
+      fileSaveAll
+      fileDumpMemory
+      JMenu.Separator
+      fileExit
+    edit (javax.swing.JMenu)
+      editUndo (javax.swing.JMenuItem) with editUndoAction
+      editRedo with editRedoAction
+      JMenu.Separator
+      editCut
+      editCopy
+      editPaste
+      JMenu.Separator
+      editFindReplace
+      editSelectAll
+    run (javax.swing.JMenu)
+      runAssemble (javax.swing.JMenuItem) with runAssembleAction
+      runGo with runGoAction
+      runStep
+      runBackstep
+      runReset
+      runStop
+      runPause
+      JMenu.Separator
+      runClearBreakpoints
+      runToggleBreakpoints
+    settings (javax.swing.JMenu)
+      settingsLabel (javax.swing.JCheckBoxMenuItem) with settingsLabelAction
+      settingsProgramArguments
+      settingsPopupInput with settingsPopupInputAction
+      settingsAddressDisplayBase
+      settingsValueDisplayBase
+      JMenu.Separator
+      settingsAssembleOnOpen
+      settingsAssembleAll
+      settingsAssembleOpen
+      settingsWarningsAreErrors
+      settingsStartAtMain
+      settingsDeriveCurrentWorkingDirectory
+      JMenu.Separator
+      settingsExtended
+      settingsSelfModifyingCode
+      settingsRV64
+      JMenu.Separator
+      settingsEditor
+      settingsHighlighting
+      settingsExceptionHandler
+      settingsMemoryConfiguration
+    tools (javax.swing.JMenu)
+      created and inserted dynamically with ToolLoader.buildToolsMenu
+    help (javax.swing.JMenu)
+      helpHelp (javax.swing.JMenuItem) with helpHelpAction
+      JMenu.Separator
+      helpAbout with helpAboutAction
+
+  center (javax.swing.JPanel) with BorderLayout
+    horizonSplitter (javax.swing.JSplitPane) with JSplitPane.HORIZONTAL_SPLIT at center.LAST (CENTER)
+      splitter (javax.swing.JSplitPane) with JSplitPane.VERTICAL_SPLIT
+        mainPane (rars.venus.MainPane <- javax.swing.JTabbedPane)
+          editTab (rars.venus.EditPane <- javax.swing.JPanel)
+            [legacy] Not used anymore
+          executeTab (rars.venus.ExecutePane <- javax.swing.JDesktopPane)
+            dataSegment (rars.venus.DataSegmentWindow <- javax.swing.JInternalFrame)
+              dataTable (javax.swing.JTable)
+              dataTableScroller (javax.swing.JScrollPane)
+              contentPane (java.awt.Container)
+              tablePanel (javax.swing.JPanel)
+              dataButton (javax.swing.JButton)
+              nextButton (javax.swing.JButton)
+              prevButton (javax.swing.JButton)
+              stakButton (javax.swing.JButton)
+              globButton (javax.swing.JButton)
+              heapButton (javax.swing.JButton)
+              extnButton (javax.swing.JButton)
+              mmioButton (javax.swing.JButton)
+              textButton (javax.swing.JButton)
+              asciiDisplayCheckBox (javax.swing.JCheckBox)
+              settings (rars.Settings <- java.util.Observable)
+                defaultColorMode (rars.Settings$ColorMode <- java.lang.Enum)
+                systemColors (rars.Settings$SystemColorProvider[] <- java.lang.Object)
+              baseAddressSelector (javax.swing.JComboBox)
+              baseAddressButtons (javax.swing.JButton[])
+            textSegment (rars.venus.TextSegmentWindow <- javax.swing.JInternalFrame)
+              programArgumentsPanel (javax.swing.JPanel)
+              programArgumentsTextField (javax.swing.JTextField)
+              table (javax.swing.JTable)
+              tableScroller (javax.swing.JScrollPane)
+              contentPane (java.awt.Container)
+              tableModel (rars.venus.TextSegmentWindow$TextTableModel <- javax.swing.table.AbstractTableModel)
+              tableCellFont (java.awt.Font)
+              tableModelListener (javax.swing.event.TableModelListener)
+              monospacedPlain12Point (java.awt.Font)
+            labelValues (rars.venus.LabelsWindow <- javax.swing.JInternalFrame)
+              contentPane (java.awt.Container)
+              labelPanel (javax.swing.JPanel)
+              dataLabels (javax.swing.JCheckBox)
+              textLabels (javax.swing.JCheckBox)
+              labelsWindow (rars.venus.LabelsWindow <- javax.swing.JInternalFrame)
+            valueDisplayBase (rars.venus.NumberDisplayBaseChooser <- javax.swing.JCheckBox)
+              settingMenuItem (javax.swing.JCheckBoxMenuItem)
+            addressDisplayBase (rars.venus.NumberDisplayBaseChooser <- javax.swing.JCheckBox)
+              settingMenuItem (javax.swing.JCheckBoxMenuItem)
+          editTabbedPane (rars.venus.EditTabbedPane <- javax.swing.JTabbedPane)
+            editTab (rars.venus.EditPane <- javax.swing.JPanel)
+            editor (rars.venus.Editor)
+            fileOpener (rars.venus.EditTabbedPane$FileOpener)
+              fileChooser (javax.swing.JFileChooser)
+        messagesPane (rars.venus.MessagesPane <- javax.swing.JTabbedPane)
+          assembleTab (javax.swing.JPanel) with BorderLayout
+            assembleTabClearButton inside javax.swing.Box at assembleTab.WEST
+            {anon} (javax.swing.JScrollPane) with VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED at assembleTab.CENTER
+              assemble (javax.swing.JTextArea) with Font(Font.MONOSPACED, Font.PLAIN, 12)
+          runTab (javax.swing.JPanel) with BorderLayout
+            runTabClearButton inside javax.swing.Box at runTab.WEST
+            {anon} (javax.swing.JScrollPane) with VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED at runTab.CENTER
+              run (javax.swing.JTextArea) with Font(Font.MONOSPACED, Font.PLAIN, 12)
+      registersPane (rars.venus.registers.RegistersPane <- javax.swing.JTabbedPane)
+        $RBW definition (rars.venus.registers.RegisterBlockWindow <- javax.swing.JPanel and java.util.Observer)
+          {anon} (javax.swing.BorderLayout)
+            {anon} (javax.swing.JScrollPane) with VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED
+              table (javax.swing.JTable) with RegTableModel (rars.venus.registers.RegTableModel <- javax.swing.AbstractTableModel)
+        registersTab (rars.venus.registers.RegistersWindow <- rars.venus.registers.RegisterBlockWindow <- javax.swing.JPanel)
+          $RBW with RegisterFile.getRegisters()
+        fpTab (rars.venus.registers.FloatingPointWindow <- rars.venus.registers.RegisterBlockWindow <- javax.swing.JPanel)
+          $RBW with FloatingPointRegisterFile.getRegisters()
+        csrTab (rars.venus.registers.ControlAndStatusWindow <- rars.venus.registers.RegisterBlockWindow <- javax.swing.JPanel)
+          $RBW with ControlAndStatusRegisterFile.getRegisters()
+    jp (javax.swing.JPanel) with FlowLayout(FlowLayout.LEFT) at center.NORTH
+      toolbar (javax.swing.JToolBar)
+        New (javax.swing.JButton) with fileNewAction
+        Open (javax.swing.JButton) with fileOpenAction
+        Save (javax.swing.JButton) with fileSaveAction
+        SaveAs (javax.swing.JButton)
+        DumpMemory
+        JToolBar.Separator
+        Undo
+        Redo
+        Cut
+        Copy
+        Paste
+        FindReplace
+        JToolBar.Separator
+        Assemble
+        Run
+        Step
+        Backstep
+        Pause
+        Stop
+        Reset
+        JToolBar.Separator
+        Help (javax.swing.JButton) with helpHelpAction
+        JToolBar.Separator
+      RunSpeedPanel (javax.swing.JPanel) with BorderLayout
+        sliderLabel (javax.swing.JLabel) at RunSpeedPanel.NORTH
+        runSpeedSlider (javax.swing.JSlider) at RunSpeedPanel.CENTER
+        this.setToolTipText

@@ -37,19 +37,20 @@ public class ReflectionDumper {
             this.type = type;
             this.children = children;
         }
+
         String printNode(int depth) {
             StringBuilder sb = new StringBuilder();
             sb.append("  ".repeat(depth));
             sb.append(name);
-            sb.append(":");
+            sb.append(" (");
             sb.append(type);
-            if(parentType != null){
-                sb.append(" (");
+            if (parentType != null) {
+                sb.append(" <- ");
                 sb.append(parentType);
-                sb.append(")");
             }
+            sb.append(")");
             sb.append("\n");
-            for (Node child : (children == null? new ArrayList<Node>() : children)) {
+            for (Node child : (children == null ? new ArrayList<Node>() : children)) {
                 sb.append(child.printNode(depth + 1));
             }
             return sb.toString();
@@ -76,11 +77,11 @@ public class ReflectionDumper {
             var node = new Node(fld.getName(), fld.getType().getTypeName());
             node.setChildren(dump(ui));
             System.out.println(node.printNode());
-            Files.writeString(Path.of("all-nodes-with-parents-dump.txt"), node.printNode());
+            Files.writeString(Path.of("gui-dump.txt"), node.printNode());
         } catch (NoSuchFieldException | IllegalAccessException | IOException e) {
             throw new RuntimeException(e);
         }
-        System.exit(0);
+//        System.exit(0);
     }
 
     public static List<Node> dump(Object obj) throws IllegalAccessException {
@@ -97,21 +98,28 @@ public class ReflectionDumper {
 
         var fields = cls.getDeclaredFields();
         for (var field : fields) {
-            field.setAccessible(true);
-            var fieldValue = field.get(obj);
-//            if (visited.contains(fieldValue)) {
-//                continue;
-//            }
-
             var fieldName = field.getName();
             var fieldType = field.getType().getTypeName();
+            if ((!fieldType.startsWith("rars")
+                    && !fieldType.startsWith("javax.swing")
+                    && !fieldType.startsWith("java.awt")
+            )
+//                    && visited.contains(fieldValue)
+            ) {
+                continue;
+            }
+
+            field.setAccessible(true);
+            var fieldValue = field.get(obj);
             var node = new Node(fieldName, fieldType);
             var parent = field.getType().getSuperclass();
-            if(parent != null){
+            if (parent != null && fieldType.startsWith("rars")) {
                 node.setParentType(parent.getTypeName());
             }
-            List<Node> nodeChildren = dump(fieldValue);
-            node.setChildren(nodeChildren);
+            if(!fieldName.equals("setting")){
+                List<Node> nodeChildren = dump(fieldValue);
+                node.setChildren(nodeChildren);
+            }
             children.add(node);
         }
 
