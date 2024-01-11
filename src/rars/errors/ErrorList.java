@@ -1,4 +1,7 @@
-package rars;
+package rars.errors;
+
+import rars.Globals;
+import rars.RISCVprogram;
 
 import java.util.ArrayList;
 /*
@@ -38,15 +41,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  **/
 
 public class ErrorList {
-    private ArrayList<ErrorMessage> messages;
-    private int errorCount;
-    private int warningCount;
     public static final String ERROR_MESSAGE_PREFIX = "Error";
     public static final String WARNING_MESSAGE_PREFIX = "Warning";
     public static final String FILENAME_PREFIX = " in ";
     public static final String LINE_PREFIX = " line ";
     public static final String POSITION_PREFIX = " column ";
     public static final String MESSAGE_SEPARATOR = ": ";
+    private final ArrayList<ErrorMessage> messages;
+    private int errorCount;
+    private int warningCount;
 
 
     /**
@@ -106,7 +109,7 @@ public class ErrorList {
             return;
         }
         if (errorCount == getErrorLimit()) {
-            messages.add(new ErrorMessage((RISCVprogram) null, mess.getLine(), mess.getPosition(), "Error Limit of " + getErrorLimit() + " exceeded."));
+            messages.add(new ErrorMessage(null, mess.getLine(), mess.getPosition(), "Error Limit of " + getErrorLimit() + " exceeded."));
             errorCount++; // subsequent errors will not be added; see if statement above
             return;
         }
@@ -189,7 +192,7 @@ public class ErrorList {
 
     // Produces either error or warning report.
     private String generateReport(boolean isWarning) {
-        StringBuilder report = new StringBuilder("");
+        StringBuilder report = new StringBuilder();
         for (ErrorMessage m : messages) {
             if ((isWarning && m.isWarning()) || (!isWarning && !m.isWarning())) {
                 report.append(m.generateReport());

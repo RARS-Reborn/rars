@@ -1,11 +1,10 @@
 package rars;
 
 import rars.assembler.SymbolTable;
-import rars.riscv.hardware.Memory;
 import rars.riscv.InstructionSet;
 import rars.riscv.SyscallNumberOverride;
+import rars.riscv.hardware.Memory;
 import rars.util.PropertiesFile;
-import rars.venus.VenusUI;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -48,10 +47,31 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * @version August 2003
  */
 public class Globals {
-    // List these first because they are referenced by methods called at initialization.
-    private static String configPropertiesFile = "Config";
-    private static String syscallPropertiesFile = "Syscall";
-
+    /**
+     * Lock variable used at head of synchronized block to guard memory and registers
+     **/
+    public static final ReentrantLock memoryAndRegistersLock = new ReentrantLock();
+    /**
+     * Path to folder that contains images
+     */
+    // The leading "/" in filepath prevents package name from being pre-pended.
+    public static final String imagesPath = "/images/";
+    /**
+     * Path to folder that contains help text
+     */
+    public static final String helpPath = "/help/";
+    /**
+     * The current version number. Can't wait for "initialize()" call to get it.
+     */
+    public static final String version = "1.6";
+    /**
+     * Copyright years
+     */
+    public static final String copyrightYears = getCopyrightYears();
+    /**
+     * Copyright holders
+     */
+    public static final String copyrightHolders = getCopyrightHolders();
     /**
      * The set of implemented instructions.
      **/
@@ -69,38 +89,25 @@ public class Globals {
      **/
     public static Memory memory;
     /**
-     * Lock variable used at head of synchronized block to guard memory and registers
-     **/
-    public static final ReentrantLock memoryAndRegistersLock = new ReentrantLock();
-    /**
      * Flag to determine whether or not to produce internal debugging information.
      **/
     public static boolean debug = false;
-    /**
-     * Object that contains various settings that can be accessed modified internally.
-     **/
-    static Settings settings;
     /**
      * String to GUI's RunI/O text area when echoing user input from pop-up dialog.
      */
     public static String userInputAlert = "**** user input : ";
     /**
-     * Path to folder that contains images
+     * Exit code -- useful with SYSCALL 17 when running from command line (not GUI)
      */
-    // The leading "/" in filepath prevents package name from being pre-pended.
-    public static final String imagesPath = "/images/";
-    /**
-     * Path to folder that contains help text
-     */
-    public static final String helpPath = "/help/";
-    /* Flag that indicates whether or not instructionSet has been initialized. */
-    private static boolean initialized = false;
+    public static int exitCode = 0;
     /* The GUI being used (if any) with this simulator. */
-    static VenusUI gui = null;
+    public static boolean runSpeedPanelExists = false;
     /**
-     * The current version number. Can't wait for "initialize()" call to get it.
-     */
-    public static final String version = "1.6";
+     * Object that contains various settings that can be accessed modified internally.
+     **/
+    static Settings settings;
+    // List these first because they are referenced by methods called at initialization.
+    private static final String configPropertiesFile = "Config";
     /**
      * List of accepted file extensions for RISCV assembly source files.
      */
@@ -118,14 +125,6 @@ public class Globals {
      */
     public static final int maximumBacksteps = getBackstepLimit();
     /**
-     * Copyright years
-     */
-    public static final String copyrightYears = getCopyrightYears();
-    /**
-     * Copyright holders
-     */
-    public static final String copyrightHolders = getCopyrightHolders();
-    /**
      * Placeholder for non-printable ASCII codes
      */
     public static final String ASCII_NON_PRINT = getAsciiNonPrint();
@@ -133,12 +132,9 @@ public class Globals {
      * Array of strings to display for ASCII codes in ASCII display of data segment. ASCII code 0-255 is array index.
      */
     public static final String[] ASCII_TABLE = getAsciiStrings();
-    /**
-     * Exit code -- useful with SYSCALL 17 when running from command line (not GUI)
-     */
-    public static int exitCode = 0;
-
-    public static boolean runSpeedPanelExists = false;
+    private static final String syscallPropertiesFile = "Syscall";
+    /* Flag that indicates whether or not instructionSet has been initialized. */
+    private static boolean initialized = false;
 
     private static String getCopyrightYears() {
         return "2003-2019";
@@ -146,14 +142,6 @@ public class Globals {
 
     private static String getCopyrightHolders() {
         return "Pete Sanderson and Kenneth Vollmar";
-    }
-
-    public static void setGui(VenusUI g) {
-        gui = g;
-    }
-
-    public static VenusUI getGui() {
-        return gui;
     }
 
     public static Settings getSettings() {
@@ -204,17 +192,17 @@ public class Globals {
     public static String[] getAsciiStrings() {
         String let = getPropertyEntry(configPropertiesFile, "AsciiTable");
         String placeHolder = getAsciiNonPrint();
-        if(let == null){
+        if (let == null) {
             // If config isn't loaded, give a decent default value.
-            String[] table = new String[((int) '~' )+ 1];
+            String[] table = new String[((int) '~') + 1];
             for (int i = 0; i < table.length; i++) {
                 if (i == 0) table[i] = "\0";
                 else if (i == '\n') table[i] = "\n";
                 else if (i < ' ') table[i] = placeHolder;
-                else table[i] = " "+(char) i;
+                else table[i] = " " + (char) i;
             }
             return table;
-        }else {
+        } else {
             String[] lets = let.split(" +");
             int maxLength = 0;
             for (int i = 0; i < lets.length; i++) {

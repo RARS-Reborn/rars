@@ -1,8 +1,8 @@
 package rars.riscv.syscalls;
 
-import rars.ExitingException;
 import rars.Globals;
 import rars.ProgramStatement;
+import rars.errors.ExitingException;
 import rars.riscv.AbstractSyscall;
 import rars.riscv.hardware.AddressErrorException;
 import rars.riscv.hardware.RegisterFile;
@@ -47,7 +47,7 @@ public class SyscallRead extends AbstractSyscall {
         int byteAddress = RegisterFile.getValue("a1"); // destination of characters read from file
         int index = 0;
         int length = RegisterFile.getValue("a2");
-        byte myBuffer[] = new byte[length]; // specified length
+        byte[] myBuffer = new byte[length]; // specified length
         // Call to SystemIO.xxxx.read(xxx,xxx,xxx)  returns actual length
         int retLength = SystemIO.readFromFile(
                 RegisterFile.getValue("a0"), // fd

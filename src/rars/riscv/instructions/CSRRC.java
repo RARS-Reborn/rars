@@ -1,11 +1,11 @@
 package rars.riscv.instructions;
 
 import rars.ProgramStatement;
-import rars.SimulationException;
-import rars.riscv.hardware.ControlAndStatusRegisterFile;
-import rars.riscv.hardware.RegisterFile;
+import rars.errors.SimulationException;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
+import rars.riscv.hardware.ControlAndStatusRegisterFile;
+import rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -44,7 +44,7 @@ public class CSRRC extends BasicInstruction {
         try {
             long csr = ControlAndStatusRegisterFile.getValueLong(operands[1]);
             if (operands[2] != 0) {
-                if(ControlAndStatusRegisterFile.clearRegister(operands[1], RegisterFile.getValueLong(operands[2]))){
+                if (ControlAndStatusRegisterFile.clearRegister(operands[1], RegisterFile.getValueLong(operands[2]))) {
                     throw new SimulationException(statement, "Attempt to write to read-only CSR", SimulationException.ILLEGAL_INSTRUCTION);
                 }
             }

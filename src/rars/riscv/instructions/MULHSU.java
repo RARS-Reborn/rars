@@ -43,6 +43,7 @@ public class MULHSU extends Arithmetic {
         }
         return BigInteger.valueOf(value).multiply(unsigned).shiftRight(64).longValue();
     }
+
     public int computeW(int value, int value2) {
         //Sign extend t2, but not t3
         long ext = ((long) value << 32) >> 32, ext2 = ((long) value2) & 0xFFFFFFFFL;

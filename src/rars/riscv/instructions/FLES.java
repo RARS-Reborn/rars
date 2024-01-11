@@ -3,11 +3,9 @@ package rars.riscv.instructions;
 import jsoftfloat.Environment;
 import jsoftfloat.types.Float32;
 import rars.ProgramStatement;
-import rars.riscv.hardware.ControlAndStatusRegisterFile;
-import rars.riscv.hardware.FloatingPointRegisterFile;
-import rars.riscv.hardware.RegisterFile;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
+import rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -46,7 +44,7 @@ public class FLES extends BasicInstruction {
         int[] operands = statement.getOperands();
         Float32 f1 = Floating.getFloat(operands[1]), f2 = Floating.getFloat(operands[2]);
         Environment e = new Environment();
-        boolean result = jsoftfloat.operations.Comparisons.compareSignalingLessThanEqual(f1,f2,e);
+        boolean result = jsoftfloat.operations.Comparisons.compareSignalingLessThanEqual(f1, f2, e);
         Floating.setfflags(e);
         RegisterFile.updateRegister(operands[0], result ? 1 : 0);
     }

@@ -1,8 +1,8 @@
 package rars.riscv;
 
-import rars.AssemblyException;
 import rars.assembler.TokenList;
 import rars.assembler.Tokenizer;
+import rars.errors.AssemblyException;
 
 import java.util.StringTokenizer;
 

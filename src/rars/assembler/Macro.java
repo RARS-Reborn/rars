@@ -1,8 +1,8 @@
 package rars.assembler;
 
-import rars.ErrorList;
-import rars.ErrorMessage;
 import rars.RISCVprogram;
+import rars.errors.ErrorList;
+import rars.errors.ErrorMessage;
 import rars.riscv.hardware.FloatingPointRegisterFile;
 import rars.riscv.hardware.RegisterFile;
 
@@ -42,7 +42,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 public class Macro {
     private String name;
     private RISCVprogram program;
-    private ArrayList<String> labels;
+    private final ArrayList<String> labels;
 
     /**
      * first and last line number of macro definition. first line starts with
@@ -62,6 +62,30 @@ public class Macro {
         origFromLine = origToLine = 0;
         args = new ArrayList<>();
         labels = new ArrayList<>();
+    }
+
+    /**
+     * returns whether <code>tokenValue</code> is macro parameter or not
+     *
+     * @param tokenValue
+     * @param acceptSpimStyleParameters accepts SPIM-style parameters which begin with '$' if true
+     * @return
+     */
+    public static boolean tokenIsMacroParameter(String tokenValue, boolean acceptSpimStyleParameters) {
+        if (acceptSpimStyleParameters) {
+            // Bug fix: SPIM accepts parameter names that start with $ instead of %.  This can
+            // lead to problems since register names also start with $.  This IF condition
+            // should filter out register names.  Originally filtered those from regular set but not
+            // from ControlAndStatusRegisterFile or FloatingPointRegisterFile register sets.  Expanded the condition.
+            // DPS  7-July-2014.
+            if (tokenValue.length() > 0 && tokenValue.charAt(0) == '$' &&
+                    RegisterFile.getRegister(tokenValue) == null &&
+                    FloatingPointRegisterFile.getRegister(tokenValue) == null)    // added 7-July-2014
+            {
+                return true;
+            }
+        }
+        return tokenValue.length() > 1 && tokenValue.charAt(0) == '%';
     }
 
     public String getName() {
@@ -84,12 +108,12 @@ public class Macro {
         return fromLine;
     }
 
-    public int getOriginalFromLine() {
-        return this.origFromLine;
-    }
-
     public void setFromLine(int fromLine) {
         this.fromLine = fromLine;
+    }
+
+    public int getOriginalFromLine() {
+        return this.origFromLine;
     }
 
     public void setOriginalFromLine(int origFromLine) {
@@ -100,12 +124,12 @@ public class Macro {
         return toLine;
     }
 
-    public int getOriginalToLine() {
-        return this.origToLine;
-    }
-
     public void setToLine(int toLine) {
         this.toLine = toLine;
+    }
+
+    public int getOriginalToLine() {
+        return this.origToLine;
     }
 
     public void setOriginalToLine(int origToLine) {
@@ -126,8 +150,7 @@ public class Macro {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Macro) {
-            Macro macro = (Macro) obj;
+        if (obj instanceof Macro macro) {
             return macro.getName().equals(name) && (macro.args.size() == args.size());
         }
         return super.equals(obj);
@@ -180,7 +203,6 @@ public class Macro {
         return s;
     }
 
-
     /**
      * returns true if <code>value</code> is name of a label defined in this macro's body.
      *
@@ -202,36 +224,12 @@ public class Macro {
 // Initially the position of the substitute was based on token position but that proved problematic
 // in that the source string does not always match the token list from which the token comes. The
 // token list has already had .eqv equivalences applied whereas the source may not.  This is because
-// the source comes from a macro definition?  That has proven to be a tough question to answer. 
+// the source comes from a macro definition?  That has proven to be a tough question to answer.
 // DPS 12-feb-2013
     private String replaceToken(String source, Token tokenToBeReplaced, String substitute) {
         String stringToBeReplaced = tokenToBeReplaced.getValue();
         int pos = source.indexOf(stringToBeReplaced);
         return (pos < 0) ? source : source.substring(0, pos) + substitute + source.substring(pos + stringToBeReplaced.length());
-    }
-
-    /**
-     * returns whether <code>tokenValue</code> is macro parameter or not
-     *
-     * @param tokenValue
-     * @param acceptSpimStyleParameters accepts SPIM-style parameters which begin with '$' if true
-     * @return
-     */
-    public static boolean tokenIsMacroParameter(String tokenValue, boolean acceptSpimStyleParameters) {
-        if (acceptSpimStyleParameters) {
-            // Bug fix: SPIM accepts parameter names that start with $ instead of %.  This can
-            // lead to problems since register names also start with $.  This IF condition
-            // should filter out register names.  Originally filtered those from regular set but not
-            // from ControlAndStatusRegisterFile or FloatingPointRegisterFile register sets.  Expanded the condition.
-            // DPS  7-July-2014.
-            if (tokenValue.length() > 0 && tokenValue.charAt(0) == '$' &&
-                    RegisterFile.getRegister(tokenValue) == null &&
-                    FloatingPointRegisterFile.getRegister(tokenValue) == null)    // added 7-July-2014
-            {
-                return true;
-            }
-        }
-        return tokenValue.length() > 1 && tokenValue.charAt(0) == '%';
     }
 
     public void addLabel(String value) {

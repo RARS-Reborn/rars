@@ -3,7 +3,7 @@ package rars.riscv.instructions;
 import jsoftfloat.Environment;
 import jsoftfloat.types.Float64;
 import rars.ProgramStatement;
-import rars.SimulationException;
+import rars.errors.SimulationException;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
 import rars.riscv.hardware.FloatingPointRegisterFile;
@@ -18,10 +18,10 @@ public class FCVTWUD extends BasicInstruction {
     public void simulate(ProgramStatement statement) throws SimulationException {
         int[] operands = statement.getOperands();
         Environment e = new Environment();
-        e.mode = Floating.getRoundingMode(operands[2],statement);
+        e.mode = Floating.getRoundingMode(operands[2], statement);
         Float64 in = new Float64(FloatingPointRegisterFile.getValueLong(operands[1]));
-        int out = jsoftfloat.operations.Conversions.convertToUnsignedInt(in,e,false);
+        int out = jsoftfloat.operations.Conversions.convertToUnsignedInt(in, e, false);
         Floating.setfflags(e);
-        RegisterFile.updateRegister(operands[0],out);
+        RegisterFile.updateRegister(operands[0], out);
     }
 }

@@ -2,12 +2,12 @@ package rars.riscv.instructions;
 
 import rars.Globals;
 import rars.ProgramStatement;
-import rars.SimulationException;
+import rars.errors.SimulationException;
+import rars.riscv.BasicInstruction;
+import rars.riscv.BasicInstructionFormat;
 import rars.riscv.hardware.AddressErrorException;
 import rars.riscv.hardware.FloatingPointRegisterFile;
 import rars.riscv.hardware.RegisterFile;
-import rars.riscv.BasicInstruction;
-import rars.riscv.BasicInstructionFormat;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -46,7 +46,7 @@ public class FSW extends BasicInstruction {
         int[] operands = statement.getOperands();
         operands[1] = (operands[1] << 20) >> 20;
         try {
-            Globals.memory.setWord(RegisterFile.getValue(operands[2]) + operands[1], (int)FloatingPointRegisterFile.getValueLong(operands[0]));
+            Globals.memory.setWord(RegisterFile.getValue(operands[2]) + operands[1], (int) FloatingPointRegisterFile.getValueLong(operands[0]));
         } catch (AddressErrorException e) {
             throw new SimulationException(statement, e);
         }

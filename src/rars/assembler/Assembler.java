@@ -1,11 +1,17 @@
 package rars.assembler;
 
-import rars.*;
-import rars.riscv.hardware.AddressErrorException;
-import rars.riscv.hardware.Memory;
+import rars.Globals;
+import rars.ProgramStatement;
+import rars.RISCVprogram;
+import rars.Settings;
+import rars.errors.AssemblyException;
+import rars.errors.ErrorList;
+import rars.errors.ErrorMessage;
 import rars.riscv.BasicInstruction;
 import rars.riscv.ExtendedInstruction;
 import rars.riscv.Instruction;
+import rars.riscv.hardware.AddressErrorException;
+import rars.riscv.hardware.Memory;
 import rars.util.Binary;
 import rars.util.SystemIO;
 
@@ -579,7 +585,6 @@ public class Assembler {
             errors.add(new ErrorMessage(token.getSourceProgram(), token.getSourceLine(), token
                     .getStartPos(), "\"" + token.getValue()
                     + "\" directive is invalid or not implemented in RARS"));
-            return;
         } else if (direct == Directives.EQV) { /* EQV added by DPS 11 July 2012 */
             // Do nothing.  This was vetted and processed during tokenizing.
         } else if (direct == Directives.MACRO) {
@@ -630,7 +635,6 @@ public class Assembler {
             fileCurrentlyBeingAssembled.getLocalMacroPool().commitMacro(token);
         } else if (inMacroSegment) {
             // should not parse lines even directives in macro segment
-            return;
         } else if (direct == Directives.DATA) {
             this.inDataSegment = true;
             this.autoAlign = true;
@@ -642,30 +646,30 @@ public class Assembler {
             if (tokens.size() > 1 && TokenTypes.isIntegerTokenType(tokens.get(1).getType())) {
                 this.textAddress.set(Binary.stringToInt(tokens.get(1).getValue())); // KENV 1/6/05
             }
-        } else if (direct == Directives.SECTION){
-            if(tokens.size() >= 2){
+        } else if (direct == Directives.SECTION) {
+            if (tokens.size() >= 2) {
                 Token section = tokens.get(1);
-                if(section.getType() == TokenTypes.QUOTED_STRING || section.getType() == TokenTypes.IDENTIFIER){
+                if (section.getType() == TokenTypes.QUOTED_STRING || section.getType() == TokenTypes.IDENTIFIER) {
                     String str = section.getValue();
-                    if(str.startsWith(".data") || str.startsWith(".rodata") || str.startsWith(".sdata")){
+                    if (str.startsWith(".data") || str.startsWith(".rodata") || str.startsWith(".sdata")) {
                         this.inDataSegment = true;
-                    }else if(str.startsWith(".text")){
+                    } else if (str.startsWith(".text")) {
                         this.inDataSegment = false;
-                    }else{
-                        errors.add(new ErrorMessage(true,token.getSourceProgram(),token.getSourceLine(),token.getStartPos(),
-                                "section name \""+str+"\" is ignored"));
+                    } else {
+                        errors.add(new ErrorMessage(true, token.getSourceProgram(), token.getSourceLine(), token.getStartPos(),
+                                "section name \"" + str + "\" is ignored"));
                     }
                 } else {
-                    errors.add(new ErrorMessage(token.getSourceProgram(),token.getSourceLine(),token.getStartPos(),
+                    errors.add(new ErrorMessage(token.getSourceProgram(), token.getSourceLine(), token.getStartPos(),
                             ".section must be followed by a section name "));
                 }
-            }else{
-                errors.add(new ErrorMessage(true,token.getSourceProgram(),token.getSourceLine(),token.getStartPos(),
+            } else {
+                errors.add(new ErrorMessage(true, token.getSourceProgram(), token.getSourceLine(), token.getStartPos(),
                         ".section without arguments is ignored"));
             }
         } else if (direct == Directives.WORD || direct == Directives.HALF
                 || direct == Directives.BYTE || direct == Directives.FLOAT
-                || direct == Directives.DOUBLE || direct == Directives.DWORD ) {
+                || direct == Directives.DOUBLE || direct == Directives.DWORD) {
             this.dataDirective = direct;
             if (passesDataSegmentCheck(token) && tokens.size() > 1) { // DPS
                 // 11/20/06, added text segment prohibition
@@ -691,14 +695,14 @@ public class Assembler {
                 return;
             }
             int value = Binary.stringToInt(tokens.get(1).getValue()); // KENV 1/6/05
-            if(value < 2 && !this.inDataSegment) {
-                errors.add(new ErrorMessage(true,token.getSourceProgram(),token.getSourceLine(),token.getStartPos(),
+            if (value < 2 && !this.inDataSegment) {
+                errors.add(new ErrorMessage(true, token.getSourceProgram(), token.getSourceLine(), token.getStartPos(),
                         "Alignments less than 4 bytes are not supported in the text section. The alignment has been rounded up to 4 bytes."));
-                this.dataAddress.set(this.alignToBoundary(this.dataAddress.get(),4));
+                this.dataAddress.set(this.alignToBoundary(this.dataAddress.get(), 4));
             } else if (value == 0) {
                 this.autoAlign = false;
             } else {
-                this.dataAddress.set(this.alignToBoundary(this.dataAddress.get(),(int)Math.pow(2,value)));
+                this.dataAddress.set(this.alignToBoundary(this.dataAddress.get(), (int) Math.pow(2, value)));
             }
         } else if (direct == Directives.SPACE) {
             // TODO: add a fill type option
@@ -804,7 +808,7 @@ public class Assembler {
     private void executeDirectiveContinuation(TokenList tokens) {
         Directives direct = this.dataDirective;
         if (direct == Directives.WORD || direct == Directives.HALF || direct == Directives.BYTE
-                || direct == Directives.FLOAT || direct == Directives.DOUBLE || direct == Directives.DWORD ) {
+                || direct == Directives.FLOAT || direct == Directives.DOUBLE || direct == Directives.DWORD) {
             if (tokens.size() > 0) {
                 storeNumeric(tokens, direct, errors);
             }
@@ -925,20 +929,20 @@ public class Assembler {
             long longvalue;
             if (TokenTypes.INTEGER_64 == token.getType()) {
                 longvalue = Binary.stringToLong(token.getValue());
-                value = (int)longvalue;
-                if (directive != Directives.DWORD){
+                value = (int) longvalue;
+                if (directive != Directives.DWORD) {
                     errors.add(new ErrorMessage(ErrorMessage.WARNING, token.getSourceProgram(), token.getSourceLine(),
                             token.getStartPos(), "value " + Binary.longToHexString(longvalue)
                             + " is out-of-range and truncated to " + Binary.intToHexString(value)));
                 }
-            }else{
+            } else {
                 value = Binary.stringToInt(token.getValue());
                 longvalue = value;
             }
 
-            if (directive == Directives.DWORD){
-                writeToDataSegment((int)longvalue, 4, token, errors);
-                writeToDataSegment((int)(longvalue>>32), 4, token, errors);
+            if (directive == Directives.DWORD) {
+                writeToDataSegment((int) longvalue, 4, token, errors);
+                writeToDataSegment((int) (longvalue >> 32), 4, token, errors);
                 return;
             }
 
@@ -1111,15 +1115,15 @@ public class Assembler {
                                 break;
                             case 'u':
                                 String codePoint = "";
-                                try{
-                                    codePoint = quote.substring(j+1, j+5); //get the UTF-8 codepoint following the unicode escape sequence
+                                try {
+                                    codePoint = quote.substring(j + 1, j + 5); //get the UTF-8 codepoint following the unicode escape sequence
                                     theChar = Character.toChars(Integer.parseInt(codePoint, 16))[0]; //converts the codepoint to single character
-                                } catch(StringIndexOutOfBoundsException e){
-                                    String invalidCodePoint = quote.substring(j+1);
+                                } catch (StringIndexOutOfBoundsException e) {
+                                    String invalidCodePoint = quote.substring(j + 1);
                                     errors.add(new ErrorMessage(token.getSourceProgram(), token
-                                        .getSourceLine(), token.getStartPos(), "unicode escape \"\\u" +
+                                            .getSourceLine(), token.getStartPos(), "unicode escape \"\\u" +
                                             invalidCodePoint + "\" is incomplete. Only escapes with 4 digits are valid."));
-                                } catch(NumberFormatException e){
+                                } catch (NumberFormatException e) {
                                     errors.add(new ErrorMessage(token.getSourceProgram(), token
                                             .getSourceLine(), token.getStartPos(), "illegal unicode escape: \"\\u" + codePoint + "\""));
                                 }
@@ -1144,7 +1148,7 @@ public class Assembler {
                                 .getSourceLine(), token.getStartPos(), "\""
                                 + this.dataAddress.get() + "\" is not a valid data segment address"));
                     }
-                    
+
                 }
                 if (direct == Directives.ASCIZ || direct == Directives.STRING) {
                     try {
@@ -1271,7 +1275,7 @@ public class Assembler {
     // the integer directives: .word, .half, .byte)
     // - the label's token. Normally need only the name but error message needs more.
     private class DataSegmentForwardReferences {
-        private ArrayList<DataSegmentForwardReference> forwardReferenceList;
+        private final ArrayList<DataSegmentForwardReference> forwardReferenceList;
 
         private DataSegmentForwardReferences() {
             forwardReferenceList = new ArrayList<>();

@@ -1,5 +1,6 @@
-package rars;
+package rars.errors;
 
+import rars.ProgramStatement;
 import rars.riscv.hardware.AddressErrorException;
 
 /**

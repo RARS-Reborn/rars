@@ -36,7 +36,7 @@ public class SH extends Store {
     }
 
     public void store(int address, long data) throws AddressErrorException {
-        Globals.memory.setHalf(address, (int)data & 0x0000FFFF);
+        Globals.memory.setHalf(address, (int) data & 0x0000FFFF);
     }
 }
 

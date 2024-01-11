@@ -3,7 +3,7 @@ package rars.riscv.instructions;
 import jsoftfloat.Environment;
 import jsoftfloat.types.Float64;
 import rars.ProgramStatement;
-import rars.SimulationException;
+import rars.errors.SimulationException;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
 import rars.riscv.hardware.FloatingPointRegisterFile;
@@ -17,9 +17,9 @@ public class FSQRTD extends BasicInstruction {
     public void simulate(ProgramStatement statement) throws SimulationException {
         int[] operands = statement.getOperands();
         Environment e = new Environment();
-        e.mode = Floating.getRoundingMode(operands[2],statement);
-        Float64 result = jsoftfloat.operations.Arithmetic.squareRoot(new Float64(FloatingPointRegisterFile.getValueLong(operands[1])),e);
+        e.mode = Floating.getRoundingMode(operands[2], statement);
+        Float64 result = jsoftfloat.operations.Arithmetic.squareRoot(new Float64(FloatingPointRegisterFile.getValueLong(operands[1])), e);
         Floating.setfflags(e);
-        FloatingPointRegisterFile.updateRegisterLong(operands[0],result.bits);
+        FloatingPointRegisterFile.updateRegisterLong(operands[0], result.bits);
     }
 }

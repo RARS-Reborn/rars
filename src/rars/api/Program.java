@@ -1,6 +1,11 @@
 package rars.api;
 
-import rars.*;
+import rars.Globals;
+import rars.RISCVprogram;
+import rars.Settings;
+import rars.errors.AssemblyException;
+import rars.errors.ErrorList;
+import rars.errors.SimulationException;
 import rars.riscv.hardware.*;
 import rars.simulator.ProgramArgumentList;
 import rars.simulator.Simulator;
@@ -15,7 +20,7 @@ import java.util.ArrayList;
  * This is most of the public API for running RARS programs. It wraps internal
  * APIs to provide a base for making applications to simulate many programs.
  * </p>
- *
+ * <p>
  * The order you are expected to run the methods is:
  * <ol>
  * <li> assemble(...)
@@ -41,18 +46,19 @@ import java.util.ArrayList;
  */
 public class Program {
 
-    private Options set;
-    private RISCVprogram code;
+    private final Options set;
+    private final RISCVprogram code;
     private SystemIO.Data fds;
     private ByteArrayOutputStream stdout, stderr;
-    private Memory assembled, simulation;
+    private final Memory assembled;
+    private final Memory simulation;
     private int startPC, exitCode;
 
     public Program() {
         this(new Options());
     }
 
-    public Program(Options set){
+    public Program(Options set) {
         Globals.initialize();
         this.set = set;
         code = new RISCVprogram();
@@ -64,12 +70,12 @@ public class Program {
      * Assembles from a list of files
      *
      * @param files A list of files to assemble
-     * @param main Which file should be considered the main file; it should be in files
+     * @param main  Which file should be considered the main file; it should be in files
      * @return A list of warnings generated if Options.warningsAreErrors is true, this will be empty
      * @throws AssemblyException thrown if any errors are found in the code
      */
     public ErrorList assemble(ArrayList<String> files, String main) throws AssemblyException {
-        ArrayList<RISCVprogram> programs = code.prepareFilesForAssembly(files,main, null);
+        ArrayList<RISCVprogram> programs = code.prepareFilesForAssembly(files, main, null);
         return assemble(programs);
     }
 
@@ -84,7 +90,7 @@ public class Program {
         // TODO: potentially inline prepareForAssembly
         ArrayList<String> files = new ArrayList<>();
         files.add(file);
-        ArrayList<RISCVprogram> programs = code.prepareFilesForAssembly(files,file, null);
+        ArrayList<RISCVprogram> programs = code.prepareFilesForAssembly(files, file, null);
         return assemble(programs);
     }
 
@@ -108,12 +114,12 @@ public class Program {
         ErrorList warnings = null;
         AssemblyException e = null;
         try {
-            warnings = code.assemble(programs,set.pseudo,set.warningsAreErrors);
-        }catch(AssemblyException ae){
+            warnings = code.assemble(programs, set.pseudo, set.warningsAreErrors);
+        } catch (AssemblyException ae) {
             e = ae;
         }
         Memory.swapInstance(temp);
-        if(e != null)throw e;
+        if (e != null) throw e;
 
         RegisterFile.initializeProgramCounter(set.startAtMain);
         startPC = RegisterFile.getProgramCounter();
@@ -125,10 +131,10 @@ public class Program {
      * Prepares the simulator for execution. Clears registers, loads arguments
      * into memory and initializes the String backed STDIO
      *
-     * @param args Just like the args to a Java main, but an ArrayList.
+     * @param args  Just like the args to a Java main, but an ArrayList.
      * @param STDIN A string that can be read in the program like its stdin or null to allow IO passthrough
      */
-    public void setup(ArrayList<String> args, String STDIN){
+    public void setup(ArrayList<String> args, String STDIN) {
         RegisterFile.resetRegisters();
         FloatingPointRegisterFile.resetRegisters();
         ControlAndStatusRegisterFile.resetRegisters();
@@ -143,11 +149,11 @@ public class Program {
         Memory.swapInstance(tmpMem);
 
         // To capture the IO we need to replace stdin and friends
-        if (STDIN != null){
+        if (STDIN != null) {
             stdout = new ByteArrayOutputStream();
             stderr = new ByteArrayOutputStream();
             fds = new SystemIO.Data(
-                new ByteArrayInputStream(STDIN.getBytes()),stdout,stderr
+                    new ByteArrayInputStream(STDIN.getBytes()), stdout, stderr
             );
         } else {
             fds = new SystemIO.Data(true);
@@ -158,12 +164,12 @@ public class Program {
      * Simulates a processor executing the machine code.
      *
      * @return the reason why simulation was paused or terminated.
-     *         Possible values are: <ul>
-     *              <li> BREAKPOINT (caused by ebreak instruction),
-     *              <li> MAX_STEPS (caused by simulating Options.maxSteps instructions),
-     *              <li> NORMAL_TERMINATION (caused by executing the exit system call)
-     *              <li> CLIFF_TERMINATION (caused by the program overflowing the written code). </ul>
-     *         Only BREAKPOINT and MAX_STEPS can be simulated further.
+     * Possible values are: <ul>
+     * <li> BREAKPOINT (caused by ebreak instruction),
+     * <li> MAX_STEPS (caused by simulating Options.maxSteps instructions),
+     * <li> NORMAL_TERMINATION (caused by executing the exit system call)
+     * <li> CLIFF_TERMINATION (caused by the program overflowing the written code). </ul>
+     * Only BREAKPOINT and MAX_STEPS can be simulated further.
      * @throws SimulationException thrown if there is an uncaught interrupt. The program cannot be simulated further.
      */
     public Simulator.Reason simulate() throws SimulationException {
@@ -178,7 +184,7 @@ public class Program {
 
         try {
             ret = code.simulate(set.maxSteps);
-        }catch(SimulationException se){
+        } catch (SimulationException se) {
             e = se;
         }
         exitCode = Globals.exitCode;
@@ -187,21 +193,21 @@ public class Program {
         SystemIO.swapData(tmpFiles);
         Memory.swapInstance(tmpMem);
 
-        if(e != null)throw e;
+        if (e != null) throw e;
         return ret;
     }
 
     /**
      * @return converts the bytes sent to stdout into a string (resets to "" when setup is called)
      */
-    public String getSTDOUT(){
+    public String getSTDOUT() {
         return stdout.toString();
     }
 
     /**
      * @return converts the bytes sent to stderr into a string (resets to "" when setup is called)
      */
-    public String getSTDERR(){
+    public String getSTDERR() {
         return stderr.toString();
     }
 
@@ -212,33 +218,33 @@ public class Program {
      * @return The value of the register as an int (floats are encoded as IEEE-754)
      * @throws NullPointerException if name is invalid; only needs to be checked if code accesses arbitrary names
      */
-    public int getRegisterValue(String name){
+    public int getRegisterValue(String name) {
         Register r = RegisterFile.getRegister(name);
-        if(r == null){
+        if (r == null) {
             r = FloatingPointRegisterFile.getRegister(name);
         }
-        if(r == null){
+        if (r == null) {
             return ControlAndStatusRegisterFile.getValue(name);
-        }else{
-            return (int)r.getValue();
+        } else {
+            return (int) r.getValue();
         }
     }
 
     /**
      * Sets the value of a normal, floating-point or control and status register.
      *
-     * @param name Either the common usage (t0, a0, ft0), explicit numbering (x2, x3, f0), or CSR name (ustatus)
+     * @param name  Either the common usage (t0, a0, ft0), explicit numbering (x2, x3, f0), or CSR name (ustatus)
      * @param value The value of the register as an int (floats are encoded as IEEE-754)
      * @throws NullPointerException if name is invalid; only needs to be checked if code accesses arbitrary names
      */
-    public void setRegisterValue(String name, int value){
+    public void setRegisterValue(String name, int value) {
         Register r = RegisterFile.getRegister(name);
-        if(r == null){
+        if (r == null) {
             r = FloatingPointRegisterFile.getRegister(name);
         }
-        if(r == null){
-            ControlAndStatusRegisterFile.updateRegister(name,value);
-        }else{
+        if (r == null) {
+            ControlAndStatusRegisterFile.updateRegister(name, value);
+        } else {
             r.setValue(value);
         }
     }
@@ -246,16 +252,16 @@ public class Program {
     /**
      * Returns the exit code passed to the exit syscall if it was called, otherwise returns 0
      */
-    public int getExitCode(){
+    public int getExitCode() {
         return exitCode;
     }
 
     /**
      * Gets the instance of memory the program is using.
-     *
+     * <p>
      * This is only valid when setup has been called.
      */
-    public Memory getMemory(){
+    public Memory getMemory() {
         return simulation;
     }
 }

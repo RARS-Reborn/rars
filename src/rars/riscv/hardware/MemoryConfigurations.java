@@ -45,10 +45,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public class MemoryConfigurations {
 
-    private static ArrayList<MemoryConfiguration> configurations = null;
-    private static MemoryConfiguration defaultConfiguration;
-    private static MemoryConfiguration currentConfiguration;
-
     // Be careful, these arrays are parallel and position-sensitive.
     // The getters in this and in MemoryConfiguration depend on this
     // sequence.  Should be refactored...  The order comes from the
@@ -72,9 +68,11 @@ public class MemoryConfigurations {
             "stack limit address",
             "memory map limit address"
     };
-
+    private static ArrayList<MemoryConfiguration> configurations = null;
+    private static MemoryConfiguration defaultConfiguration;
+    private static MemoryConfiguration currentConfiguration;
     // Default configuration comes from SPIM
-    private static int[] defaultConfigurationItemValues = {
+    private static final int[] defaultConfigurationItemValues = {
             0x00400000, // .text Base Address
             0x10000000, // Data Segment base address
             0x10000000, // .extern Base Address
@@ -94,7 +92,7 @@ public class MemoryConfigurations {
     };
 
     // Compact allows 16 bit addressing, data segment starts at 0
-    private static int[] dataBasedCompactConfigurationItemValues = {
+    private static final int[] dataBasedCompactConfigurationItemValues = {
             0x00003000, // .text Base Address
             0x00000000, // Data Segment base address
             0x00001000, // .extern Base Address
@@ -114,7 +112,7 @@ public class MemoryConfigurations {
     };
 
     // Compact allows 16 bit addressing, text segment starts at 0
-    private static int[] textBasedCompactConfigurationItemValues = {
+    private static final int[] textBasedCompactConfigurationItemValues = {
             0x00000000, // .text Base Address
             0x00001000, // Data Segment base address
             0x00001000, // .extern Base Address

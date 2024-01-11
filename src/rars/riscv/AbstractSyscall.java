@@ -1,7 +1,7 @@
 package rars.riscv;
 
-import rars.ExitingException;
 import rars.ProgramStatement;
+import rars.errors.ExitingException;
 /*
 Copyright (c) 2003-2006,  Pete Sanderson and Kenneth Vollmar
 
@@ -43,8 +43,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public abstract class AbstractSyscall implements Comparable<AbstractSyscall> {
     private int serviceNumber;
-    private String serviceName;
-    private String description, inputs, outputs;
+    private final String serviceName;
+    private final String description;
+    private final String inputs;
+    private final String outputs;
 
     /**
      * Constructor is provided so subclass may initialize instance variables.
@@ -56,7 +58,7 @@ public abstract class AbstractSyscall implements Comparable<AbstractSyscall> {
     }
 
     /**
-     * @param name service name which may be used for reference independent of number
+     * @param name  service name which may be used for reference independent of number
      * @param descr a hort description of what the system calll does
      */
     protected AbstractSyscall(String name, String descr) {
@@ -65,7 +67,7 @@ public abstract class AbstractSyscall implements Comparable<AbstractSyscall> {
 
 
     /**
-     * @param name service name which may be used for reference independent of number
+     * @param name  service name which may be used for reference independent of number
      * @param descr a short description of what the system call does
      * @param in    a description of what registers should be set to before the system call
      * @param out   a description of what registers are set to after the system call
@@ -111,16 +113,6 @@ public abstract class AbstractSyscall implements Comparable<AbstractSyscall> {
     }
 
     /**
-     * Set the service number.  This is provided to allow MARS implementer or user
-     * to override the default service number.
-     *
-     * @param num specified service number to override the default.
-     */
-    public void setNumber(int num) {
-        serviceNumber = num;
-    }
-
-    /**
      * Return the assigned service number.  This is the number the programmer
      * must store into a7 before issuing the ECALL instruction.
      *
@@ -128,6 +120,16 @@ public abstract class AbstractSyscall implements Comparable<AbstractSyscall> {
      */
     public int getNumber() {
         return serviceNumber;
+    }
+
+    /**
+     * Set the service number.  This is provided to allow MARS implementer or user
+     * to override the default service number.
+     *
+     * @param num specified service number to override the default.
+     */
+    public void setNumber(int num) {
+        serviceNumber = num;
     }
 
     /**
@@ -144,5 +146,4 @@ public abstract class AbstractSyscall implements Comparable<AbstractSyscall> {
         assert getNumber() != other.getNumber() : "Different syscalls have to have different numbers";
         return getNumber() > other.getNumber() ? 1 : -1;
     }
-
 }

@@ -5,7 +5,6 @@ import rars.Settings;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
 
 	/*
 Copyright (c) 2003-2013,  Pete Sanderson and Kenneth Vollmar
@@ -54,11 +53,6 @@ public class SystemIO {
      * Maximum number of files that can be open
      */
     public static final int SYSCALL_MAXFILES = 32;
-    /**
-     * String used for description of file error
-     */
-    public static String fileErrorString = new String("File operation OK");
-
     private static final int O_RDONLY = 0x00000000;
     private static final int O_WRONLY = 0x00000001;
     private static final int O_RDWR = 0x00000002;
@@ -66,15 +60,17 @@ public class SystemIO {
     private static final int O_CREAT = 0x00000200; // 512
     private static final int O_TRUNC = 0x00000400; // 1024
     private static final int O_EXCL = 0x00000800; // 2048
-
     private static final int SEEK_SET = 0;
     private static final int SEEK_CUR = 1;
     private static final int SEEK_END = 2;
-
     // standard I/O channels
     private static final int STDIN = 0;
     private static final int STDOUT = 1;
     private static final int STDERR = 2;
+    /**
+     * String used for description of file error
+     */
+    public static String fileErrorString = "File operation OK";
 
     /**
      * Implements syscall to read an integer value.
@@ -92,19 +88,13 @@ public class SystemIO {
 
     private static String readStringInternal(String init, String prompt, int maxlength) {
         String input = init;
-        if (Globals.getGui() == null) {
-            try {
-                input = getInputReader().readLine();
-                if (input == null)
-                    input = "";
-            } catch (IOException e) {
-            }
-        } else {
-            if (Globals.getSettings().getBooleanSetting(Settings.Bool.POPUP_SYSCALL_INPUT)) {
-                input = Globals.getGui().getMessagesPane().getInputString(prompt);
-            } else {
-                input = Globals.getGui().getMessagesPane().getInputString(maxlength);
-            }
+        try {
+            input = getInputReader().readLine();
+            if (input == null)
+                input = "";
+        } catch (IOException e) {
+            // TODO: Change to proper logging
+            System.err.println("utils.SystemIO - readStringInternal - readLine exception");
         }
         return input;
     }
@@ -139,17 +129,14 @@ public class SystemIO {
      * Implements syscall having 4 in $v0, to print a string.
      */
     public static void printString(String string) {
-        if (Globals.getGui() == null) {
-            try {
-                SystemIO.getOutputWriter().write(string);
-                SystemIO.getOutputWriter().flush();
-            } catch (IOException e){
-            }
-        } else {
-            print2Gui(string);
+        try {
+            SystemIO.getOutputWriter().write(string);
+            SystemIO.getOutputWriter().flush();
+        } catch (IOException e) {
+            // TODO: Change to proper logging
+            System.err.println("utils.SystemIO - printString - write or flush exception");
         }
     }
-
 
     /**
      * Implements syscall to read a string.
@@ -187,7 +174,7 @@ public class SystemIO {
         // just propagating the runtime exception (the default behavior), but
         // I want to make it explicit.  The client needs to catch it.
         try {
-            returnValue = (int) (input.charAt(0)); // first character input
+            returnValue = input.charAt(0); // first character input
         } catch (IndexOutOfBoundsException e) // no chars present
         {
             throw e;  // was: returnValue = 0;
@@ -210,11 +197,11 @@ public class SystemIO {
     public static int writeToFile(int fd, byte[] myBuffer, int lengthRequested) {
         /////////////// DPS 8-Jan-2013  ////////////////////////////////////////////////////
         /// Write to STDOUT or STDERR file descriptor while using IDE - write to Messages pane.
-        if ((fd == STDOUT || fd == STDERR) && Globals.getGui() != null) {
-            String data = new String(myBuffer, StandardCharsets.UTF_8); //decode the bytes using UTF-8 charset
-            print2Gui(data);
-            return myBuffer.length; // data.length would not count multi-byte characters
-        }
+//        if ((fd == STDOUT || fd == STDERR) && Globals.getGui() != null) {
+//            String data = new String(myBuffer, StandardCharsets.UTF_8); //decode the bytes using UTF-8 charset
+//            print2Gui(data);
+//            return myBuffer.length; // data.length would not count multi-byte characters
+//        }
         ///////////////////////////////////////////////////////////////////////////////////
         //// When running in command mode, code below works for either regular file or STDOUT/STDERR
 
@@ -267,15 +254,15 @@ public class SystemIO {
         int retValue = -1;
         /////////////// DPS 8-Jan-2013  //////////////////////////////////////////////////
         /// Read from STDIN file descriptor while using IDE - get input from Messages pane.
-        if (fd == STDIN && Globals.getGui() != null) {
-            String input = Globals.getGui().getMessagesPane().getInputString(lengthRequested);
-            byte[] bytesRead = input.getBytes();
-
-            for (int i = 0; i < myBuffer.length; i++) {
-                myBuffer[i] = (i < bytesRead.length) ? bytesRead[i] : 0;
-            }
-            return Math.min(myBuffer.length, bytesRead.length);
-        }
+//        if (fd == STDIN && Globals.getGui() != null) {
+//            String input = Globals.getGui().getMessagesPane().getInputString(lengthRequested);
+//            byte[] bytesRead = input.getBytes();
+//
+//            for (int i = 0; i < myBuffer.length; i++) {
+//                myBuffer[i] = (i < bytesRead.length) ? bytesRead[i] : 0;
+//            }
+//            return Math.min(myBuffer.length, bytesRead.length);
+//        }
         ////////////////////////////////////////////////////////////////////////////////////
         //// When running in command mode, code below works for either regular file or STDIN
 
@@ -446,41 +433,15 @@ public class SystemIO {
         }
         return FileIOData.inputReader;
     }
-    private static BufferedWriter getOutputWriter(){
-        if (FileIOData.outputWriter==null){
-            FileIOData.outputWriter=new BufferedWriter(new OutputStreamWriter(System.out));
+
+    private static BufferedWriter getOutputWriter() {
+        if (FileIOData.outputWriter == null) {
+            FileIOData.outputWriter = new BufferedWriter(new OutputStreamWriter(System.out));
         }
         return FileIOData.outputWriter;
     }
 
-    // The GUI doesn't handle lots of small messages well so I added this hacky way of buffering
-    // Currently it checks to flush every instruction run
-    private static String buffer = "";
-    private static long lasttime = 0;
-    private static void print2Gui(String output){
-        long time = System.currentTimeMillis();
-        if (time > lasttime) {
-            Globals.getGui().getMessagesPane().postRunMessage(buffer+output);
-            buffer = "";
-            lasttime = time + 100;
-        } else {
-            buffer += output;
-        }
-    }
-    /**
-     * Flush stdout cache
-     * Makes sure that messages don't get stuck in the print2Gui buffer for too long.
-     */
-    public static void flush(boolean force) {
-        long time = System.currentTimeMillis();
-        if (buffer != "" && (force || time > lasttime)){
-            Globals.getGui().getMessagesPane().postRunMessage(buffer);
-            buffer = "";
-            lasttime = time + 100;
-        }
-    }
-
-    public static Data swapData(Data in){
+    public static Data swapData(Data in) {
         Data temp = new Data(false);
         temp.fileNames = FileIOData.fileNames;
         temp.fileFlags = FileIOData.fileFlags;
@@ -498,14 +459,15 @@ public class SystemIO {
     }
 
     public static class Data {
-        private String[] fileNames; // The filenames in use. Null if file descriptor i is not in use.
-        private int[] fileFlags; // The flags of this file, 0=READ, 1=WRITE. Invalid if this file descriptor is not in use.
         public Closeable[] streams;
         public BufferedReader inputReader;
         public BufferedWriter outputWriter;
         public BufferedWriter errorWriter;
-        public Data(boolean generate){
-            if(generate) {
+        private String[] fileNames; // The filenames in use. Null if file descriptor i is not in use.
+        private int[] fileFlags; // The flags of this file, 0=READ, 1=WRITE. Invalid if this file descriptor is not in use.
+
+        public Data(boolean generate) {
+            if (generate) {
                 fileNames = new String[SYSCALL_MAXFILES];
                 fileFlags = new int[SYSCALL_MAXFILES];
                 streams = new Closeable[SYSCALL_MAXFILES];
@@ -521,14 +483,14 @@ public class SystemIO {
             }
         }
 
-        public Data(ByteArrayInputStream in, ByteArrayOutputStream out, ByteArrayOutputStream err){
+        public Data(ByteArrayInputStream in, ByteArrayOutputStream out, ByteArrayOutputStream err) {
             this(true);
-            this.streams[STDIN]=in;
-            this.streams[STDOUT]=out;
-            this.streams[STDERR]=err;
-            this.inputReader=new BufferedReader(new InputStreamReader(in));
-            this.outputWriter=new BufferedWriter(new OutputStreamWriter(out));
-            this.errorWriter=new BufferedWriter(new OutputStreamWriter(err));
+            this.streams[STDIN] = in;
+            this.streams[STDOUT] = out;
+            this.streams[STDERR] = err;
+            this.inputReader = new BufferedReader(new InputStreamReader(in));
+            this.outputWriter = new BufferedWriter(new OutputStreamWriter(out));
+            this.errorWriter = new BufferedWriter(new OutputStreamWriter(err));
         }
     }
 
@@ -537,30 +499,30 @@ public class SystemIO {
     // Ken Vollmar, August 2005
 
     private static class FileIOData {
-        private static String[] fileNames = new String[SYSCALL_MAXFILES]; // The filenames in use. Null if file descriptor i is not in use.
-        private static int[] fileFlags = new int[SYSCALL_MAXFILES]; // The flags of this file, 0=READ, 1=WRITE. Invalid if this file descriptor is not in use.
-        private static Closeable[] streams = new Closeable[SYSCALL_MAXFILES]; // The streams in use, associated with the filenames
         public static BufferedReader inputReader;
         public static BufferedWriter outputWriter;
         public static BufferedWriter errorWriter;
+        private static String[] fileNames = new String[SYSCALL_MAXFILES]; // The filenames in use. Null if file descriptor i is not in use.
+        private static int[] fileFlags = new int[SYSCALL_MAXFILES]; // The flags of this file, 0=READ, 1=WRITE. Invalid if this file descriptor is not in use.
+        private static Closeable[] streams = new Closeable[SYSCALL_MAXFILES]; // The streams in use, associated with the filenames
 
         // Reset all file information. Closes any open files and resets the arrays
         private static void resetFiles() {
             for (int i = 0; i < SYSCALL_MAXFILES; i++) {
                 close(i);
             }
-            if (outputWriter!=null){
+            if (outputWriter != null) {
                 try {
                     outputWriter.close();
-                    outputWriter=null;
-                } catch (IOException e){
+                    outputWriter = null;
+                } catch (IOException e) {
                 }
             }
-            if (errorWriter!=null){
+            if (errorWriter != null) {
                 try {
                     errorWriter.close();
-                    errorWriter=null;
-                } catch (IOException e){
+                    errorWriter = null;
+                } catch (IOException e) {
                 }
             }
             setupStdio();
@@ -610,12 +572,10 @@ public class SystemIO {
         private static boolean fdInUse(int fd, int flag) {
             if (fd < 0 || fd >= SYSCALL_MAXFILES) {
                 return false;
-            } else if (fileNames[fd] != null && fileFlags[fd] == 0 && flag == 0) {  // O_RDONLY read-only
+            } else // O_WRONLY write-only
+                if (fileNames[fd] != null && fileFlags[fd] == 0 && flag == 0) {  // O_RDONLY read-only
                 return true;
-            } else if (fileNames[fd] != null && ((fileFlags[fd] & flag & O_WRONLY) == O_WRONLY)) {  // O_WRONLY write-only
-                return true;
-            }
-            return false;
+            } else return fileNames[fd] != null && ((fileFlags[fd] & flag & O_WRONLY) == O_WRONLY);
 
         }
 
@@ -673,9 +633,9 @@ public class SystemIO {
             }
 
             // Must be OK -- put filename in table
-            fileNames[i] = new String(filename); // our table has its own copy of filename
+            fileNames[i] = filename; // our table has its own copy of filename
             fileFlags[i] = flag;
-            fileErrorString = new String("File operation OK");
+            fileErrorString = "File operation OK";
             return i;
         }
 

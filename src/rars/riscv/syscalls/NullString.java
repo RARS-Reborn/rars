@@ -1,8 +1,8 @@
 package rars.riscv.syscalls;
 
-import rars.ExitingException;
 import rars.Globals;
 import rars.ProgramStatement;
+import rars.errors.ExitingException;
 import rars.riscv.hardware.AddressErrorException;
 import rars.riscv.hardware.RegisterFile;
 
@@ -72,8 +72,8 @@ public class NullString {
         }
 
         int size = utf8BytesList.size() - 1;    //size - 1 so we dont include the null terminator in the utf8Bytes array
-        byte[] utf8Bytes = new byte[size];  
-        for (int i = 0; i < size; i++){ 
+        byte[] utf8Bytes = new byte[size];
+        for (int i = 0; i < size; i++) {
             utf8Bytes[i] = utf8BytesList.get(i);
         }
 

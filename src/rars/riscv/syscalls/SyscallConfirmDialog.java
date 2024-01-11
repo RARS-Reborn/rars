@@ -1,11 +1,8 @@
 package rars.riscv.syscalls;
 
-import rars.ExitingException;
 import rars.ProgramStatement;
+import rars.errors.ExitingException;
 import rars.riscv.AbstractSyscall;
-import rars.riscv.hardware.RegisterFile;
-
-import javax.swing.*;
 
 /*
 Copyright (c) 2003-2008,  Pete Sanderson and Kenneth Vollmar
@@ -43,11 +40,12 @@ public class SyscallConfirmDialog extends AbstractSyscall {
     }
 
     public void simulate(ProgramStatement statement) throws ExitingException {
-        String message = NullString.get(statement);
-        int result = JOptionPane.showConfirmDialog(null, message);
-        if (result == JOptionPane.CLOSED_OPTION) {
-            result = JOptionPane.CANCEL_OPTION;
-        }
-        RegisterFile.updateRegister("a0", result);
+        throw new UnsupportedOperationException("Not implemented due to the lack of GUI");
+//        String message = NullString.get(statement);
+//        int result = JOptionPane.showConfirmDialog(null, message);
+//        if (result == JOptionPane.CLOSED_OPTION) {
+//            result = JOptionPane.CANCEL_OPTION;
+//        }
+//        RegisterFile.updateRegister("a0", result);
     }
 }

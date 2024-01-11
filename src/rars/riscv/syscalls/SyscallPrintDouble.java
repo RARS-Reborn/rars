@@ -1,10 +1,9 @@
 package rars.riscv.syscalls;
 
-import rars.ExitingException;
 import rars.ProgramStatement;
+import rars.errors.ExitingException;
 import rars.riscv.AbstractSyscall;
 import rars.riscv.hardware.FloatingPointRegisterFile;
-import rars.util.Binary;
 import rars.util.SystemIO;
 
 /*
@@ -41,7 +40,7 @@ public class SyscallPrintDouble extends AbstractSyscall {
      * is 3 and name is "PrintDouble".
      */
     public SyscallPrintDouble() {
-        super("PrintDouble","Prints a double precision floating point number","fa0 = double to print","N/A");
+        super("PrintDouble", "Prints a double precision floating point number", "fa0 = double to print", "N/A");
     }
 
     /**

@@ -1,6 +1,10 @@
 package rars;
 
 import rars.assembler.*;
+import rars.errors.AssemblyException;
+import rars.errors.ErrorList;
+import rars.errors.ErrorMessage;
+import rars.errors.SimulationException;
 import rars.riscv.hardware.RegisterFile;
 import rars.simulator.BackStepper;
 import rars.simulator.Simulator;
@@ -50,7 +54,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 public class RISCVprogram {
 
     // See explanation of method inSteppedExecution() below.
-    private boolean steppedExecution = false;
+    private final boolean steppedExecution = false;
 
     private String filename;
     private ArrayList<String> sourceList;
@@ -74,6 +78,17 @@ public class RISCVprogram {
     }
 
     /**
+     * Retrieve list of source statements that comprise the program.
+     *
+     * @return ArrayList of SourceLine.
+     * Each SourceLine represents one line of RISCV source code
+     **/
+
+    public ArrayList<SourceLine> getSourceLineList() {
+        return this.sourceLineList;
+    }
+
+    /**
      * Set list of source statements that comprise the program.
      *
      * @param sourceLineList ArrayList of SourceLine.
@@ -86,17 +101,6 @@ public class RISCVprogram {
         for (SourceLine sl : sourceLineList) {
             sourceList.add(sl.getSource());
         }
-    }
-
-    /**
-     * Retrieve list of source statements that comprise the program.
-     *
-     * @return ArrayList of SourceLine.
-     * Each SourceLine represents one line of RISCV source code
-     **/
-
-    public ArrayList<SourceLine> getSourceLineList() {
-        return this.sourceLineList;
     }
 
     /**
@@ -217,9 +221,9 @@ public class RISCVprogram {
      *
      * @param source String containing the RISCV source code.
      **/
-    public void fromString(String source){
+    public void fromString(String source) {
         this.filename = source;
-        this.sourceList = new ArrayList<>(Arrays.asList(source.split( "\n")));
+        this.sourceList = new ArrayList<>(Arrays.asList(source.split("\n")));
     }
 
     /**
@@ -246,7 +250,7 @@ public class RISCVprogram {
             }
         } catch (Exception e) {
             errors = new ErrorList();
-            errors.add(new ErrorMessage((RISCVprogram) null, 0, 0, e.toString()));
+            errors.add(new ErrorMessage(null, 0, 0, e.toString()));
             throw new AssemblyException(errors);
         }
     }

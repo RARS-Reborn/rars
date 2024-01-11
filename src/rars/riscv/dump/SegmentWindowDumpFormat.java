@@ -116,7 +116,7 @@ public class SegmentWindowDumpFormat extends AbstractDumpFormat {
         if (!Memory.inTextSegment(firstAddress)) {
             return;
         }
-        
+
         // If address in text segment, print in same format as Text Segment Window
         out.println("Address     Code        Basic                        Line Source");
         out.println();

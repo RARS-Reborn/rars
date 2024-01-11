@@ -2,7 +2,7 @@ package rars.riscv.instructions;
 
 import rars.Globals;
 import rars.ProgramStatement;
-import rars.SimulationException;
+import rars.errors.SimulationException;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
 import rars.riscv.hardware.AddressErrorException;

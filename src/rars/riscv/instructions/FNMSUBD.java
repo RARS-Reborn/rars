@@ -8,8 +8,8 @@ public class FNMSUBD extends FusedDouble {
         super("fnmsub.d f1, f2, f3, f4", "Fused Negated Multiply Subatract: Assigns -(f2*f3-f4) to f1", "10");
     }
 
-    public Float64 compute(Float64 f1, Float64 f2, Float64 f3, Environment e){
+    public Float64 compute(Float64 f1, Float64 f2, Float64 f3, Environment e) {
         FusedFloat.flipRounding(e);
-        return jsoftfloat.operations.Arithmetic.fusedMultiplyAdd(f1,f2,f3.negate(),e).negate();
+        return jsoftfloat.operations.Arithmetic.fusedMultiplyAdd(f1, f2, f3.negate(), e).negate();
     }
 }

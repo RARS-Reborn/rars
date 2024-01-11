@@ -36,7 +36,7 @@ public class LH extends Load {
     }
 
     public long load(int address) throws AddressErrorException {
-        return (Globals.memory.getHalf(address) << 16) >> 16; // Shifting sign extends
+        return ((long) Globals.memory.getHalf(address) << 16) >> 16; // Shifting sign extends
     }
 }
 

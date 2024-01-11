@@ -1,8 +1,8 @@
 package rars.riscv.syscalls;
 
-import rars.ExitingException;
 import rars.Globals;
 import rars.ProgramStatement;
+import rars.errors.ExitingException;
 import rars.riscv.AbstractSyscall;
 
 /*
@@ -32,8 +32,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (MIT license, http://www.opensource.org/licenses/mit-license.html)
  */
-
-
 
 
 public class SyscallExit extends AbstractSyscall {

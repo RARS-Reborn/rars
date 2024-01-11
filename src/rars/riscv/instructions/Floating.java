@@ -1,15 +1,15 @@
 package rars.riscv.instructions;
 
+import jsoftfloat.Environment;
 import jsoftfloat.Flags;
 import jsoftfloat.RoundingMode;
 import jsoftfloat.types.Float32;
 import rars.ProgramStatement;
-import rars.SimulationException;
-import rars.riscv.hardware.ControlAndStatusRegisterFile;
-import rars.riscv.hardware.FloatingPointRegisterFile;
+import rars.errors.SimulationException;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
-import jsoftfloat.Environment;
+import rars.riscv.hardware.ControlAndStatusRegisterFile;
+import rars.riscv.hardware.FloatingPointRegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -52,29 +52,21 @@ public abstract class Floating extends BasicInstruction {
     protected Floating(String name, String description, String funct, String rm) {
         super(name + " f1, f2, f3", description, BasicInstructionFormat.R_FORMAT, funct + "ttttt sssss " + rm + " fffff 1010011");
     }
-    public void simulate(ProgramStatement statement) throws SimulationException{
-        int[] operands = statement.getOperands();
-        Environment e = new Environment();
-        e.mode = getRoundingMode(operands[3],statement);
-        Float32 result = compute(new Float32(FloatingPointRegisterFile.getValue(operands[1])),new Float32(FloatingPointRegisterFile.getValue(operands[2])),e);
-        setfflags(e);
-        FloatingPointRegisterFile.updateRegister(operands[0], result.bits);
-    }
 
-    public static void setfflags(Environment e){
-        int fflags =(e.flags.contains(Flags.inexact)?1:0)+
-                (e.flags.contains(Flags.underflow)?2:0)+
-                (e.flags.contains(Flags.overflow)?4:0)+
-                (e.flags.contains(Flags.divByZero)?8:0)+
-                (e.flags.contains(Flags.invalid)?16:0);
-        if(fflags != 0) ControlAndStatusRegisterFile.orRegister("fflags",fflags);
+    public static void setfflags(Environment e) {
+        int fflags = (e.flags.contains(Flags.inexact) ? 1 : 0) +
+                (e.flags.contains(Flags.underflow) ? 2 : 0) +
+                (e.flags.contains(Flags.overflow) ? 4 : 0) +
+                (e.flags.contains(Flags.divByZero) ? 8 : 0) +
+                (e.flags.contains(Flags.invalid) ? 16 : 0);
+        if (fflags != 0) ControlAndStatusRegisterFile.orRegister("fflags", fflags);
     }
 
     public static RoundingMode getRoundingMode(int RM, ProgramStatement statement) throws SimulationException {
         int rm = RM;
         int frm = ControlAndStatusRegisterFile.getValue("frm");
         if (rm == 7) rm = frm;
-        switch (rm){
+        switch (rm) {
             case 0: // RNE
                 return RoundingMode.even;
             case 1: // RTZ
@@ -86,13 +78,22 @@ public abstract class Floating extends BasicInstruction {
             case 4: // RMM
                 return RoundingMode.away;
             default:
-                throw new SimulationException(statement,"Invalid rounding mode. RM = " + RM +" and frm = " + frm);
+                throw new SimulationException(statement, "Invalid rounding mode. RM = " + RM + " and frm = " + frm);
         }
     }
 
-    public abstract Float32 compute(Float32 f1, Float32 f2, Environment e);
-
-    public static Float32 getFloat(int num){
+    public static Float32 getFloat(int num) {
         return new Float32(FloatingPointRegisterFile.getValue(num));
     }
+
+    public void simulate(ProgramStatement statement) throws SimulationException {
+        int[] operands = statement.getOperands();
+        Environment e = new Environment();
+        e.mode = getRoundingMode(operands[3], statement);
+        Float32 result = compute(new Float32(FloatingPointRegisterFile.getValue(operands[1])), new Float32(FloatingPointRegisterFile.getValue(operands[2])), e);
+        setfflags(e);
+        FloatingPointRegisterFile.updateRegister(operands[0], result.bits);
+    }
+
+    public abstract Float32 compute(Float32 f1, Float32 f2, Environment e);
 }

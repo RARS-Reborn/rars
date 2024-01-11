@@ -1,7 +1,7 @@
 package rars.riscv.instructions;
 
 import rars.ProgramStatement;
-import rars.WaitException;
+import rars.errors.WaitException;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
 

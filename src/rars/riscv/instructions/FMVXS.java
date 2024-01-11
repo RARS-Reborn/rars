@@ -1,10 +1,10 @@
 package rars.riscv.instructions;
 
 import rars.ProgramStatement;
-import rars.riscv.hardware.FloatingPointRegisterFile;
-import rars.riscv.hardware.RegisterFile;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
+import rars.riscv.hardware.FloatingPointRegisterFile;
+import rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -41,6 +41,6 @@ public class FMVXS extends BasicInstruction {
 
     public void simulate(ProgramStatement statement) {
         int[] operands = statement.getOperands();
-        RegisterFile.updateRegister(operands[0], (int)FloatingPointRegisterFile.getValueLong(operands[1]));
+        RegisterFile.updateRegister(operands[0], (int) FloatingPointRegisterFile.getValueLong(operands[1]));
     }
 }

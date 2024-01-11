@@ -58,7 +58,7 @@ public class RegisterBlock {
             System.out.println("Name: " + r.getName());
             System.out.println("Number: " + r.getNumber());
             System.out.println("Value: " + r.getValue());
-            System.out.println("");
+            System.out.println();
         }
     }
 
@@ -123,7 +123,7 @@ public class RegisterBlock {
      * @return The register object,or null if not found.
      **/
     public Register getRegister(String name) {
-        if(name.length() < 2) return null;
+        if (name.length() < 2) return null;
 
         // Handle a direct name
         for (Register r : regFile) {
@@ -133,13 +133,13 @@ public class RegisterBlock {
         }
         // Handle prefix case
         if (name.charAt(0) == prefix) {
-            if(name.charAt(1) == 0) { // Ensure that it is a normal decimal number
-                if(name.length() > 2) return null;
+            if (name.charAt(1) == 0) { // Ensure that it is a normal decimal number
+                if (name.length() > 2) return null;
                 return getRegister(0);
             }
 
             Integer num = Binary.stringToIntFast(name.substring(1));
-            if(num == null) return null;
+            if (num == null) return null;
             return getRegister(num);
         }
         return null;

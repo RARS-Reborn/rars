@@ -82,7 +82,7 @@ class ToneGenerator {
      */
     public final static byte DEFAULT_VOLUME = 100;
 
-    private static Executor threadPool = Executors.newCachedThreadPool();
+    private static final Executor threadPool = Executors.newCachedThreadPool();
 
     /**
      * Produces a Tone with the specified pitch, duration, and instrument,
@@ -145,11 +145,11 @@ class Tone implements Runnable {
      * The default MIDI channel of the tone: 0 (channel 1).
      */
     public final static int DEFAULT_CHANNEL = 0;
-
-    private byte pitch;
-    private int duration;
-    private byte instrument;
-    private byte volume;
+    private static final Lock openLock = new ReentrantLock();
+    private final byte pitch;
+    private final int duration;
+    private final byte instrument;
+    private final byte volume;
 
     /**
      * Instantiates a new Tone object, initializing the tone's pitch,
@@ -174,30 +174,28 @@ class Tone implements Runnable {
         this.volume = volume;
     }
 
+    /* The following lock and the code which locks and unlocks it
+     * around the opening of the Sequencer were added 2009-10-19 by
+     * Max Hailperin <max@gustavus.edu> in order to work around a
+     * bug in Sun's JDK which causes crashing if two threads race:
+     * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6888117 .
+     * This routinely manifested native-code crashes when tones
+     * were played asynchronously, on dual-core machines with Sun's
+     * JDK (but not on one core or with OpenJDK).  Even when tones
+     * were played only synchronously, crashes sometimes occurred.
+     * This is likely due to the fact that Thread.sleep was used
+     * for synchronization, a role it cannot reliably serve.  In
+     * any case, this one lock seems to make all the crashes go
+     * away, and the sleeps are being eliminated (since they can
+     * cause other, less severe, problems), so that case should be
+     * double covered. */
+
     /**
      * Plays the tone.
      */
     public void run() {
         playTone();
     }
-      
-       /* The following lock and the code which locks and unlocks it
-    * around the opening of the Sequencer were added 2009-10-19 by
-	* Max Hailperin <max@gustavus.edu> in order to work around a
-	* bug in Sun's JDK which causes crashing if two threads race:
-	* http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6888117 .
-	* This routinely manifested native-code crashes when tones
-	* were played asynchronously, on dual-core machines with Sun's
-	* JDK (but not on one core or with OpenJDK).  Even when tones
-	* were played only synchronously, crashes sometimes occurred.
-	* This is likely due to the fact that Thread.sleep was used
-	* for synchronization, a role it cannot reliably serve.  In
-	* any case, this one lock seems to make all the crashes go
-	* away, and the sleeps are being eliminated (since they can
-	* cause other, less severe, problems), so that case should be
-	* double covered. */
-
-    private static Lock openLock = new ReentrantLock();
 
     private void playTone() {
 
@@ -233,12 +231,12 @@ class Tone implements Runnable {
 
             player.setSequence(seq);
 
-	    /* The EndOfTrackListener was added 2009-10-19 by Max
-         * Hailperin <max@gustavus.edu> so that its
-	     * awaitEndOfTrack method could be used as a more reliable
-	     * replacement for Thread.sleep.  (Given that the tone
-	     * might not start playing right away, the sleep could end
-	     * before the tone, clipping off the end of the tone.) */
+            /* The EndOfTrackListener was added 2009-10-19 by Max
+             * Hailperin <max@gustavus.edu> so that its
+             * awaitEndOfTrack method could be used as a more reliable
+             * replacement for Thread.sleep.  (Given that the tone
+             * might not start playing right away, the sleep could end
+             * before the tone, clipping off the end of the tone.) */
             EndOfTrackListener eot = new EndOfTrackListener();
             player.addMetaEventListener(eot);
 

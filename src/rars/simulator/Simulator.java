@@ -1,14 +1,21 @@
 package rars.simulator;
 
-import rars.*;
-import rars.riscv.hardware.*;
+import rars.Globals;
+import rars.ProgramStatement;
+import rars.errors.BreakpointException;
+import rars.errors.ExitingException;
+import rars.errors.SimulationException;
+import rars.errors.WaitException;
 import rars.riscv.BasicInstruction;
 import rars.riscv.Instruction;
+import rars.riscv.hardware.AddressErrorException;
+import rars.riscv.hardware.ControlAndStatusRegisterFile;
+import rars.riscv.hardware.InterruptController;
+import rars.riscv.hardware.RegisterFile;
 import rars.util.Binary;
 import rars.util.SystemIO;
 import rars.venus.run.RunSpeedPanel;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Observable;
@@ -49,21 +56,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  **/
 
 public class Simulator extends Observable {
-    private SimThread simulatorThread;
     private static Simulator simulator = null;  // Singleton object
-    private static Runnable interactiveGUIUpdater = null;
+    private final ArrayList<StopListener> stopListeners = new ArrayList<>(1);
+    private SimThread simulatorThread;
 
-    /**
-     * various reasons for simulate to end...
-     */
-    public enum Reason {
-        BREAKPOINT,
-        EXCEPTION,
-        MAX_STEPS,         // includes step mode (where maxSteps is 1)
-        NORMAL_TERMINATION,
-        CLIFF_TERMINATION, // run off bottom of program
-        PAUSE,
-        STOP
+    private Simulator() {
+        simulatorThread = null;
     }
 
     /**
@@ -80,13 +78,6 @@ public class Simulator extends Observable {
             simulator = new Simulator();
         }
         return simulator;
-    }
-
-    private Simulator() {
-        simulatorThread = null;
-        if (Globals.getGui() != null) {
-            interactiveGUIUpdater = new UpdateGUI();
-        }
     }
 
     /**
@@ -152,16 +143,6 @@ public class Simulator extends Observable {
         interruptExecution(Reason.PAUSE);
     }
 
-    /* This interface is required by the Asker class in MessagesPane
-     * to be notified about the fact that the user has requested to
-     * stop the execution. When that happens, it must unblock the
-     * simulator thread. */
-    public interface StopListener {
-        void stopped(Simulator s);
-    }
-
-    private ArrayList<StopListener> stopListeners = new ArrayList<>(1);
-
     public void addStopListener(StopListener l) {
         stopListeners.add(l);
     }
@@ -190,13 +171,35 @@ public class Simulator extends Observable {
     }
 
     /**
+     * various reasons for simulate to end...
+     */
+    public enum Reason {
+        BREAKPOINT,
+        EXCEPTION,
+        MAX_STEPS,         // includes step mode (where maxSteps is 1)
+        NORMAL_TERMINATION,
+        CLIFF_TERMINATION, // run off bottom of program
+        PAUSE,
+        STOP
+    }
+
+    /* This interface is required by the Asker class in MessagesPane
+     * to be notified about the fact that the user has requested to
+     * stop the execution. When that happens, it must unblock the
+     * simulator thread. */
+    public interface StopListener {
+        void stopped(Simulator s);
+    }
+
+    /**
      * Perform the simulated execution. It is "interrupted" when main thread sets
      * the "stop" variable to true. The variable is tested before the next instruction
      * is simulated.  Thus interruption occurs in a tightly controlled fashion.
      */
 
     class SimThread implements Runnable {
-        private int pc, maxSteps;
+        private final int maxSteps;
+        private int pc;
         private int[] breakPoints;
         private boolean done;
         private SimulationException pe;
@@ -232,18 +235,19 @@ public class Simulator extends Observable {
         }
 
         private void startExecution() {
-            Simulator.getInstance().notifyObserversOfExecution(new SimulatorNotice(SimulatorNotice.SIMULATOR_START,
-                    maxSteps,(Globals.getGui() != null || Globals.runSpeedPanelExists)?RunSpeedPanel.getInstance().getRunSpeed():RunSpeedPanel.UNLIMITED_SPEED,
-                    pc, null, pe, done));
+            Simulator.getInstance().notifyObserversOfExecution(
+                    new SimulatorNotice(SimulatorNotice.SIMULATOR_START,
+                            maxSteps, Globals.runSpeedPanelExists ? RunSpeedPanel.getInstance().getRunSpeed() : RunSpeedPanel.UNLIMITED_SPEED,
+                            pc, null, pe, done));
         }
 
         private void stopExecution(boolean done, Reason reason) {
             this.done = done;
             this.constructReturnReason = reason;
-            SystemIO.flush(true);
+//            SystemIO.flush(true);
             if (done) SystemIO.resetFiles(); // close any files opened in the process of simulating
             Simulator.getInstance().notifyObserversOfExecution(new SimulatorNotice(SimulatorNotice.SIMULATOR_STOP,
-                    maxSteps, (Globals.getGui() != null || Globals.runSpeedPanelExists)?RunSpeedPanel.getInstance().getRunSpeed():RunSpeedPanel.UNLIMITED_SPEED,
+                    maxSteps, Globals.runSpeedPanelExists ? RunSpeedPanel.getInstance().getRunSpeed() : RunSpeedPanel.UNLIMITED_SPEED,
                     pc, reason, pe, done));
         }
 
@@ -387,7 +391,7 @@ public class Simulator extends Observable {
             // Volatile variable initialized false but can be set true by the main thread.
             // Used to stop or pause a running program.  See stopSimulation() above.
             while (!stop) {
-                SystemIO.flush(false);
+//                SystemIO.flush(false);
                 // Perform the RISCV instruction in synchronized block.  If external threads agree
                 // to access memory and registers only through synchronized blocks on same
                 // lock variable, then full (albeit heavy-handed) protection of memory and
@@ -523,11 +527,11 @@ public class Simulator extends Observable {
 
                 // Update cycle(h) and instret(h)
                 long cycle = ControlAndStatusRegisterFile.getValueNoNotify("cycle"),
-                         instret = ControlAndStatusRegisterFile.getValueNoNotify("instret"),
-                         time = System.currentTimeMillis();;
-                ControlAndStatusRegisterFile.updateRegisterBackdoor("cycle",cycle+1);
-                ControlAndStatusRegisterFile.updateRegisterBackdoor("instret",instret+1);
-                ControlAndStatusRegisterFile.updateRegisterBackdoor("time",time);
+                        instret = ControlAndStatusRegisterFile.getValueNoNotify("instret"),
+                        time = System.currentTimeMillis();
+                ControlAndStatusRegisterFile.updateRegisterBackdoor("cycle", cycle + 1);
+                ControlAndStatusRegisterFile.updateRegisterBackdoor("instret", instret + 1);
+                ControlAndStatusRegisterFile.updateRegisterBackdoor("time", time);
 
                 //     Return if we've reached a breakpoint.
                 if (ebreak || (breakPoints != null) &&
@@ -553,11 +557,11 @@ public class Simulator extends Observable {
                 // schedule GUI update only if: there is in fact a GUI! AND
                 //                              using Run,  not Step (maxSteps != 1) AND
                 //                              running slowly enough for GUI to keep up
-                if (interactiveGUIUpdater != null && maxSteps != 1 &&
-                        RunSpeedPanel.getInstance().getRunSpeed() < RunSpeedPanel.UNLIMITED_SPEED) {
-                    SwingUtilities.invokeLater(interactiveGUIUpdater);
-                }
-                if (Globals.getGui() != null || Globals.runSpeedPanelExists) { // OR added by DPS 24 July 2008 to enable speed control by stand-alone tool
+//                if (interactiveGUIUpdater != null && maxSteps != 1 &&
+//                        RunSpeedPanel.getInstance().getRunSpeed() < RunSpeedPanel.UNLIMITED_SPEED) {
+//                    SwingUtilities.invokeLater(interactiveGUIUpdater);
+//                }
+                if (Globals.runSpeedPanelExists) { // OR added by DPS 24 July 2008 to enable speed control by stand-alone tool
                     if (maxSteps != 1 &&
                             RunSpeedPanel.getInstance().getRunSpeed() < RunSpeedPanel.UNLIMITED_SPEED) {
                         try {
@@ -569,20 +573,6 @@ public class Simulator extends Observable {
                 }
             }
             stopExecution(false, constructReturnReason);
-        }
-    }
-
-    private class UpdateGUI implements Runnable {
-        public void run() {
-            if (Globals.getGui().getRegistersPane().getSelectedComponent() ==
-                    Globals.getGui().getMainPane().getExecutePane().getRegistersWindow()) {
-                Globals.getGui().getMainPane().getExecutePane().getRegistersWindow().updateRegisters();
-            } else {
-                Globals.getGui().getMainPane().getExecutePane().getFloatingPointWindow().updateRegisters();
-            }
-            Globals.getGui().getMainPane().getExecutePane().getDataSegmentWindow().updateValues();
-            Globals.getGui().getMainPane().getExecutePane().getTextSegmentWindow().setCodeHighlighting(true);
-            Globals.getGui().getMainPane().getExecutePane().getTextSegmentWindow().highlightStepAtPC();
         }
     }
 }

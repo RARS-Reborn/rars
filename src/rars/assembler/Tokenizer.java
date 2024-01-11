@@ -1,6 +1,10 @@
 package rars.assembler;
 
-import rars.*;
+import rars.Globals;
+import rars.RISCVprogram;
+import rars.errors.AssemblyException;
+import rars.errors.ErrorList;
+import rars.errors.ErrorMessage;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,14 +57,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public class Tokenizer {
 
-    private ErrorList errors;
-    private RISCVprogram sourceRISCVprogram;
-    private HashMap<String, String> equivalents; // DPS 11-July-2012
     // The 8 escaped characters are: single quote, double quote, backslash, newline (linefeed),
     // tab, backspace, return, form feed.  The characters and their corresponding decimal codes:
     // TODO: potentially make this automatic
     private static final String escapedCharacters = "'\"\\ntbrf0";
     private static final String[] escapedCharactersValues = {"39", "34", "92", "10", "9", "8", "13", "12", "0"};
+    private ErrorList errors;
+    private RISCVprogram sourceRISCVprogram;
+    private HashMap<String, String> equivalents; // DPS 11-July-2012
 
     /**
      * Simple constructor. Initializes empty error list.
@@ -201,21 +205,21 @@ public class Tokenizer {
      * @return the generated token list for that line
      **/
     /*
-    * 
-    * Tokenizing is not as easy as it appears at first blush, because the typical 
-    * delimiters: space, tab, comma, can all appear inside quoted ASCII strings!
-    * Also, spaces are not as necessary as they seem, the following line is accepted
-    * and parsed correctly by SPIM:    label:lw,$t4,simple#comment
-    * as is this weird variation:      label  :lw  $t4  ,simple ,  ,  , # comment
-    * 
-    * as is this line:  stuff:.asciiz"# ,\n\"","aaaaa"  (interestingly, if you put
-    * additional characters after the \", they are ignored!!)
-    * 
-    * I also would like to know the starting character position in the line of each
-    * token, for error reporting purposes.  StringTokenizer cannot give you this.
-    * 
-    * Given all the above, it is just as easy to "roll my own" as to use StringTokenizer
-    */
+     *
+     * Tokenizing is not as easy as it appears at first blush, because the typical
+     * delimiters: space, tab, comma, can all appear inside quoted ASCII strings!
+     * Also, spaces are not as necessary as they seem, the following line is accepted
+     * and parsed correctly by SPIM:    label:lw,$t4,simple#comment
+     * as is this weird variation:      label  :lw  $t4  ,simple ,  ,  , # comment
+     *
+     * as is this line:  stuff:.asciiz"# ,\n\"","aaaaa"  (interestingly, if you put
+     * additional characters after the \", they are ignored!!)
+     *
+     * I also would like to know the starting character position in the line of each
+     * token, for error reporting purposes.  StringTokenizer cannot give you this.
+     *
+     * Given all the above, it is just as easy to "roll my own" as to use StringTokenizer
+     */
 
     // Modified for release 4.3, to preserve existing API.
     public TokenList tokenizeLine(int lineNum, String theLine) {
@@ -436,7 +440,7 @@ public class Tokenizer {
             linePos++;
         }  // while
         if (tokenPos > 0) {
-            if(insideQuotedString){
+            if (insideQuotedString) {
                 errors.add(new ErrorMessage(program, lineNum, tokenStartPos,
                         "String is not terminated."));
             }
@@ -557,7 +561,7 @@ public class Tokenizer {
         String quotesRemoved = value.substring(1, value.length() - 1);
         // if not escaped, then if one character left return its value else return original.
         if (quotesRemoved.charAt(0) != '\\') {
-            return (quotesRemoved.length() == 1) ? Integer.toString((int) quotesRemoved.charAt(0)) : value;
+            return (quotesRemoved.length() == 1) ? Integer.toString(quotesRemoved.charAt(0)) : value;
         }
         // now we know it is escape sequence and have to decode which of the 8: ',",\,n,t,b,r,f
         if (quotesRemoved.length() == 2) {

@@ -1,9 +1,9 @@
 package rars.riscv.syscalls;
 
-import rars.ExitingException;
 import rars.ProgramStatement;
-import rars.riscv.hardware.FloatingPointRegisterFile;
+import rars.errors.ExitingException;
 import rars.riscv.AbstractSyscall;
+import rars.riscv.hardware.FloatingPointRegisterFile;
 import rars.util.SystemIO;
 
 /*
@@ -46,7 +46,7 @@ public class SyscallReadDouble extends AbstractSyscall {
      * is 7 and name is "ReadDouble".
      */
     public SyscallReadDouble() {
-        super("ReadDouble","Reads a double from input console", "N/A","fa0 = the double");
+        super("ReadDouble", "Reads a double from input console", "N/A", "fa0 = the double");
     }
 
     /**

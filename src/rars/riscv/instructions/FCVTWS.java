@@ -3,15 +3,11 @@ package rars.riscv.instructions;
 import jsoftfloat.Environment;
 import jsoftfloat.types.Float32;
 import rars.ProgramStatement;
-import rars.SimulationException;
-import rars.assembler.DataTypes;
-import rars.riscv.hardware.ControlAndStatusRegisterFile;
-import rars.riscv.hardware.FloatingPointRegisterFile;
-import rars.riscv.hardware.RegisterFile;
+import rars.errors.SimulationException;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
-
-import java.math.BigInteger;
+import rars.riscv.hardware.FloatingPointRegisterFile;
+import rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -49,11 +45,11 @@ public class FCVTWS extends BasicInstruction {
     public void simulate(ProgramStatement statement) throws SimulationException {
         int[] operands = statement.getOperands();
         Environment e = new Environment();
-        e.mode = Floating.getRoundingMode(operands[2],statement);
+        e.mode = Floating.getRoundingMode(operands[2], statement);
         Float32 in = new Float32(FloatingPointRegisterFile.getValue(operands[1]));
-        int out = jsoftfloat.operations.Conversions.convertToInt(in,e,false);
+        int out = jsoftfloat.operations.Conversions.convertToInt(in, e, false);
         Floating.setfflags(e);
-        RegisterFile.updateRegister(operands[0],out);
+        RegisterFile.updateRegister(operands[0], out);
     }
 }
 

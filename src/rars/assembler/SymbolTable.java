@@ -1,8 +1,8 @@
 package rars.assembler;
 
-import rars.ErrorList;
-import rars.ErrorMessage;
 import rars.Globals;
+import rars.errors.ErrorList;
+import rars.errors.ErrorMessage;
 
 import java.util.ArrayList;
 
@@ -42,13 +42,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  **/
 
 public class SymbolTable {
-    private static String startLabel = "main";
-    private String filename;
-    private ArrayList<Symbol> table;
     // Note -1 is legal 32 bit address (0xFFFFFFFF) but it is the high address in
     // kernel address space so highly unlikely that any symbol will have this as
     // its associated address!
     public static final int NOT_FOUND = -1;
+    private static final String startLabel = "main";
+    private final String filename;
+    private ArrayList<Symbol> table;
 
     /**
      * Create a new empty symbol table for given file
@@ -59,6 +59,16 @@ public class SymbolTable {
     public SymbolTable(String filename) {
         this.filename = filename;
         this.table = new ArrayList<>();
+    }
+
+    /**
+     * Fetches the text segment label (symbol) which, if declared global, indicates
+     * the starting address for execution.
+     *
+     * @return String containing global label whose text segment address is starting address for program execution.
+     **/
+    public static String getStartLabel() {
+        return startLabel;
     }
 
     /**
@@ -81,7 +91,6 @@ public class SymbolTable {
         }
     }
 
-
     /**
      * Removes a symbol from the Symbol table.  If not found, it does nothing.
      * This will rarely happen (only when variable is declared .globl after already
@@ -101,7 +110,6 @@ public class SymbolTable {
             }
         }
     }
-
 
     /**
      * Method to return the address associated with the given label.
@@ -130,7 +138,6 @@ public class SymbolTable {
         int address = this.getAddress(s);
         return (address == NOT_FOUND) ? Globals.symbolTable.getAddress(s) : address;
     }
-
 
     /**
      * Produce Symbol object from symbol table that corresponds to given String.
@@ -182,7 +189,6 @@ public class SymbolTable {
         return (sym == null) ? Globals.symbolTable.getSymbolGivenAddress(s) : sym;
     }
 
-
     /**
      * For obtaining the Data Symbols.
      *
@@ -198,7 +204,6 @@ public class SymbolTable {
         }
         return list;
     }
-
 
     /**
      * For obtaining the Text Symbols.
@@ -263,15 +268,5 @@ public class SymbolTable {
             label.setAddress(replacementAddress);
             label = getSymbolGivenAddress(Integer.toString(originalAddress));
         }
-    }
-
-    /**
-     * Fetches the text segment label (symbol) which, if declared global, indicates
-     * the starting address for execution.
-     *
-     * @return String containing global label whose text segment address is starting address for program execution.
-     **/
-    public static String getStartLabel() {
-        return startLabel;
     }
 }

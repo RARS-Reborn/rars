@@ -2,12 +2,12 @@ package rars.riscv.instructions;
 
 import rars.Globals;
 import rars.ProgramStatement;
-import rars.SimulationException;
+import rars.errors.SimulationException;
+import rars.riscv.BasicInstruction;
+import rars.riscv.BasicInstructionFormat;
 import rars.riscv.hardware.AddressErrorException;
 import rars.riscv.hardware.FloatingPointRegisterFile;
 import rars.riscv.hardware.RegisterFile;
-import rars.riscv.BasicInstruction;
-import rars.riscv.BasicInstructionFormat;
 
 /*
 Copyright (c) 2017,  Benjamin Landers

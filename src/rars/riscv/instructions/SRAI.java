@@ -1,9 +1,9 @@
 package rars.riscv.instructions;
 
 import rars.ProgramStatement;
-import rars.riscv.hardware.RegisterFile;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
+import rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -35,7 +35,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 public class SRAI extends BasicInstruction {
     public SRAI() {
         super("srai t1,t2,10", "Shift right arithmetic : Set t1 to result of sign-extended shifting t2 right by number of bits specified by immediate",
-                BasicInstructionFormat.R_FORMAT, "0100000 ttttt sssss 101 fffff 0010011",false);
+                BasicInstructionFormat.R_FORMAT, "0100000 ttttt sssss 101 fffff 0010011", false);
     }
 
     public void simulate(ProgramStatement statement) {

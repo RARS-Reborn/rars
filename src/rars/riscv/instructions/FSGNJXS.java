@@ -1,9 +1,9 @@
 package rars.riscv.instructions;
 
 import rars.ProgramStatement;
-import rars.riscv.hardware.FloatingPointRegisterFile;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
+import rars.riscv.hardware.FloatingPointRegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers

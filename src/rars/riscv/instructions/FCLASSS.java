@@ -2,10 +2,10 @@ package rars.riscv.instructions;
 
 import jsoftfloat.types.Float32;
 import rars.ProgramStatement;
-import rars.riscv.hardware.FloatingPointRegisterFile;
-import rars.riscv.hardware.RegisterFile;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
+import rars.riscv.hardware.FloatingPointRegisterFile;
+import rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -40,6 +40,23 @@ public class FCLASSS extends BasicInstruction {
                 BasicInstructionFormat.I_FORMAT, "1110000 00000 sssss 001 fffff 1010011");
     }
 
+    public static <T extends jsoftfloat.types.Floating<T>> void fclass(T in, int out) {
+        if (in.isNaN()) {
+            RegisterFile.updateRegister(out, in.isSignalling() ? 0x100 : 0x200);
+        } else {
+            boolean negative = in.isSignMinus();
+            if (in.isInfinite()) {
+                RegisterFile.updateRegister(out, negative ? 0x001 : 0x080);
+            } else if (in.isZero()) {
+                RegisterFile.updateRegister(out, negative ? 0x008 : 0x010);
+            } else if (in.isSubnormal()) {
+                RegisterFile.updateRegister(out, negative ? 0x004 : 0x020);
+            } else {
+                RegisterFile.updateRegister(out, negative ? 0x002 : 0x040);
+            }
+        }
+    }
+
     /* Sets the one bit in t1 for every number
      * 0 t1 is −infinity.
      * 1 t1 is a negative normal number.
@@ -55,23 +72,6 @@ public class FCLASSS extends BasicInstruction {
     public void simulate(ProgramStatement statement) {
         int[] operands = statement.getOperands();
         Float32 in = new Float32(FloatingPointRegisterFile.getValue(operands[1]));
-        fclass(in,operands[0]);
-    }
-
-    public static <T extends jsoftfloat.types.Floating<T>> void fclass(T in, int out){
-        if (in.isNaN()) {
-            RegisterFile.updateRegister(out, in.isSignalling() ? 0x100 : 0x200);
-        } else {
-            boolean negative = in.isSignMinus();
-            if (in.isInfinite()) {
-                RegisterFile.updateRegister(out, negative ? 0x001 : 0x080);
-            } else if (in.isZero()) {
-                RegisterFile.updateRegister(out, negative ? 0x008 : 0x010);
-            } else if (in.isSubnormal()) {
-                RegisterFile.updateRegister(out, negative ? 0x004 : 0x020);
-            } else {
-                RegisterFile.updateRegister(out, negative ? 0x002 : 0x040);
-            }
-        }
+        fclass(in, operands[0]);
     }
 }

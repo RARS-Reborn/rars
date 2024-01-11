@@ -40,11 +40,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 public class Binary {
 
-    // Using int value 0-15 as index, yields equivalent hex digit as char.
-    private static char[] chars =
-            {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
     // Use this to produce String equivalent of unsigned int value (add it to int value, result is long)
     private static final long UNSIGNED_BASE = (long) 0x7FFFFFFF + (long) 0x7FFFFFFF + (long) 2; //0xFFFFFFFF+1
+    // Using int value 0-15 as index, yields equivalent hex digit as char.
+    private static final char[] chars =
+            {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     /**
      * Translate int value into a String consisting of '1's and '0's.
@@ -284,8 +284,8 @@ public class Binary {
      * @return String containing '0', '1', ...'F' which form hexadecimal equivalent of int.
      */
     public static String intToHexString(int d) {
-        String leadingZero = new String("0");
-        String leadingX = new String("0x");
+        String leadingZero = "0";
+        String leadingX = "0x";
         String t = Integer.toHexString(d);
         while (t.length() < 8)
             t = leadingZero.concat(t);
@@ -305,11 +305,11 @@ public class Binary {
      * @return String containing '0', '1', ...'F' which form hexadecimal equivalent of int.
      */
     public static String intToHalfHexString(int d) {
-        String leadingZero = new String("0");
-        String leadingX = new String("0x");
+        String leadingZero = "0";
+        String leadingX = "0x";
         String t = Integer.toHexString(d);
         if (t.length() > 4) {
-            t = t.substring(t.length() - 4, t.length());
+            t = t.substring(t.length() - 4);
         }
         while (t.length() < 4)
             t = leadingZero.concat(t);
@@ -376,11 +376,11 @@ public class Binary {
         // Profiling showed that the old method here using Integer.decode was slow
         // stringToIntFast should be input by input compatible
         Integer res2 = stringToIntFast(s);
-        if(res2 == null){
+        if (res2 == null) {
             // TODO: maybe speed this up
             long res3 = stringToLong(s);
-            if (res3 <= Integer.MAX_VALUE && res3 >= Integer.MIN_VALUE){
-                return (int)res3;
+            if (res3 <= Integer.MAX_VALUE && res3 >= Integer.MIN_VALUE) {
+                return (int) res3;
             }
             throw new NumberFormatException();
 
@@ -388,20 +388,20 @@ public class Binary {
         return res2;
     }
 
-    public static Integer stringToIntFast(String s){
-        if(s.length() == 0) return null;
+    public static Integer stringToIntFast(String s) {
+        if (s.length() == 0) return null;
         char first = s.charAt(0);
-        if(!(('0' <= first && first <= '9') || first == '-')) return null;
+        if (!(('0' <= first && first <= '9') || first == '-')) return null;
 
         int result = 0;
         int i = 0;
-        if(first == '-') i=1;
+        if (first == '-') i = 1;
 
         // Not doing s = s.lowercase() because it is slightly slower
-        if(s.length() > 2+i && s.charAt(i) == '0' && (s.charAt(i+1) == 'x' || s.charAt(i+1) == 'X')) { // Hex case
-            if(s.length() > 10+i) return null; // This must overflow or contain invalid characters
+        if (s.length() > 2 + i && s.charAt(i) == '0' && (s.charAt(i + 1) == 'x' || s.charAt(i + 1) == 'X')) { // Hex case
+            if (s.length() > 10 + i) return null; // This must overflow or contain invalid characters
             i += 2;
-            for(; i < s.length(); i++) {
+            for (; i < s.length(); i++) {
                 char c = s.charAt(i);
                 result *= 16;
                 if ('0' <= c && c <= '9') {
@@ -414,9 +414,9 @@ public class Binary {
                     return null;
                 }
             }
-        }else if (first == '0'){ // Octal case
-            if(s.length() > 12+i) return null; // This must overflow or contain invalid characters
-            for(; i < s.length(); i++){
+        } else if (first == '0') { // Octal case
+            if (s.length() > 12 + i) return null; // This must overflow or contain invalid characters
+            for (; i < s.length(); i++) {
                 char c = s.charAt(i);
                 if ('0' <= c && c <= '7') {
                     result *= 8;
@@ -425,10 +425,10 @@ public class Binary {
                     return null;
                 }
             }
-            if(result < 0)return null;
+            if (result < 0) return null;
         } else {
-            if(s.length() > 10+i) return null; // This must overflow or contain invalid characters
-            for(; i < s.length(); i++){
+            if (s.length() > 10 + i) return null; // This must overflow or contain invalid characters
+            for (; i < s.length(); i++) {
                 char c = s.charAt(i);
                 if ('0' <= c && c <= '9') {
                     result *= 10;
@@ -437,15 +437,16 @@ public class Binary {
                     return null;
                 }
             }
-            if(result < 0) return null;
+            if (result < 0) return null;
         }
         // Overflowing to min and negating keeps the value at min
-        if(result == Integer.MIN_VALUE && first == '-') return Integer.MIN_VALUE;
+        if (result == Integer.MIN_VALUE && first == '-') return Integer.MIN_VALUE;
         // Don't allow overflow and negation as that produces unexpected values.
-        if(result < 0 && first == '-') return null;
-        if(first == '-') result*=-1;
+        if (result < 0 && first == '-') return null;
+        if (first == '-') result *= -1;
         return result;
     }
+
     /**
      * Attempt to validate given string whose characters represent a 64 bit long.
      * Long.decode() is insufficient because it will not allow incorporation of
@@ -458,7 +459,7 @@ public class Binary {
      */
 
     public static long stringToLong(String s) throws NumberFormatException {
-        String work = new String(s);
+        String work = s;
         long result = 0;
         // First, use Long.decode().  This will validate most, but it flags
         // valid hex two's complement values as exceptions.  We'll catch those and

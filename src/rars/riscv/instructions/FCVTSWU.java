@@ -3,11 +3,11 @@ package rars.riscv.instructions;
 import jsoftfloat.Environment;
 import jsoftfloat.types.Float32;
 import rars.ProgramStatement;
-import rars.SimulationException;
-import rars.riscv.hardware.FloatingPointRegisterFile;
-import rars.riscv.hardware.RegisterFile;
+import rars.errors.SimulationException;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
+import rars.riscv.hardware.FloatingPointRegisterFile;
+import rars.riscv.hardware.RegisterFile;
 
 import java.math.BigInteger;
 
@@ -47,11 +47,11 @@ public class FCVTSWU extends BasicInstruction {
     public void simulate(ProgramStatement statement) throws SimulationException {
         int[] operands = statement.getOperands();
         Environment e = new Environment();
-        e.mode = Floating.getRoundingMode(operands[2],statement);
+        e.mode = Floating.getRoundingMode(operands[2], statement);
         Float32 tmp = new Float32(0);
-        Float32 converted = jsoftfloat.operations.Conversions.convertFromInt(BigInteger.valueOf(RegisterFile.getValue(operands[1]) &0xFFFFFFFFL),e,tmp);
+        Float32 converted = jsoftfloat.operations.Conversions.convertFromInt(BigInteger.valueOf(RegisterFile.getValue(operands[1]) & 0xFFFFFFFFL), e, tmp);
         Floating.setfflags(e);
-        FloatingPointRegisterFile.updateRegister(operands[0],converted.bits);
+        FloatingPointRegisterFile.updateRegister(operands[0], converted.bits);
     }
 }
 

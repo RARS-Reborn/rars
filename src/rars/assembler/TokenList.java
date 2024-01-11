@@ -57,6 +57,17 @@ public class TokenList implements Cloneable, Iterable<Token> {
     }
 
     /**
+     * Retrieve the source line String associated with this
+     * token list.  It may or may not have been modified during
+     * assembly preprocessing.
+     *
+     * @return The source line for this token list.
+     */   // DPS 03-Jan-2013/
+    public String getProcessedLine() {
+        return processedLine;
+    }
+
+    /**
      * Use this to record the source line String for this token list
      * after possible modification (textual substitution) during
      * assembly preprocessing.  The modified source will be displayed in
@@ -67,17 +78,6 @@ public class TokenList implements Cloneable, Iterable<Token> {
     // DPS 03-Jan-2013
     public void setProcessedLine(String line) {
         processedLine = line;
-    }
-
-    /**
-     * Retrieve the source line String associated with this
-     * token list.  It may or may not have been modified during
-     * assembly preprocessing.
-     *
-     * @return The source line for this token list.
-     */   // DPS 03-Jan-2013/
-    public String getProcessedLine() {
-        return processedLine;
     }
 
     /**

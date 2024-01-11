@@ -1,10 +1,10 @@
 package rars.riscv.instructions;
 
 import rars.ProgramStatement;
-import rars.riscv.hardware.RegisterFile;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
 import rars.riscv.InstructionSet;
+import rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -44,6 +44,6 @@ public class JALR extends BasicInstruction {
         int target = RegisterFile.getValue(operands[1]);
         InstructionSet.processReturnAddress(operands[0]);
         // Set PC = $t2 + immediate with the last bit set to 0
-        InstructionSet.processJump((target + ((operands[2]<<20)>>20)) & 0xFFFFFFFE);
+        InstructionSet.processJump((target + ((operands[2] << 20) >> 20)) & 0xFFFFFFFE);
     }
 }

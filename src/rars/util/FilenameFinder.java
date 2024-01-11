@@ -134,7 +134,7 @@ public class FilenameFinder {
             e.printStackTrace();
             return filenameList;
         }
-         
+
         // 3/4/2019 - Removed original commented out implementation - Benjamin Landers
     }
 
@@ -389,9 +389,9 @@ public class FilenameFinder {
 
     private static class RarsFileFilter extends FileFilter {
 
-        private ArrayList<String> extensions;
-        private String fullDescription;
-        private boolean acceptDirectories;
+        private final ArrayList<String> extensions;
+        private final String fullDescription;
+        private final boolean acceptDirectories;
 
         private RarsFileFilter(ArrayList<String> extensions, String description, boolean acceptDirectories) {
             this.extensions = extensions;

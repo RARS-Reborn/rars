@@ -3,11 +3,9 @@ package rars.riscv;
 import rars.Globals;
 import rars.ProgramStatement;
 import rars.Settings;
-import rars.SimulationException;
+import rars.errors.SimulationException;
 import rars.riscv.hardware.RegisterFile;
-import rars.riscv.syscalls.*;
 import rars.util.FilenameFinder;
-import rars.util.SystemIO;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -59,7 +57,7 @@ public class InstructionSet {
     private static final String CLASS_EXTENSION = "class";
     public static boolean rv64 = Globals.getSettings().getBooleanSetting(Settings.Bool.RV64_ENABLED);
 
-    private ArrayList<Instruction> instructionList;
+    private final ArrayList<Instruction> instructionList;
     private ArrayList<MatchMap> opcodeMatchMaps;
 
     /**
@@ -68,6 +66,45 @@ public class InstructionSet {
     public InstructionSet() {
         instructionList = new ArrayList<>();
 
+    }
+
+    public static void findAndSimulateSyscall(int number, ProgramStatement statement)
+            throws SimulationException {
+        AbstractSyscall service = SyscallLoader.findSyscall(number);
+        if (service != null) {
+            // TODO: find a cleaner way of doing this
+            // This was introduced to solve issue #108
+//            boolean is_writing = service instanceof SyscallPrintChar ||
+//                    service instanceof SyscallPrintDouble ||
+//                    service instanceof SyscallPrintFloat ||
+//                    service instanceof SyscallPrintInt ||
+//                    service instanceof SyscallPrintIntBinary ||
+//                    service instanceof SyscallPrintIntHex ||
+//                    service instanceof SyscallPrintIntUnsigned ||
+//                    service instanceof SyscallPrintString ||
+//                    service instanceof SyscallWrite;
+//            if (!is_writing) {
+//                SystemIO.flush(true);
+//            }
+            service.simulate(statement);
+            return;
+        }
+        throw new SimulationException(statement,
+                "invalid or unimplemented syscall service: " +
+                        number + " ", SimulationException.ENVIRONMENT_CALL);
+    }
+
+    public static void processBranch(int displacement) {
+        // Decrement needed because PC has already been incremented
+        RegisterFile.setProgramCounter(RegisterFile.getProgramCounter() + displacement - Instruction.INSTRUCTION_LENGTH);
+    }
+
+    public static void processJump(int targetAddress) {
+        RegisterFile.setProgramCounter(targetAddress);
+    }
+
+    public static void processReturnAddress(int register) {
+        RegisterFile.updateRegister(register, RegisterFile.getProgramCounter());
     }
 
     /**
@@ -94,7 +131,7 @@ public class InstructionSet {
         addBasicInstructions();
 
         ////////////// READ PSEUDO-INSTRUCTION SPECS FROM DATA FILE AND ADD //////////////////////
-        if(rv64) {
+        if (rv64) {
             addPseudoInstructions("/PseudoOps-64.txt");
         }
 
@@ -108,8 +145,7 @@ public class InstructionSet {
         HashMap<Integer, HashMap<Integer, BasicInstruction>> maskMap = new HashMap<>();
         ArrayList<MatchMap> matchMaps = new ArrayList<>();
         for (Instruction inst : instructionList) {
-            if (inst instanceof BasicInstruction) {
-                BasicInstruction basic = (BasicInstruction) inst;
+            if (inst instanceof BasicInstruction basic) {
                 Integer mask = basic.getOpcodeMask();
                 Integer match = basic.getOpcodeMatch();
                 HashMap<Integer, BasicInstruction> matchMap = maskMap.get(mask);
@@ -125,6 +161,9 @@ public class InstructionSet {
         this.opcodeMatchMaps = matchMaps;
     }
 
+
+    // TODO: check to see if autocomplete was accidentally removed
+
     public BasicInstruction findByBinaryCode(int binaryInstr) {
         for (MatchMap map : this.opcodeMatchMaps) {
             BasicInstruction ret = map.find(binaryInstr);
@@ -132,6 +171,12 @@ public class InstructionSet {
         }
         return null;
     }
+
+    /*
+     * Method to find and invoke a syscall given its service number.  Each syscall
+     * function is represented by an object in an array list.  Each object is of
+     * a class that implements Syscall or extends AbstractSyscall.
+     */
 
     private void addBasicInstructions() {
         // grab all class files in the same directory as Syscall
@@ -156,8 +201,8 @@ public class InstructionSet {
                 }
                 try {
                     instructionList.add((BasicInstruction) clas.newInstance());
-                }catch (NullPointerException ne){
-                    if (ne.toString().contains("rv"))continue;
+                } catch (NullPointerException ne) {
+                    if (ne.toString().contains("rv")) continue;
                     throw ne;
                 }
             } catch (Exception e) {
@@ -166,8 +211,17 @@ public class InstructionSet {
             }
         }
     }
+
+    /*
+     * Method to process a successful branch condition.  DO NOT USE WITH JUMP
+     * INSTRUCTIONS!  The branch operand is a relative displacement in words
+     * whereas the jump operand is an absolute address in bytes.
+     *
+     * The parameter is displacement operand from instruction.
+     */
+
     /*  METHOD TO ADD PSEUDO-INSTRUCTIONS
-    */
+     */
     private void addPseudoInstructions(String file) {
         InputStream is = null;
         BufferedReader in = null;
@@ -221,6 +275,14 @@ public class InstructionSet {
 
     }
 
+    /*
+     * Method to process a jump.  DO NOT USE WITH BRANCH INSTRUCTIONS!
+     * The branch operand is a relative displacement in words
+     * whereas the jump operand is an absolute address in bytes.
+     *
+     * The parameter is jump target absolute byte address.
+     */
+
     /**
      * Given an operator mnemonic, will return the corresponding Instruction object(s)
      * from the instruction set.  Uses straight linear search technique.
@@ -241,8 +303,13 @@ public class InstructionSet {
         return matchingInstructions;
     }
 
+    /*
+     * Method to process storing of a return address in the given
+     * register.  This is used only by the "and link"
+     * instructions: jal and jalr
+     * The parameter is register number to receive the return address.
+     */
 
-    // TODO: check to see if autocomplete was accidentally removed
     /**
      * Given a string, will return the Instruction object(s) from the instruction
      * set whose operator mnemonic prefix matches it.  Case-insensitive.  For example
@@ -266,78 +333,10 @@ public class InstructionSet {
         return matchingInstructions;
     }
 
-   	/*
-        * Method to find and invoke a syscall given its service number.  Each syscall
-   	 * function is represented by an object in an array list.  Each object is of
-   	 * a class that implements Syscall or extends AbstractSyscall.
-   	 */
-
-    public static void findAndSimulateSyscall(int number, ProgramStatement statement)
-            throws SimulationException {
-        AbstractSyscall service = SyscallLoader.findSyscall(number);
-        if (service != null) {
-            // TODO: find a cleaner way of doing this
-            // This was introduced to solve issue #108
-            boolean is_writing = service instanceof SyscallPrintChar ||
-                    service instanceof SyscallPrintDouble ||
-                    service instanceof SyscallPrintFloat ||
-                    service instanceof SyscallPrintInt ||
-                    service instanceof SyscallPrintIntBinary ||
-                    service instanceof SyscallPrintIntHex ||
-                    service instanceof SyscallPrintIntUnsigned ||
-                    service instanceof SyscallPrintString ||
-                    service instanceof SyscallWrite;
-            if (!is_writing) {
-                SystemIO.flush(true);
-            }
-            service.simulate(statement);
-            return;
-        }
-        throw new SimulationException(statement,
-                "invalid or unimplemented syscall service: " +
-                        number + " ", SimulationException.ENVIRONMENT_CALL);
-    }
-
-   	/*
-        * Method to process a successful branch condition.  DO NOT USE WITH JUMP
-   	 * INSTRUCTIONS!  The branch operand is a relative displacement in words
-   	 * whereas the jump operand is an absolute address in bytes.
-   	 *
-   	 * The parameter is displacement operand from instruction.
-   	 */
-
-    public static void processBranch(int displacement) {
-        // Decrement needed because PC has already been incremented
-        RegisterFile.setProgramCounter(RegisterFile.getProgramCounter() + displacement - Instruction.INSTRUCTION_LENGTH);
-    }
-
-   	/*
-        * Method to process a jump.  DO NOT USE WITH BRANCH INSTRUCTIONS!
-   	 * The branch operand is a relative displacement in words
-   	 * whereas the jump operand is an absolute address in bytes.
-   	 *
-   	 * The parameter is jump target absolute byte address.
-   	 */
-
-    public static void processJump(int targetAddress) {
-        RegisterFile.setProgramCounter(targetAddress);
-    }
-
-   	/*
-        * Method to process storing of a return address in the given
-   	 * register.  This is used only by the "and link"
-   	 * instructions: jal and jalr
-   	 * The parameter is register number to receive the return address.
-   	 */
-
-    public static void processReturnAddress(int register) {
-        RegisterFile.updateRegister(register, RegisterFile.getProgramCounter());
-    }
-
     private static class MatchMap implements Comparable<MatchMap> {
-        private int mask;
-        private int maskLength; // number of 1 bits in mask
-        private HashMap<Integer, BasicInstruction> matchMap;
+        private final int mask;
+        private final int maskLength; // number of 1 bits in mask
+        private final HashMap<Integer, BasicInstruction> matchMap;
 
         public MatchMap(int mask, HashMap<Integer, BasicInstruction> matchMap) {
             this.mask = mask;

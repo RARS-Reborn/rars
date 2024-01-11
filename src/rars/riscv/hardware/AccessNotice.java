@@ -48,8 +48,8 @@ public abstract class AccessNotice {
      */
     public static final int WRITE = 1;
 
-    private int accessType;
-    private Thread thread;
+    private final int accessType;
+    private final Thread thread;
 
     protected AccessNotice(int type) {
         if (type != READ && type != WRITE) {

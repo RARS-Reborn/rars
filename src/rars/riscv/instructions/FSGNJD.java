@@ -14,7 +14,7 @@ public class FSGNJD extends BasicInstruction {
     public void simulate(ProgramStatement statement) {
         int[] operands = statement.getOperands();
         long result = (FloatingPointRegisterFile.getValueLong(operands[1]) & 0x7FFFFFFF_FFFFFFFFL) |
-                      (FloatingPointRegisterFile.getValueLong(operands[2]) & 0x80000000_00000000L);
+                (FloatingPointRegisterFile.getValueLong(operands[2]) & 0x80000000_00000000L);
         FloatingPointRegisterFile.updateRegisterLong(operands[0], result);
     }
 }

@@ -1,6 +1,6 @@
 package rars.riscv.hardware;
 
-import rars.SimulationException;
+import rars.errors.SimulationException;
 import rars.riscv.Instruction;
 import rars.simulator.Simulator;
 

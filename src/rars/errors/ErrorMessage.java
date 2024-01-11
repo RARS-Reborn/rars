@@ -1,4 +1,7 @@
-package rars;
+package rars.errors;
+
+import rars.ProgramStatement;
+import rars.RISCVprogram;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,22 +43,20 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  **/
 
 public class ErrorMessage {
-    private boolean isWarning; // allow for warnings too (added Nov 2006)
-    private String filename; // name of source file  (added Oct 2006)
-    private int line;     // line in source code where error detected
-    private int position; // position in source line where error detected
-    private String message;
-    private String macroExpansionHistory;
-
     /**
      * Constant to indicate this message is warning not error
      */
     public static final boolean WARNING = true;
-
     /**
      * Constant to indicate this message is error not warning
      */
     public static final boolean ERROR = false;
+    private final boolean isWarning; // allow for warnings too (added Nov 2006)
+    private final String filename; // name of source file  (added Oct 2006)
+    private final int line;     // line in source code where error detected
+    private final int position; // position in source line where error detected
+    private final String message;
+    private final String macroExpansionHistory;
 
     /**
      * Constructor for ErrorMessage.  Assumes line number is calculated after any .include files expanded, and
@@ -140,10 +141,17 @@ public class ErrorMessage {
         }
     }
 
+    // Added by Mohammad Sekavat Dec 2012
+    private static String getExpansionHistory(RISCVprogram sourceProgram) {
+        if (sourceProgram == null || sourceProgram.getLocalMacroPool() == null)
+            return "";
+        return sourceProgram.getLocalMacroPool().getExpansionHistory();
+    }
+
     private ArrayList<Integer> parseMacroHistory(String string) {
         Pattern pattern = Pattern.compile("<\\d+>");
         Matcher matcher = pattern.matcher(string);
-        String verify = new String(string).trim();
+        String verify = string.trim();
         ArrayList<Integer> macroHistory = new ArrayList<>();
         while (matcher.find()) {
             String match = matcher.group();
@@ -234,13 +242,6 @@ public class ErrorMessage {
         if (macroExpansionHistory == null || macroExpansionHistory.length() == 0)
             return "";
         return macroExpansionHistory + "->";
-    }
-
-    // Added by Mohammad Sekavat Dec 2012
-    private static String getExpansionHistory(RISCVprogram sourceProgram) {
-        if (sourceProgram == null || sourceProgram.getLocalMacroPool() == null)
-            return "";
-        return sourceProgram.getLocalMacroPool().getExpansionHistory();
     }
 
 }  // ErrorMessage

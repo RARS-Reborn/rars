@@ -1,6 +1,9 @@
 import rars.*;
 import rars.api.Options;
 import rars.api.Program;
+import rars.errors.AssemblyException;
+import rars.errors.ErrorMessage;
+import rars.errors.SimulationException;
 import rars.riscv.*;
 import rars.simulator.Simulator;
 

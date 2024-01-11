@@ -1,8 +1,8 @@
 package rars.riscv.syscalls;
 
-import rars.ExitingException;
 import rars.Globals;
 import rars.ProgramStatement;
+import rars.errors.ExitingException;
 import rars.riscv.AbstractSyscall;
 import rars.riscv.hardware.AddressErrorException;
 import rars.riscv.hardware.RegisterFile;
@@ -57,7 +57,7 @@ public class SyscallWrite extends AbstractSyscall {
             return;
         }
         int index = 0;
-        byte myBuffer[] = new byte[reqLength];
+        byte[] myBuffer = new byte[reqLength];
         try {
             byte b = (byte) Globals.memory.getByte(byteAddress);
             while (index < reqLength) // Stop at requested length. Null bytes are included.

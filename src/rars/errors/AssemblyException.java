@@ -1,4 +1,4 @@
-package rars;
+package rars.errors;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -34,7 +34,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * @version July 2017
  */
 public class AssemblyException extends Exception {
-    private ErrorList errs;
+    private final ErrorList errs;
 
     public AssemblyException(ErrorList errs) {
         this.errs = errs;

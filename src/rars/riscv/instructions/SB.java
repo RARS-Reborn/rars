@@ -36,7 +36,7 @@ public class SB extends Store {
     }
 
     public void store(int address, long data) throws AddressErrorException {
-        Globals.memory.setByte(address, (int)data & 0x000000FF);
+        Globals.memory.setByte(address, (int) data & 0x000000FF);
     }
 }
 

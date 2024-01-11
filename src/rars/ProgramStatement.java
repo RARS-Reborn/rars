@@ -4,13 +4,15 @@ import rars.assembler.SymbolTable;
 import rars.assembler.Token;
 import rars.assembler.TokenList;
 import rars.assembler.TokenTypes;
+import rars.errors.ErrorList;
+import rars.errors.ErrorMessage;
+import rars.riscv.BasicInstruction;
+import rars.riscv.BasicInstructionFormat;
+import rars.riscv.Instruction;
 import rars.riscv.hardware.ControlAndStatusRegisterFile;
 import rars.riscv.hardware.FloatingPointRegisterFile;
 import rars.riscv.hardware.Register;
 import rars.riscv.hardware.RegisterFile;
-import rars.riscv.BasicInstruction;
-import rars.riscv.BasicInstructionFormat;
-import rars.riscv.Instruction;
 import rars.util.Binary;
 import rars.venus.NumberDisplayBaseChooser;
 
@@ -55,18 +57,19 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 public class ProgramStatement implements Comparable<ProgramStatement> {
-    private RISCVprogram sourceProgram;
+    private static final String invalidOperator = "<INVALID>";
+    private final RISCVprogram sourceProgram;
     private String source, basicAssemblyStatement, machineStatement;
-    private TokenList originalTokenList, strippedTokenList;
-    private BasicStatementList basicStatementList;
-    private int[] operands;
+    private final TokenList originalTokenList;
+    private final TokenList strippedTokenList;
+    private final BasicStatementList basicStatementList;
+    private final int[] operands;
     private int numOperands;
-    private Instruction instruction;
-    private int textAddress;
+    private final Instruction instruction;
+    private final int textAddress;
     private int sourceLine;
     private int binaryStatement;
-    private boolean altered;
-    private static final String invalidOperator = "<INVALID>";
+    private final boolean altered;
 
     //////////////////////////////////////////////////////////////////////////////////
 
@@ -210,8 +213,8 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
                 // Little bit of a hack because CSRFile doesn't supoprt getRegister(strinug)
                 Register[] regs = ControlAndStatusRegisterFile.getRegisters();
                 registerNumber = -1;
-                for(Register r : regs){
-                    if (r.getName().equals(tokenValue)){
+                for (Register r : regs) {
+                    if (r.getName().equals(tokenValue)) {
                         registerNumber = r.getNumber();
                         break;
                     }
@@ -222,7 +225,7 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
                     return;
                 }
                 basic += registerNumber;
-                basicStatementList.addString(""+registerNumber);
+                basicStatementList.addString("" + registerNumber);
                 this.operands[this.numOperands++] = registerNumber;
             } else if (tokenType == TokenTypes.FP_REGISTER_NAME) {
                 registerNumber = FloatingPointRegisterFile.getRegister(tokenValue).getNumber();
@@ -235,22 +238,22 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
                     return;
                 }
                 this.operands[this.numOperands++] = registerNumber;
-            } else if(tokenType == TokenTypes.ROUNDING_MODE){
+            } else if (tokenType == TokenTypes.ROUNDING_MODE) {
                 int rounding_mode = -1;
-                if(tokenValue.equals("rne")){
+                if (tokenValue.equals("rne")) {
                     rounding_mode = 0;
-                }else if ( tokenValue.equals("rtz")){
+                } else if (tokenValue.equals("rtz")) {
                     rounding_mode = 1;
-                }else if (tokenValue.equals("rdn")) {
+                } else if (tokenValue.equals("rdn")) {
                     rounding_mode = 2;
                 } else if (tokenValue.equals("rup")) {
                     rounding_mode = 3;
                 } else if (tokenValue.equals("rmm")) {
                     rounding_mode = 4;
-                } else if (tokenValue.equals("dyn")){
+                } else if (tokenValue.equals("dyn")) {
                     rounding_mode = 7;
                 }
-                if (rounding_mode == -1){
+                if (rounding_mode == -1) {
                     errors.add(new ErrorMessage(this.sourceProgram, token.getSourceLine(), token.getStartPos(), "invalid rounding mode"));
                     return;
                 }
@@ -475,50 +478,6 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
     } // toString()
 
     /**
-     * Assigns given String to be Basic Assembly statement equivalent to this source line.
-     *
-     * @param statement A String containing equivalent Basic Assembly statement.
-     **/
-
-    public void setBasicAssemblyStatement(String statement) {
-        basicAssemblyStatement = statement;
-    }
-
-    /**
-     * Assigns given String to be binary machine code (32 characters, all of them 0 or 1)
-     * equivalent to this source line.
-     *
-     * @param statement A String containing equivalent machine code.
-     **/
-
-    public void setMachineStatement(String statement) {
-        machineStatement = statement;
-    }
-
-    /**
-     * Assigns given int to be binary machine code equivalent to this source line.
-     *
-     * @param binaryCode An int containing equivalent binary machine code.
-     **/
-
-    public void setBinaryStatement(int binaryCode) {
-        binaryStatement = binaryCode;
-    }
-
-
-    /**
-     * associates RISCV source statement.  Used by assembler when generating basic
-     * statements during macro expansion of extended statement.
-     *
-     * @param src a RISCV source statement.
-     **/
-
-    public void setSource(String src) {
-        source = src;
-    }
-
-
-    /**
      * Produces RISCVprogram object representing the source file containing this statement.
      *
      * @return The RISCVprogram object.  May be null...
@@ -536,7 +495,6 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
         return (sourceProgram == null) ? "" : sourceProgram.getFilename();
     }
 
-
     /**
      * Produces RISCV source statement.
      *
@@ -545,6 +503,17 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
 
     public String getSource() {
         return source;
+    }
+
+    /**
+     * associates RISCV source statement.  Used by assembler when generating basic
+     * statements during macro expansion of extended statement.
+     *
+     * @param src a RISCV source statement.
+     **/
+
+    public void setSource(String src) {
+        source = src;
     }
 
     /**
@@ -566,6 +535,16 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
 
     public String getBasicAssemblyStatement() {
         return basicAssemblyStatement;
+    }
+
+    /**
+     * Assigns given String to be Basic Assembly statement equivalent to this source line.
+     *
+     * @param statement A String containing equivalent Basic Assembly statement.
+     **/
+
+    public void setBasicAssemblyStatement(String statement) {
+        basicAssemblyStatement = statement;
     }
 
     /**
@@ -591,12 +570,33 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
     }
 
     /**
+     * Assigns given String to be binary machine code (32 characters, all of them 0 or 1)
+     * equivalent to this source line.
+     *
+     * @param statement A String containing equivalent machine code.
+     **/
+
+    public void setMachineStatement(String statement) {
+        machineStatement = statement;
+    }
+
+    /**
      * Produces 32-bit binary machine statement as int.
      *
      * @return The int version of 32-bit binary machine code.
      **/
     public int getBinaryStatement() {
         return binaryStatement;
+    }
+
+    /**
+     * Assigns given int to be binary machine code equivalent to this source line.
+     *
+     * @param binaryCode An int containing equivalent binary machine code.
+     **/
+
+    public void setBinaryStatement(int binaryCode) {
+        binaryStatement = binaryCode;
     }
 
     /**
@@ -727,12 +727,12 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
 
 
     //////////////////////////////////////////////////////////////////////////////
-   /*
-    *   Given a model BasicInstruction and the assembled (not source) operand array for a statement, 
-    *   this method will construct the corresponding basic instruction list.  This method is
-    *   used by the constructor that is given only the int address and binary code.  It is not
-    *   intended to be used when source code is available.  DPS 11-July-2013
-    */
+    /*
+     *   Given a model BasicInstruction and the assembled (not source) operand array for a statement,
+     *   this method will construct the corresponding basic instruction list.  This method is
+     *   used by the constructor that is given only the int address and binary code.  It is not
+     *   intended to be used when source code is available.  DPS 11-July-2013
+     */
     private BasicStatementList buildBasicStatementListFromBinaryCode(int binary, BasicInstruction instr, int[] operands, int numOperands) {
         BasicStatementList statementList = new BasicStatementList();
         int tokenListCounter = 1;  // index 0 is operator; operands start at index 1
@@ -763,12 +763,12 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
                     statementList.addString(marker + operands[i]);
                     notOperand = false;
                 } else if (tokenType.equals(TokenTypes.INTEGER_12)) {
-                    statementList.addValue((operands[i]<<20)>>20);
+                    statementList.addValue((operands[i] << 20) >> 20);
                     notOperand = false;
-                } else if(tokenType.equals(TokenTypes.ROUNDING_MODE)) {
-                    String[] modes = new String[]{"rne","rtz","rdn","rup","rmm","invalid","invalid","dyn"};
+                } else if (tokenType.equals(TokenTypes.ROUNDING_MODE)) {
+                    String[] modes = new String[]{"rne", "rtz", "rdn", "rup", "rmm", "invalid", "invalid", "dyn"};
                     String value = "invalid";
-                    if(operands[i] >=0 && operands[i] < 8){
+                    if (operands[i] >= 0 && operands[i] < 8) {
                         value = modes[operands[i]];
                     }
                     statementList.addString(value);
@@ -810,7 +810,7 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
 
     private class BasicStatementList {
 
-        private ArrayList<ListElement> list;
+        private final ArrayList<ListElement> list;
 
         BasicStatementList() {
             list = new ArrayList<>();
@@ -827,6 +827,7 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
         void addValue(int value) {
             list.add(new ListElement(2, null, value));
         }
+
         void addShortValue(int value) {
             list.add(new ListElement(3, null, value));
         }
@@ -873,5 +874,4 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
             }
         }
     }
-
 }

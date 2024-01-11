@@ -36,9 +36,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  **/
 
 public class Symbol {
-    private String name;
+    private final String name;
     private int address;
-    private boolean data; // boolean true if data symbol false if text symbol.
+    private final boolean data; // boolean true if data symbol false if text symbol.
 
     /**
      * Basic constructor, creates a symbol object.
@@ -65,6 +65,16 @@ public class Symbol {
     }
 
     /**
+     * Sets (replaces) the address of the the Symbol.
+     *
+     * @param newAddress The revised address of the Symbol.
+     **/
+
+    public void setAddress(int newAddress) {
+        this.address = newAddress;
+    }
+
+    /**
      * Returns the label of the the Symbol.
      *
      * @return The label of the Symbol.
@@ -82,16 +92,5 @@ public class Symbol {
 
     public boolean getType() {
         return this.data;
-    }
-
-
-    /**
-     * Sets (replaces) the address of the the Symbol.
-     *
-     * @param newAddress The revised address of the Symbol.
-     **/
-
-    public void setAddress(int newAddress) {
-        this.address = newAddress;
     }
 }

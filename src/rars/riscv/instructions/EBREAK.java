@@ -1,8 +1,8 @@
 package rars.riscv.instructions;
 
-import rars.BreakpointException;
 import rars.ProgramStatement;
-import rars.SimulationException;
+import rars.errors.BreakpointException;
+import rars.errors.SimulationException;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
 

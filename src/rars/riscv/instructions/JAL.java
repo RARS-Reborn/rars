@@ -1,11 +1,11 @@
 package rars.riscv.instructions;
 
 import rars.ProgramStatement;
-import rars.riscv.hardware.RegisterFile;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
 import rars.riscv.Instruction;
 import rars.riscv.InstructionSet;
+import rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers

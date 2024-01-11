@@ -1,8 +1,9 @@
-package rars;
+package rars.errors;
 
+import rars.ProgramStatement;
+import rars.riscv.Instruction;
 import rars.riscv.hardware.AddressErrorException;
 import rars.riscv.hardware.RegisterFile;
-import rars.riscv.Instruction;
 import rars.util.Binary;
 
 /**

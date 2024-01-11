@@ -42,7 +42,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public final class Directives {
 
-    private static ArrayList<Directives> directiveList = new ArrayList<>();
     public static final Directives DATA = new Directives(".data", "Subsequent items stored in Data segment at next available address");
     public static final Directives TEXT = new Directives(".text", "Subsequent items (instructions) stored in Text segment at next available address");
     public static final Directives WORD = new Directives(".word", "Store the listed value(s) as 32 bit words on word boundary");
@@ -67,9 +66,9 @@ public final class Directives {
     /*  INCLUDE added by DPS 11 Jan 2013 */
     public static final Directives INCLUDE = new Directives(".include", "Insert the contents of the specified file.  Put filename in quotes.");
     public static final Directives SECTION = new Directives(".section", "Allows specifying sections without .text or .data directives. Included for gcc comparability");
-
-    private String descriptor;
-    private String description; // help text
+    private static final ArrayList<Directives> directiveList = new ArrayList<>();
+    private final String descriptor;
+    private final String description; // help text
 
     private Directives(String name, String description) {
         this.descriptor = name;
@@ -115,6 +114,35 @@ public final class Directives {
         return matches;
     }
 
+    /**
+     * Produces List of Directive objects
+     *
+     * @return All directives defined
+     **/
+    public static ArrayList<Directives> getDirectiveList() {
+        return directiveList;
+    }
+
+    /**
+     * Lets you know whether given directive is for integer (WORD,HALF,BYTE).
+     *
+     * @param direct a directive
+     * @return true if given directive is WORD, HALF, or BYTE, false otherwise
+     **/
+    public static boolean isIntegerDirective(Directives direct) {
+        return direct == Directives.DWORD || direct == Directives.WORD || direct == Directives.HALF || direct == Directives.BYTE;
+
+    }
+
+    /**
+     * Lets you know whether given directive is for floating number (FLOAT,DOUBLE).
+     *
+     * @param direct a directive
+     * @return true if given directive is FLOAT or DOUBLE, false otherwise.
+     **/
+    public static boolean isFloatingDirective(Directives direct) {
+        return direct == Directives.FLOAT || direct == Directives.DOUBLE;
+    }
 
     /**
      * Produces String-ified version of Directive object
@@ -125,7 +153,6 @@ public final class Directives {
     public String toString() {
         return this.descriptor;
     }
-
 
     /**
      * Get name of this Directives object
@@ -145,38 +172,6 @@ public final class Directives {
 
     public String getDescription() {
         return this.description;
-    }
-
-    /**
-     * Produces List of Directive objects
-     *
-     * @return All directives defined
-     **/
-    public static ArrayList<Directives> getDirectiveList() {
-        return directiveList;
-    }
-
-
-    /**
-     * Lets you know whether given directive is for integer (WORD,HALF,BYTE).
-     *
-     * @param direct a directive
-     * @return true if given directive is WORD, HALF, or BYTE, false otherwise
-     **/
-    public static boolean isIntegerDirective(Directives direct) {
-        return direct == Directives.DWORD || direct == Directives.WORD || direct == Directives.HALF || direct == Directives.BYTE;
-
-    }
-
-
-    /**
-     * Lets you know whether given directive is for floating number (FLOAT,DOUBLE).
-     *
-     * @param direct a directive
-     * @return true if given directive is FLOAT or DOUBLE, false otherwise.
-     **/
-    public static boolean isFloatingDirective(Directives direct) {
-        return direct == Directives.FLOAT || direct == Directives.DOUBLE;
     }
 
 }

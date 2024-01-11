@@ -1,11 +1,11 @@
 package rars.riscv.instructions;
 
 import rars.ProgramStatement;
-import rars.SimulationException;
-import rars.riscv.hardware.AddressErrorException;
-import rars.riscv.hardware.RegisterFile;
+import rars.errors.SimulationException;
 import rars.riscv.BasicInstruction;
 import rars.riscv.BasicInstructionFormat;
+import rars.riscv.hardware.AddressErrorException;
+import rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -45,9 +45,10 @@ public abstract class Load extends BasicInstruction {
         super(usage, description, BasicInstructionFormat.I_FORMAT,
                 "ssssssssssss ttttt " + funct + " fffff 0000011");
     }
+
     public Load(String usage, String description, String funct, boolean rv64) {
         super(usage, description, BasicInstructionFormat.I_FORMAT,
-                "ssssssssssss ttttt " + funct + " fffff 0000011",rv64);
+                "ssssssssssss ttttt " + funct + " fffff 0000011", rv64);
 
     }
 

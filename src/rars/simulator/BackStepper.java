@@ -2,10 +2,10 @@ package rars.simulator;
 
 import rars.Globals;
 import rars.ProgramStatement;
+import rars.riscv.Instruction;
 import rars.riscv.hardware.ControlAndStatusRegisterFile;
 import rars.riscv.hardware.FloatingPointRegisterFile;
 import rars.riscv.hardware.RegisterFile;
-import rars.riscv.Instruction;
 
 /*
 Copyright (c) 2003-2006,  Pete Sanderson and Kenneth Vollmar
@@ -43,35 +43,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 public class BackStepper {
-    private enum Action {
-        MEMORY_RESTORE_RAW_WORD,
-        MEMORY_RESTORE_DOUBLE_WORD,
-        MEMORY_RESTORE_WORD,
-        MEMORY_RESTORE_HALF,
-        MEMORY_RESTORE_BYTE,
-        REGISTER_RESTORE,
-        PC_RESTORE,
-        CONTROL_AND_STATUS_REGISTER_RESTORE,
-        CONTROL_AND_STATUS_REGISTER_BACKDOOR,
-        FLOATING_POINT_REGISTER_RESTORE,
-        DO_NOTHING
-    }
-
     // Flag to mark BackStep object as prepresenting specific situation: user manipulates
     // memory/register value via GUI after assembling program but before running it.
     private static final int NOT_PC_VALUE = -1;
-
-
-    private boolean engaged;
     private final BackstepStack backSteps;
-
-    // One can argue using java.util.Stack, given its clumsy implementation.
-    // A homegrown linked implementation will be more streamlined, but
-    // I anticipate that backstepping will only be used during timed
-    // (currently max 30 instructions/second) or stepped execution, where
-    // performance is not an issue.  Its Vector implementation may result
-    // in quicker garbage collection than a pure linked list implementation.
-
+    private boolean engaged;
     /**
      * Create a fresh BackStepper.  It is enabled, which means all
      * subsequent instruction executions will have their "undo" action
@@ -81,6 +57,13 @@ public class BackStepper {
         engaged = true;
         backSteps = new BackstepStack(Globals.maximumBacksteps);
     }
+
+    // One can argue using java.util.Stack, given its clumsy implementation.
+    // A homegrown linked implementation will be more streamlined, but
+    // I anticipate that backstepping will only be used during timed
+    // (currently max 30 instructions/second) or stepped execution, where
+    // performance is not an issue.  Its Vector implementation may result
+    // in quicker garbage collection than a pure linked list implementation.
 
     /**
      * Determine whether execution "undo" steps are currently being recorded.
@@ -137,31 +120,31 @@ public class BackStepper {
                 try {
                     switch (step.action) {
                         case MEMORY_RESTORE_RAW_WORD:
-                            Globals.memory.setRawWord(step.param1, (int)step.param2);
+                            Globals.memory.setRawWord(step.param1, (int) step.param2);
                             break;
                         case MEMORY_RESTORE_DOUBLE_WORD:
                             Globals.memory.setDoubleWord(step.param1, step.param2);
                             break;
                         case MEMORY_RESTORE_WORD:
-                            Globals.memory.setWord(step.param1, (int)step.param2);
+                            Globals.memory.setWord(step.param1, (int) step.param2);
                             break;
                         case MEMORY_RESTORE_HALF:
-                            Globals.memory.setHalf(step.param1, (int)step.param2);
+                            Globals.memory.setHalf(step.param1, (int) step.param2);
                             break;
                         case MEMORY_RESTORE_BYTE:
-                            Globals.memory.setByte(step.param1, (int)step.param2);
+                            Globals.memory.setByte(step.param1, (int) step.param2);
                             break;
                         case REGISTER_RESTORE:
                             RegisterFile.updateRegister(step.param1, step.param2);
                             break;
                         case FLOATING_POINT_REGISTER_RESTORE:
-                            FloatingPointRegisterFile.updateRegisterLong(step.param1,step.param2);
+                            FloatingPointRegisterFile.updateRegisterLong(step.param1, step.param2);
                             break;
                         case CONTROL_AND_STATUS_REGISTER_RESTORE:
-                            ControlAndStatusRegisterFile.updateRegister(step.param1,step.param2);
+                            ControlAndStatusRegisterFile.updateRegister(step.param1, step.param2);
                             break;
                         case CONTROL_AND_STATUS_REGISTER_BACKDOOR:
-                            ControlAndStatusRegisterFile.updateRegisterBackdoor(step.param1,step.param2);
+                            ControlAndStatusRegisterFile.updateRegisterBackdoor(step.param1, step.param2);
                             break;
                         case PC_RESTORE:
                             RegisterFile.setProgramCounter(step.param1);
@@ -178,16 +161,16 @@ public class BackStepper {
             engaged = true;  // RESET IT (was disabled at top of loop -- see comment)
         }
     }
-  
-     
-      /* Convenience method called below to get program counter value.  If it needs to be
-        * be modified (e.g. to subtract 4) that can be done here in one place.
-   	 */
 
     private int pc() {
         // PC incremented prior to instruction simulation, so need to adjust for that.
         return RegisterFile.getProgramCounter() - Instruction.INSTRUCTION_LENGTH;
     }
+
+
+    /* Convenience method called below to get program counter value.  If it needs to be
+     * be modified (e.g. to subtract 4) that can be done here in one place.
+     */
 
     /**
      * Add a new "back step" (the undo action) to the stack. The action here
@@ -288,7 +271,6 @@ public class BackStepper {
         return value;
     }
 
-
     /**
      * Add a new "back step" (the undo action) to the stack.  The action here
      * is to restore a control and status register value. This does not obey
@@ -328,6 +310,19 @@ public class BackStepper {
         }
     }
 
+    private enum Action {
+        MEMORY_RESTORE_RAW_WORD,
+        MEMORY_RESTORE_DOUBLE_WORD,
+        MEMORY_RESTORE_WORD,
+        MEMORY_RESTORE_HALF,
+        MEMORY_RESTORE_BYTE,
+        REGISTER_RESTORE,
+        PC_RESTORE,
+        CONTROL_AND_STATUS_REGISTER_RESTORE,
+        CONTROL_AND_STATUS_REGISTER_BACKDOOR,
+        FLOATING_POINT_REGISTER_RESTORE,
+        DO_NOTHING
+    }
 
     // Represents a "back step" (undo action) on the stack.
     private class BackStep {
@@ -382,9 +377,9 @@ public class BackStepper {
 
     private class BackstepStack {
         private final int capacity;
+        private final BackStep[] stack;
         private int size;
         private int top;
-        private final BackStep[] stack;
 
         // Stack is created upon successful assembly or reset.  The one-time overhead of
         // creating all the BackStep objects will not be noticed by the user, and enhances

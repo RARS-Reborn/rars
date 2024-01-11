@@ -1,27 +1,25 @@
 package rars;
 
+import rars.api.Options;
 import rars.api.Program;
+import rars.errors.AssemblyException;
+import rars.errors.ErrorList;
+import rars.errors.SimulationException;
 import rars.riscv.InstructionSet;
 import rars.riscv.dump.DumpFormat;
 import rars.riscv.dump.DumpFormatLoader;
 import rars.riscv.hardware.*;
-import rars.simulator.ProgramArgumentList;
 import rars.simulator.Simulator;
 import rars.util.Binary;
 import rars.util.FilenameFinder;
 import rars.util.MemoryDump;
-import rars.venus.VenusUI;
-import rars.api.Options;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Observable;
-import java.util.Observer;
 
 /*
 Copyright (c) 2003-2012,  Pete Sanderson and Kenneth Vollmar
@@ -60,6 +58,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public class Launch {
 
+    private static final String rangeSeparator = "-";
+    private static final int memoryWordsPerLine = 4; // display 4 memory words, tab separated, per line
+    private static final int DECIMAL = 0; // memory and register display format
+    private static final int HEXADECIMAL = 1;// memory and register display format
+    private static final int ASCII = 2;// memory and register display format
     /**
      * Main takes a number of command line arguments.<br>
      * Usage:  rars  [options] filename<br>
@@ -109,7 +112,7 @@ public class Launch {
      * made available to the program at runtime.<br>
      **/
 
-    private Options options;
+    private final Options options;
     private boolean gui;
     private boolean simulate;
     private boolean rv64;
@@ -117,24 +120,16 @@ public class Launch {
     private boolean verbose;  // display register name or address along with contents
     private boolean assembleProject; // assemble only the given file or all files in its directory
     private boolean countInstructions; // Whether to count and report number of instructions executed
-    private static final String rangeSeparator = "-";
-    private static final int memoryWordsPerLine = 4; // display 4 memory words, tab separated, per line
-    private static final int DECIMAL = 0; // memory and register display format
-    private static final int HEXADECIMAL = 1;// memory and register display format
-    private static final int ASCII = 2;// memory and register display format
-    private ArrayList<String> registerDisplayList;
-    private ArrayList<String> memoryDisplayList;
-    private ArrayList<String> filenameList;
-    private int instructionCount;
+    private final ArrayList<String> registerDisplayList;
+    private final ArrayList<String> memoryDisplayList;
+    private final ArrayList<String> filenameList;
+    private final int instructionCount;
     private PrintStream out; // stream for display of command line output
     private ArrayList<String[]> dumpTriples = null; // each element holds 3 arguments for dump option
     private ArrayList<String> programArgumentList; // optional program args for program (becomes argc, argv)
     private int assembleErrorExitCode;  // RARS command exit code to return if assemble error occurs
     private int simulateErrorExitCode;// RARS command exit code to return if simulation error occurs
 
-    public static void main(String[] args){
-        new Launch(args);
-    }
     private Launch(String[] args) {
         Globals.initialize();
 
@@ -155,18 +150,16 @@ public class Launch {
         out = System.out;
 
         if (!parseCommandArgs(args)) {
+            out.println("CLI options are not provided. Exiting...");
             System.exit(Globals.exitCode);
         }
-        
-        if (gui) {
-            launchIDE();
-        } else { // running from command line.
-            // assure command mode works in headless environment (generates exception if not)
-            System.setProperty("java.awt.headless", "true");
-            
-            dumpSegments(runCommand());
-            System.exit(Globals.exitCode);
-        }
+
+        dumpSegments(runCommand());
+        System.exit(Globals.exitCode);
+    }
+
+    public static void main(String[] args) {
+        new Launch(args);
     }
 
     private void displayAllPostMortem(Program program) {
@@ -224,24 +217,6 @@ public class Launch {
         }
     }
 
-
-    /////////////////////////////////////////////////////////////////
-    // There are no command arguments, so run in interactive mode by
-    // launching the GUI-fronted integrated development environment.
-
-    private void launchIDE() {
-        // System.setProperty("apple.laf.useScreenMenuBar", "true"); // Puts RARS menu on Mac OS menu bar
-        SwingUtilities.invokeLater(
-                new Runnable() {
-                    public void run() {
-                        //Turn off metal's use of bold fonts
-                        //UIManager.put("swing.boldMetal", Boolean.FALSE);
-                        new VenusUI("RARS " + Globals.version, filenameList);
-                    }
-                });
-    }
-
-
     //////////////////////////////////////////////////////////////////////
     // Parse command line arguments.  The initial parsing has already been
     // done, since each space-separated argument is already in a String array
@@ -278,7 +253,7 @@ public class Launch {
             }
             // Once we hit "pa", all remaining command args are assumed
             // to be program arguments.
-            if (args[i].toLowerCase().equals("pa")) {
+            if (args[i].equalsIgnoreCase("pa")) {
                 inProgramArgumentList = true;
                 continue;
             }
@@ -290,7 +265,7 @@ public class Launch {
             if (args[i].toLowerCase().equals(noCopyrightSwitch)) {
                 continue;
             }
-            if (args[i].toLowerCase().equals("dump")) {
+            if (args[i].equalsIgnoreCase("dump")) {
                 if (args.length <= (i + 3)) {
                     out.println("Dump command line argument requires a segment, format and file name.");
                     argsOK = false;
@@ -302,7 +277,7 @@ public class Launch {
                 }
                 continue;
             }
-            if (args[i].toLowerCase().equals("mc")) {
+            if (args[i].equalsIgnoreCase("mc")) {
                 String configName = args[++i];
                 MemoryConfiguration config = MemoryConfigurations.getConfigurationByName(configName);
                 if (config == null) {
@@ -333,69 +308,69 @@ public class Launch {
                     // Let it fall thru and get handled by catch-all
                 }
             }
-            if (args[i].toLowerCase().equals("d")) {
+            if (args[i].equalsIgnoreCase("d")) {
                 Globals.debug = true;
                 continue;
             }
-            if (args[i].toLowerCase().equals("a")) {
+            if (args[i].equalsIgnoreCase("a")) {
                 simulate = false;
                 continue;
             }
-            if (args[i].toLowerCase().equals("ad") ||
-                    args[i].toLowerCase().equals("da")) {
+            if (args[i].equalsIgnoreCase("ad") ||
+                    args[i].equalsIgnoreCase("da")) {
                 Globals.debug = true;
                 simulate = false;
                 continue;
             }
-            if (args[i].toLowerCase().equals("p")) {
+            if (args[i].equalsIgnoreCase("p")) {
                 assembleProject = true;
                 continue;
             }
-            if (args[i].toLowerCase().equals("dec")) {
+            if (args[i].equalsIgnoreCase("dec")) {
                 displayFormat = DECIMAL;
                 continue;
             }
-            if (args[i].toLowerCase().equals("g")) {
+            if (args[i].equalsIgnoreCase("g")) {
                 gui = true;
                 continue;
             }
-            if (args[i].toLowerCase().equals("hex")) {
+            if (args[i].equalsIgnoreCase("hex")) {
                 displayFormat = HEXADECIMAL;
                 continue;
             }
-            if (args[i].toLowerCase().equals("ascii")) {
+            if (args[i].equalsIgnoreCase("ascii")) {
                 displayFormat = ASCII;
                 continue;
             }
-            if (args[i].toLowerCase().equals("b")) {
+            if (args[i].equalsIgnoreCase("b")) {
                 verbose = false;
                 continue;
             }
-            if (args[i].toLowerCase().equals("np") || args[i].toLowerCase().equals("ne")) {
+            if (args[i].equalsIgnoreCase("np") || args[i].equalsIgnoreCase("ne")) {
                 options.pseudo = false;
                 continue;
             }
-            if (args[i].toLowerCase().equals("we")) { // added 14-July-2008 DPS
+            if (args[i].equalsIgnoreCase("we")) { // added 14-July-2008 DPS
                 options.warningsAreErrors = true;
                 continue;
             }
-            if (args[i].toLowerCase().equals("sm")) { // added 17-Dec-2009 DPS
+            if (args[i].equalsIgnoreCase("sm")) { // added 17-Dec-2009 DPS
                 options.startAtMain = true;
                 continue;
             }
-            if (args[i].toLowerCase().equals("smc")) { // added 5-Jul-2013 DPS
+            if (args[i].equalsIgnoreCase("smc")) { // added 5-Jul-2013 DPS
                 options.selfModifyingCode = true;
                 continue;
             }
-            if (args[i].toLowerCase().equals("rv64")) {
+            if (args[i].equalsIgnoreCase("rv64")) {
                 rv64 = true;
                 continue;
             }
-            if (args[i].toLowerCase().equals("ic")) { // added 19-Jul-2012 DPS
+            if (args[i].equalsIgnoreCase("ic")) { // added 19-Jul-2012 DPS
                 countInstructions = true;
                 continue;
             }
-            
+
             if (new File(args[i]).exists()) {  // is it a file name?
                 filenameList.add(args[i]);
                 continue;
@@ -449,11 +424,12 @@ public class Launch {
     // Returns false if no simulation (run) occurs, true otherwise.
 
     private Program runCommand() {
-        if (filenameList.size() == 0) {
+        if (filenameList.isEmpty()) {
+            out.println("No input files provided. Exiting...");
             return null;
         }
 
-        Globals.getSettings().setBooleanSettingNonPersistent(Settings.Bool.RV64_ENABLED,rv64);
+        Globals.getSettings().setBooleanSettingNonPersistent(Settings.Bool.RV64_ENABLED, rv64);
         InstructionSet.rv64 = rv64;
         Globals.instructionSet.populate();
 
@@ -497,7 +473,7 @@ public class Launch {
             return null;
         }
         // Setup for program simulation even if just assembling to prepare memory dumps
-        program.setup(programArgumentList,null);
+        program.setup(programArgumentList, null);
         if (simulate) {
             if (Globals.debug) {
                 out.println("--------  SIMULATION BEGINS  -----------");
@@ -574,7 +550,7 @@ public class Launch {
     private void displayRegistersPostMortem(Program program) {
         // Display requested register contents
         for (String reg : registerDisplayList) {
-            if(FloatingPointRegisterFile.getRegister(reg) != null){
+            if (FloatingPointRegisterFile.getRegister(reg) != null) {
                 //TODO: do something for double vs float
                 // It isn't clear to me what the best behaviour is
                 // floating point register
@@ -594,12 +570,12 @@ public class Launch {
                 } else { // displayFormat == ASCII
                     out.println(Binary.intToAscii(ivalue));
                 }
-            } else if (ControlAndStatusRegisterFile.getRegister(reg) != null){
+            } else if (ControlAndStatusRegisterFile.getRegister(reg) != null) {
                 out.print(reg + "\t");
-                out.println(formatIntForDisplay((int)ControlAndStatusRegisterFile.getRegister(reg).getValue()));
+                out.println(formatIntForDisplay((int) ControlAndStatusRegisterFile.getRegister(reg).getValue()));
             } else if (verbose) {
                 out.print(reg + "\t");
-                out.println(formatIntForDisplay((int)RegisterFile.getRegister(reg).getValue()));
+                out.println(formatIntForDisplay((int) RegisterFile.getRegister(reg).getValue()));
             }
         }
     }
@@ -724,7 +700,7 @@ public class Launch {
         out.println("            in specified format to specified file.  Option may be repeated.");
         out.println("            Dump occurs at the end of simulation unless 'a' option is used.");
         out.println("            Segment and format are case-sensitive and possible values are:");
-        out.println("            <segment> = " + segments+", or a range like 0x400000-0x10000000");
+        out.println("            <segment> = " + segments + ", or a range like 0x400000-0x10000000");
         out.println("            <format> = " + formats);
         out.println("      g  -- force GUI mode");
         out.println("      h  -- display this help.  Use by itself with no filename.");
@@ -762,7 +738,4 @@ public class Launch {
         out.println("Exception handler not automatically assembled.  Add it to the file list.");
         out.println("Options used here do not affect RARS Settings menu values and vice versa.");
     }
-
 }
-
-   	
