@@ -131,11 +131,9 @@ public class MemoryConfigurations {
             0x00007fff  // memory map limit address
     };
 
-
     public MemoryConfigurations() {
 
     }
-
 
     public static void buildConfigurationCollection() {
         if (configurations == null) {
@@ -147,7 +145,7 @@ public class MemoryConfigurations {
             currentConfiguration = defaultConfiguration;
             // Get current config from settings
             //String currentConfigurationIdentifier = Globals.getSettings().getMemoryConfiguration();
-            setCurrentConfiguration(getConfigurationByName(Globals.getSettings().getMemoryConfiguration()));
+//            setCurrentConfiguration(getConfigurationByName(Globals.getSettings().getMemoryConfiguration()));
             //	Iterator configurationsIterator = getConfigurationsIterator();
             //	while (configurationsIterator.hasNext()) {
             //  MemoryConfiguration config = (MemoryConfiguration)configurationsIterator.next();
@@ -275,6 +273,4 @@ public class MemoryConfigurations {
     public int getMemoryMapLimitAddress() {
         return defaultConfigurationItemValues[15];
     }
-
-
 }
