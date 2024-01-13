@@ -41,13 +41,13 @@ import com.github.unaimillan.rars.venus.run.RunSpeedPanel;
  */
 
 public class SimulatorNotice {
-    private int action;
-    private int maxSteps;
-    private Simulator.Reason reason;
-    private boolean done;
-    private SimulationException exception;
-    private double runSpeed;
-    private int programCounter;
+    private final int action;
+    private final int maxSteps;
+    private final Simulator.Reason reason;
+    private final boolean done;
+    private final SimulationException exception;
+    private final double runSpeed;
+    private final int programCounter;
     public static final int SIMULATOR_START = 0;
     public static final int SIMULATOR_STOP = 1;
 
@@ -99,7 +99,7 @@ public class SimulatorNotice {
     public String toString() {
         return ((this.getAction() == SIMULATOR_START) ? "START " : "STOP  ") +
                 "Max Steps " + this.maxSteps + " " +
-                "Speed " + ((this.runSpeed == RunSpeedPanel.UNLIMITED_SPEED) ? "unlimited " : "" + this.runSpeed + " inst/sec") +
+                "Speed " + ((this.runSpeed == RunSpeedPanel.UNLIMITED_SPEED) ? "unlimited " : this.runSpeed + " inst/sec") +
                 "Prog Ctr " + this.programCounter;
     }
 }

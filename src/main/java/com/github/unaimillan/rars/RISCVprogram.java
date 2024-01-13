@@ -50,7 +50,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 public class RISCVprogram {
 
     // See explanation of method inSteppedExecution() below.
-    private boolean steppedExecution = false;
+    private final boolean steppedExecution = false;
 
     private String filename;
     private ArrayList<String> sourceList;
@@ -217,9 +217,9 @@ public class RISCVprogram {
      *
      * @param source String containing the RISCV source code.
      **/
-    public void fromString(String source){
+    public void fromString(String source) {
         this.filename = source;
-        this.sourceList = new ArrayList<>(Arrays.asList(source.split( "\n")));
+        this.sourceList = new ArrayList<>(Arrays.asList(source.split("\n")));
     }
 
     /**
@@ -246,7 +246,7 @@ public class RISCVprogram {
             }
         } catch (Exception e) {
             errors = new ErrorList();
-            errors.add(new ErrorMessage((RISCVprogram) null, 0, 0, e.toString()));
+            errors.add(new ErrorMessage(null, 0, 0, e.toString()));
             throw new AssemblyException(errors);
         }
     }

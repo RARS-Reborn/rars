@@ -75,13 +75,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public class KeyboardAndDisplaySimulator extends AbstractToolAndApplication {
 
-    private static String version = "Version 1.4";
-    private static String heading = "Keyboard and Display MMIO Simulator";
+    private static final String version = "Version 1.4";
+    private static final String heading = "Keyboard and Display MMIO Simulator";
     private static String displayPanelTitle, keyboardPanelTitle;
-    private static char VT_FILL = ' ';  // fill character for virtual terminal (random access mode)
+    private static final char VT_FILL = ' ';  // fill character for virtual terminal (random access mode)
 
     public static Dimension preferredTextAreaDimension = new Dimension(400, 200);
-    private static Insets textAreaInsets = new Insets(4, 4, 4, 4);
+    private static final Insets textAreaInsets = new Insets(4, 4, 4, 4);
 
     // Time delay to process Transmitter Data is simulated by counting instruction executions.
     // After this many executions, the Transmitter Controller Ready bit set to 1.
@@ -110,7 +110,7 @@ public class KeyboardAndDisplaySimulator extends AbstractToolAndApplication {
     private boolean displayRandomAccessMode = false;
     private int rows, columns;
     private DisplayResizeAdapter updateDisplayBorder;
-    private KeyboardAndDisplaySimulator simulator;
+    private final KeyboardAndDisplaySimulator simulator;
 
     // Major GUI components
     private JPanel keyboardAndDisplay;
@@ -125,7 +125,7 @@ public class KeyboardAndDisplaySimulator extends AbstractToolAndApplication {
     private JScrollPane keyAccepterScrollPane;
     private JTextArea keyEventAccepter;
     private JButton fontButton;
-    private Font defaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+    private final Font defaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 
 
     public static final int EXTERNAL_INTERRUPT_KEYBOARD = 0x00000040;
@@ -796,7 +796,7 @@ public class KeyboardAndDisplaySimulator extends AbstractToolAndApplication {
         private final static int DELAY_INDEX_MIN = 0;
         private final static int DELAY_INDEX_MAX = 40;
         private final static int DELAY_INDEX_INIT = 4;
-        private double[] delayTable = {
+        private final double[] delayTable = {
                 1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 100,  // 0-10
                 150, 200, 300, 400, 500, 600, 700, 800, 900, 1000,  //11-20
                 1500, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000,  //21-30

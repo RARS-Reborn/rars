@@ -15,6 +15,6 @@ public class FCLASSD extends BasicInstruction {
     public void simulate(ProgramStatement statement) {
         int[] operands = statement.getOperands();
         Float64 in = new Float64(FloatingPointRegisterFile.getValueLong(operands[1]));
-        FCLASSS.fclass(in,operands[0]);
+        FCLASSS.fclass(in, operands[0]);
     }
 }

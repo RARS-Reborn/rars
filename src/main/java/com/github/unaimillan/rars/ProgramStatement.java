@@ -4,13 +4,13 @@ import com.github.unaimillan.rars.assembler.SymbolTable;
 import com.github.unaimillan.rars.assembler.Token;
 import com.github.unaimillan.rars.assembler.TokenList;
 import com.github.unaimillan.rars.assembler.TokenTypes;
+import com.github.unaimillan.rars.riscv.BasicInstruction;
+import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
+import com.github.unaimillan.rars.riscv.Instruction;
 import com.github.unaimillan.rars.riscv.hardware.ControlAndStatusRegisterFile;
 import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 import com.github.unaimillan.rars.riscv.hardware.Register;
 import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
-import com.github.unaimillan.rars.riscv.BasicInstruction;
-import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
-import com.github.unaimillan.rars.riscv.Instruction;
 import com.github.unaimillan.rars.util.Binary;
 import com.github.unaimillan.rars.venus.NumberDisplayBaseChooser;
 
@@ -55,17 +55,18 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 public class ProgramStatement implements Comparable<ProgramStatement> {
-    private RISCVprogram sourceProgram;
+    private final RISCVprogram sourceProgram;
     private String source, basicAssemblyStatement, machineStatement;
-    private TokenList originalTokenList, strippedTokenList;
-    private BasicStatementList basicStatementList;
-    private int[] operands;
+    private final TokenList originalTokenList;
+    private final TokenList strippedTokenList;
+    private final BasicStatementList basicStatementList;
+    private final int[] operands;
     private int numOperands;
-    private Instruction instruction;
-    private int textAddress;
+    private final Instruction instruction;
+    private final int textAddress;
     private int sourceLine;
     private int binaryStatement;
-    private boolean altered;
+    private final boolean altered;
     private static final String invalidOperator = "<INVALID>";
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -210,8 +211,8 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
                 // Little bit of a hack because CSRFile doesn't supoprt getRegister(strinug)
                 Register[] regs = ControlAndStatusRegisterFile.getRegisters();
                 registerNumber = -1;
-                for(Register r : regs){
-                    if (r.getName().equals(tokenValue)){
+                for (Register r : regs) {
+                    if (r.getName().equals(tokenValue)) {
                         registerNumber = r.getNumber();
                         break;
                     }
@@ -222,7 +223,7 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
                     return;
                 }
                 basic += registerNumber;
-                basicStatementList.addString(""+registerNumber);
+                basicStatementList.addString("" + registerNumber);
                 this.operands[this.numOperands++] = registerNumber;
             } else if (tokenType == TokenTypes.FP_REGISTER_NAME) {
                 registerNumber = FloatingPointRegisterFile.getRegister(tokenValue).getNumber();
@@ -235,22 +236,22 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
                     return;
                 }
                 this.operands[this.numOperands++] = registerNumber;
-            } else if(tokenType == TokenTypes.ROUNDING_MODE){
+            } else if (tokenType == TokenTypes.ROUNDING_MODE) {
                 int rounding_mode = -1;
-                if(tokenValue.equals("rne")){
+                if (tokenValue.equals("rne")) {
                     rounding_mode = 0;
-                }else if ( tokenValue.equals("rtz")){
+                } else if (tokenValue.equals("rtz")) {
                     rounding_mode = 1;
-                }else if (tokenValue.equals("rdn")) {
+                } else if (tokenValue.equals("rdn")) {
                     rounding_mode = 2;
                 } else if (tokenValue.equals("rup")) {
                     rounding_mode = 3;
                 } else if (tokenValue.equals("rmm")) {
                     rounding_mode = 4;
-                } else if (tokenValue.equals("dyn")){
+                } else if (tokenValue.equals("dyn")) {
                     rounding_mode = 7;
                 }
-                if (rounding_mode == -1){
+                if (rounding_mode == -1) {
                     errors.add(new ErrorMessage(this.sourceProgram, token.getSourceLine(), token.getStartPos(), "invalid rounding mode"));
                     return;
                 }
@@ -727,12 +728,12 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
 
 
     //////////////////////////////////////////////////////////////////////////////
-   /*
-    *   Given a model BasicInstruction and the assembled (not source) operand array for a statement, 
-    *   this method will construct the corresponding basic instruction list.  This method is
-    *   used by the constructor that is given only the int address and binary code.  It is not
-    *   intended to be used when source code is available.  DPS 11-July-2013
-    */
+    /*
+     *   Given a model BasicInstruction and the assembled (not source) operand array for a statement,
+     *   this method will construct the corresponding basic instruction list.  This method is
+     *   used by the constructor that is given only the int address and binary code.  It is not
+     *   intended to be used when source code is available.  DPS 11-July-2013
+     */
     private BasicStatementList buildBasicStatementListFromBinaryCode(int binary, BasicInstruction instr, int[] operands, int numOperands) {
         BasicStatementList statementList = new BasicStatementList();
         int tokenListCounter = 1;  // index 0 is operator; operands start at index 1
@@ -763,12 +764,12 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
                     statementList.addString(marker + operands[i]);
                     notOperand = false;
                 } else if (tokenType.equals(TokenTypes.INTEGER_12)) {
-                    statementList.addValue((operands[i]<<20)>>20);
+                    statementList.addValue((operands[i] << 20) >> 20);
                     notOperand = false;
-                } else if(tokenType.equals(TokenTypes.ROUNDING_MODE)) {
-                    String[] modes = new String[]{"rne","rtz","rdn","rup","rmm","invalid","invalid","dyn"};
+                } else if (tokenType.equals(TokenTypes.ROUNDING_MODE)) {
+                    String[] modes = new String[]{"rne", "rtz", "rdn", "rup", "rmm", "invalid", "invalid", "dyn"};
                     String value = "invalid";
-                    if(operands[i] >=0 && operands[i] < 8){
+                    if (operands[i] >= 0 && operands[i] < 8) {
                         value = modes[operands[i]];
                     }
                     statementList.addString(value);
@@ -810,7 +811,7 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
 
     private class BasicStatementList {
 
-        private ArrayList<ListElement> list;
+        private final ArrayList<ListElement> list;
 
         BasicStatementList() {
             list = new ArrayList<>();
@@ -827,6 +828,7 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
         void addValue(int value) {
             list.add(new ListElement(2, null, value));
         }
+
         void addShortValue(int value) {
             list.add(new ListElement(3, null, value));
         }

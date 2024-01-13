@@ -1,8 +1,8 @@
 package com.github.unaimillan.rars;
 
+import com.github.unaimillan.rars.riscv.Instruction;
 import com.github.unaimillan.rars.riscv.hardware.AddressErrorException;
 import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
-import com.github.unaimillan.rars.riscv.Instruction;
 import com.github.unaimillan.rars.util.Binary;
 
 /**

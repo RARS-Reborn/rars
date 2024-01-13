@@ -43,16 +43,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 public class OperandFormat {
-   /**
-    * Syntax test for correct match in both numbers and types of operands.
-    * 
-    * @param candidateList List of tokens generated from programmer's MIPS statement.
-    * @param inst The (presumably best matched) RISCV instruction.
-    * @param errors ErrorList into which any error messages generated here will be added.
-    * 
-    * @return Returns <tt>true</tt> if the programmer's statement matches the MIPS 
-    * specification, else returns <tt>false</tt>.
-    */
+    /**
+     * Syntax test for correct match in both numbers and types of operands.
+     *
+     * @param candidateList List of tokens generated from programmer's MIPS statement.
+     * @param inst          The (presumably best matched) RISCV instruction.
+     * @param errors        ErrorList into which any error messages generated here will be added.
+     * @return Returns <tt>true</tt> if the programmer's statement matches the MIPS
+     * specification, else returns <tt>false</tt>.
+     */
 
     static boolean tokenOperandMatch(TokenList candidateList, Instruction inst, ErrorList errors) {
         return numOperandsCheck(candidateList, inst, errors) && operandTypeCheck(candidateList, inst, errors);
@@ -121,14 +120,14 @@ public class OperandFormat {
 
             if ((specType == TokenTypes.REGISTER_NAME || specType == TokenTypes.REGISTER_NUMBER) &&
                     candType == TokenTypes.REGISTER_NAME) {
-                    continue;
+                continue;
             }
             if (specType == TokenTypes.REGISTER_NAME &&
                     candType == TokenTypes.REGISTER_NUMBER)
                 continue;
-            if(specType == TokenTypes.CSR_NAME &&
-                    (candType==TokenTypes.INTEGER_5 || candType==TokenTypes.INTEGER_6 || candType == TokenTypes.INTEGER_12
-                            || candType ==TokenTypes.INTEGER_12U || candType == TokenTypes.CSR_NAME))
+            if (specType == TokenTypes.CSR_NAME &&
+                    (candType == TokenTypes.INTEGER_5 || candType == TokenTypes.INTEGER_6 || candType == TokenTypes.INTEGER_12
+                            || candType == TokenTypes.INTEGER_12U || candType == TokenTypes.CSR_NAME))
                 continue;
             if ((specType == TokenTypes.INTEGER_6 && candType == TokenTypes.INTEGER_5) ||
                     (specType == TokenTypes.INTEGER_12 && candType == TokenTypes.INTEGER_5) ||

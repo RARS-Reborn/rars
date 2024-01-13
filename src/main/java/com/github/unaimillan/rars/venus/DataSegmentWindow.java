@@ -62,10 +62,10 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
 
     private static JTable dataTable;
     private JScrollPane dataTableScroller;
-    private Container contentPane;
-    private JPanel tablePanel;
+    private final Container contentPane;
+    private final JPanel tablePanel;
     private JButton dataButton, nextButton, prevButton, stakButton, globButton, heapButton, extnButton, mmioButton, textButton;
-    private JCheckBox asciiDisplayCheckBox;
+    private final JCheckBox asciiDisplayCheckBox;
 
     private static final int VALUES_PER_ROW = 8;
     private static final int NUMBER_OF_ROWS = 16;  // with 8 value columns, this shows 512 bytes;
@@ -84,7 +84,7 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
     private boolean addressHighlighting = false;
     private boolean asciiDisplay = false;
     private int addressRow, addressColumn, addressRowFirstAddress;
-    private Settings settings;
+    private final Settings settings;
 
     private int firstAddress;
     private int homeAddress;
@@ -93,7 +93,7 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
     // The combo box replaced the row of buttons when number of buttons expanded to 7!
     // We'll keep the button objects however and manually invoke their action listeners
     // when the corresponding combo box item is selected.  DPS 22-Nov-2006
-    private JComboBox<String> baseAddressSelector;
+    private final JComboBox<String> baseAddressSelector;
 
     // The next bunch are initialized dynamically in initializeBaseAddressChoices()
     private String[] displayBaseAddressChoices;
@@ -321,7 +321,7 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
     private static final int STACK_POINTER_BASE_ADDRESS_INDEX = 4; //5;
     private static final int MMIO_BASE_ADDRESS_INDEX = 6;
     // Must agree with above in number and order...
-    private int[] displayBaseAddressArray = {Memory.externBaseAddress,
+    private final int[] displayBaseAddressArray = {Memory.externBaseAddress,
             Memory.dataBaseAddress, Memory.heapBaseAddress, -1 /*Memory.globalPointer*/,
             -1 /*Memory.stackPointer*/, Memory.textBaseAddress,
             Memory.memoryMapBaseAddress,};
@@ -646,9 +646,9 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
         dataButton.setEnabled(true);
     }
 
-   	/*
-        * Establish action listeners for the data segment navigation buttons.
-   	 */
+    /*
+     * Establish action listeners for the data segment navigation buttons.
+     */
 
     private void addButtonActionListenersAndInitialize() {
         // set initial states
@@ -775,7 +775,7 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
     //
     private int setFirstAddressAndPrevNextButtonEnableStatus(int lowAddress) {
         int lowLimit = (userOrKernelMode == USER_MODE) ? Math.min(Math.min(Memory.textBaseAddress,
-                Memory.dataSegmentBaseAddress),
+                        Memory.dataSegmentBaseAddress),
                 Memory.dataBaseAddress)
                 : Memory.memoryMapBaseAddress;
         int highLimit = (userOrKernelMode == USER_MODE) ? Memory.userHighAddress
@@ -829,8 +829,7 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
             //*.setEnabled(settings.getBooleanSetting(Settings.SELF_MODIFYING_CODE_ENABLED));
 
             updateRowHeight();
-        } else if (obj instanceof MemoryAccessNotice) {            // NOTE: observable != Memory.getInstance() because Memory class delegates notification duty.
-            MemoryAccessNotice access = (MemoryAccessNotice) obj;
+        } else if (obj instanceof MemoryAccessNotice access) {            // NOTE: observable != Memory.getInstance() because Memory class delegates notification duty.
             if (access.getAccessType() == AccessNotice.WRITE) {
                 int address = access.getAddress();
                 // Use the same highlighting technique as for Text Segment -- see
@@ -844,10 +843,10 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
         if (dataTable == null) {
             return;
         }
-        Font possibleFonts[] = {
-            settings.getFontByPosition(Settings.DATASEGMENT_HIGHLIGHT_FONT),
-            settings.getFontByPosition(Settings.EVEN_ROW_FONT),
-            settings.getFontByPosition(Settings.ODD_ROW_FONT),
+        Font[] possibleFonts = {
+                settings.getFontByPosition(Settings.DATASEGMENT_HIGHLIGHT_FONT),
+                settings.getFontByPosition(Settings.EVEN_ROW_FONT),
+                settings.getFontByPosition(Settings.ODD_ROW_FONT),
         };
         int maxHeight = 0;
         for (int i = 0; i < possibleFonts.length; i++) {
@@ -910,12 +909,12 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
         }
 
         /*
-         * The cells in the Address column are not editable.  
-      	* Value cells are editable except when displayed 
-      	* in ASCII view - don't want to give the impression
-      	* that ASCII text can be entered directly because
-      	* it can't.  It is possible but not worth the
-      	* effort to implement.
+         * The cells in the Address column are not editable.
+         * Value cells are editable except when displayed
+         * in ASCII view - don't want to give the impression
+         * that ASCII text can be entered directly because
+         * it can't.  It is possible but not worth the
+         * effort to implement.
          */
         public boolean isCellEditable(int row, int col) {
             //Note that the data/cell address is constant,
@@ -926,7 +925,7 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
 
         /*
          * JTable uses this method to determine the default renderer/
-         * editor for each cell.  
+         * editor for each cell.
          */
         public Class getColumnClass(int c) {
             return getValueAt(0, c).getClass();
@@ -935,8 +934,8 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
 
         /*
          * Update cell contents in table model.  This method should be called
-      	* only when user edits cell, so input validation has to be done.  If
-      	* value is valid, MIPS memory is updated.
+         * only when user edits cell, so input validation has to be done.  If
+         * value is valid, MIPS memory is updated.
          */
         public void setValueAt(Object value, int row, int col) {
             int val = 0;
@@ -1043,9 +1042,9 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
             super(m);
         }
 
-        private String[] columnToolTips = {
-               /* address  */ "Base memory address for this row of the table.",
-               /* value +0 */ "32-bit value stored at base address for its row.",
+        private final String[] columnToolTips = {
+                /* address  */ "Base memory address for this row of the table.",
+                /* value +0 */ "32-bit value stored at base address for its row.",
                 /* value +n */ "32-bit value stored ",
                 /* value +n */ " bytes beyond base address for its row."
         };

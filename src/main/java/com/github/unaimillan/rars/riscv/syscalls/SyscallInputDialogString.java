@@ -3,9 +3,9 @@ package com.github.unaimillan.rars.riscv.syscalls;
 import com.github.unaimillan.rars.ExitingException;
 import com.github.unaimillan.rars.Globals;
 import com.github.unaimillan.rars.ProgramStatement;
+import com.github.unaimillan.rars.riscv.AbstractSyscall;
 import com.github.unaimillan.rars.riscv.hardware.AddressErrorException;
 import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
-import com.github.unaimillan.rars.riscv.AbstractSyscall;
 
 import javax.swing.*;
 import java.nio.charset.StandardCharsets;
@@ -55,10 +55,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public class SyscallInputDialogString extends AbstractSyscall {
     public SyscallInputDialogString() {
-        super("InputDialogString","Service to display a message to a user and request a string input",
-                "a0 = address of null-terminated string that is the message to user<br>a1 = address of input buffer<br>"+
+        super("InputDialogString", "Service to display a message to a user and request a string input",
+                "a0 = address of null-terminated string that is the message to user<br>a1 = address of input buffer<br>" +
                         "a2 = maximum number of characters to read (including the terminating null)",
-                "a1 contains status value.<br> 0: OK status. Buffer contains the input string.<br>-2: Cancel was chosen. No change to buffer.<br>"+
+                "a1 contains status value.<br> 0: OK status. Buffer contains the input string.<br>-2: Cancel was chosen. No change to buffer.<br>" +
                         "-3: OK was chosen but no data had been input into field. No change to buffer.<br>-4: length of the input string exceeded the specified maximum. Buffer contains the maximum allowable input string terminated with null.");
     }
 
@@ -85,12 +85,12 @@ public class SyscallInputDialogString extends AbstractSyscall {
                 byte[] utf8BytesList = inputString.getBytes(StandardCharsets.UTF_8);
                 // The buffer will contain characters, a '\n' character, and the null character
                 // Copy the input data to buffer as space permits
-                int stringLength = Math.min(maxLength-1, utf8BytesList.length);
+                int stringLength = Math.min(maxLength - 1, utf8BytesList.length);
                 for (int index = 0; index < stringLength; index++) {
-                    Globals.memory.setByte(byteAddress+ index,
+                    Globals.memory.setByte(byteAddress + index,
                             utf8BytesList[index]);
                 }
-                if (stringLength < maxLength-1) {
+                if (stringLength < maxLength - 1) {
                     Globals.memory.setByte(byteAddress + stringLength, '\n');
                     stringLength++;
                 }

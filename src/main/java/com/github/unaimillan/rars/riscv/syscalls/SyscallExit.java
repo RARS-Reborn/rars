@@ -34,8 +34,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 
-
-
 public class SyscallExit extends AbstractSyscall {
     public SyscallExit() {
         super("Exit", "Exits the program with code 0");

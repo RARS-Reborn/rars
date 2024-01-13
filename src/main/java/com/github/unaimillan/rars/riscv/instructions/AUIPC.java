@@ -1,9 +1,9 @@
 package com.github.unaimillan.rars.riscv.instructions;
 
 import com.github.unaimillan.rars.ProgramStatement;
-import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
+import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -40,6 +40,6 @@ public class AUIPC extends BasicInstruction {
 
     public void simulate(ProgramStatement statement) {
         int[] operands = statement.getOperands();
-        RegisterFile.updateRegister(operands[0], RegisterFile.getProgramCounter() - INSTRUCTION_LENGTH + (operands[1] << 12));
+        RegisterFile.updateRegister(operands[0], RegisterFile.getProgramCounter() - INSTRUCTION_LENGTH + ((long) operands[1] << 12));
     }
 }

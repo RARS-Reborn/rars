@@ -385,7 +385,7 @@ public class RISCVTokenMarker extends TokenMarker {
             return null;
         }
         int realMatches = 0;
-        HashMap<String,String> insts = new HashMap<>();
+        HashMap<String, String> insts = new HashMap<>();
         TreeSet<String> mnemonics = new TreeSet<>();
         for (Instruction inst : matches) {
             if (Globals.getSettings().getBooleanSetting(Settings.Bool.EXTENDED_ASSEMBLER_ENABLED) || inst instanceof BasicInstruction) {
@@ -455,7 +455,7 @@ public class RISCVTokenMarker extends TokenMarker {
     // private members
     private static KeywordMap cKeywords;
     private static String[] tokenLabels, tokenExamples;
-    private KeywordMap keywords;
+    private final KeywordMap keywords;
     private int lastOffset;
     private int lastKeyword;
 

@@ -1,9 +1,9 @@
 package com.github.unaimillan.rars;
 
 import com.github.unaimillan.rars.assembler.SymbolTable;
-import com.github.unaimillan.rars.riscv.hardware.Memory;
 import com.github.unaimillan.rars.riscv.InstructionSet;
 import com.github.unaimillan.rars.riscv.SyscallNumberOverride;
+import com.github.unaimillan.rars.riscv.hardware.Memory;
 import com.github.unaimillan.rars.util.PropertiesFile;
 import com.github.unaimillan.rars.venus.VenusUI;
 
@@ -49,8 +49,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 public class Globals {
     // List these first because they are referenced by methods called at initialization.
-    private static String configPropertiesFile = "Config";
-    private static String syscallPropertiesFile = "Syscall";
+    private static final String configPropertiesFile = "Config";
+    private static final String syscallPropertiesFile = "Syscall";
 
     /**
      * The set of implemented instructions.
@@ -221,17 +221,17 @@ public class Globals {
     public static String[] getAsciiStrings() {
         String let = getPropertyEntry(configPropertiesFile, "AsciiTable");
         String placeHolder = getAsciiNonPrint();
-        if(let == null){
+        if (let == null) {
             // If config isn't loaded, give a decent default value.
-            String[] table = new String[((int) '~' )+ 1];
+            String[] table = new String[((int) '~') + 1];
             for (int i = 0; i < table.length; i++) {
                 if (i == 0) table[i] = "\0";
                 else if (i == '\n') table[i] = "\n";
                 else if (i < ' ') table[i] = placeHolder;
-                else table[i] = " "+(char) i;
+                else table[i] = " " + (char) i;
             }
             return table;
-        }else {
+        } else {
             String[] lets = let.split(" +");
             int maxLength = 0;
             for (int i = 0; i < lets.length; i++) {

@@ -37,10 +37,10 @@ import java.util.ArrayList;
  * tool tip item.
  */
 public class PopupHelpItem {
-    private String tokenText;
+    private final String tokenText;
     private String example;
     private String description;
-    private boolean exact;        // from exact match?
+    private final boolean exact;        // from exact match?
     private int exampleLength;
     private static final String spaces = "                                        "; // 40 spaces
 

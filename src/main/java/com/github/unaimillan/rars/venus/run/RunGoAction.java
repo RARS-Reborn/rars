@@ -56,7 +56,7 @@ public class RunGoAction extends GuiAction {
     public static int maxSteps = defaultMaxSteps;
     private String name;
     private ExecutePane executePane;
-    private VenusUI mainUI;
+    private final VenusUI mainUI;
 
     public RunGoAction(String name, Icon icon, String descrip,
                        Integer mnemonic, KeyStroke accel, VenusUI gui) {
@@ -94,9 +94,9 @@ public class RunGoAction extends GuiAction {
                                 if (notice.getAction() != SimulatorNotice.SIMULATOR_STOP) return;
                                 Simulator.Reason reason = notice.getReason();
                                 if (reason == Simulator.Reason.PAUSE || reason == Simulator.Reason.BREAKPOINT) {
-                                    EventQueue.invokeLater(()->paused(notice.getDone(), reason, notice.getException()));
+                                    EventQueue.invokeLater(() -> paused(notice.getDone(), reason, notice.getException()));
                                 } else {
-                                    EventQueue.invokeLater(()->stopped(notice.getException(), reason));
+                                    EventQueue.invokeLater(() -> stopped(notice.getException(), reason));
                                 }
                                 o.deleteObserver(this);
                             }

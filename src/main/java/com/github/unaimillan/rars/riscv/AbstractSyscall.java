@@ -43,8 +43,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public abstract class AbstractSyscall implements Comparable<AbstractSyscall> {
     private int serviceNumber;
-    private String serviceName;
-    private String description, inputs, outputs;
+    private final String serviceName;
+    private final String description;
+    private final String inputs;
+    private final String outputs;
 
     /**
      * Constructor is provided so subclass may initialize instance variables.
@@ -56,7 +58,7 @@ public abstract class AbstractSyscall implements Comparable<AbstractSyscall> {
     }
 
     /**
-     * @param name service name which may be used for reference independent of number
+     * @param name  service name which may be used for reference independent of number
      * @param descr a hort description of what the system calll does
      */
     protected AbstractSyscall(String name, String descr) {
@@ -65,7 +67,7 @@ public abstract class AbstractSyscall implements Comparable<AbstractSyscall> {
 
 
     /**
-     * @param name service name which may be used for reference independent of number
+     * @param name  service name which may be used for reference independent of number
      * @param descr a short description of what the system call does
      * @param in    a description of what registers should be set to before the system call
      * @param out   a description of what registers are set to after the system call

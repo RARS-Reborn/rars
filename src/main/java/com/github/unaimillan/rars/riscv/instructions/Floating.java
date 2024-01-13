@@ -1,15 +1,15 @@
 package com.github.unaimillan.rars.riscv.instructions;
 
+import com.github.unaimillan.jsoftfloat.Environment;
 import com.github.unaimillan.jsoftfloat.Flags;
 import com.github.unaimillan.jsoftfloat.RoundingMode;
 import com.github.unaimillan.jsoftfloat.types.Float32;
 import com.github.unaimillan.rars.ProgramStatement;
 import com.github.unaimillan.rars.SimulationException;
-import com.github.unaimillan.rars.riscv.hardware.ControlAndStatusRegisterFile;
-import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
-import com.github.unaimillan.jsoftfloat.Environment;
+import com.github.unaimillan.rars.riscv.hardware.ControlAndStatusRegisterFile;
+import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -52,29 +52,30 @@ public abstract class Floating extends BasicInstruction {
     protected Floating(String name, String description, String funct, String rm) {
         super(name + " f1, f2, f3", description, BasicInstructionFormat.R_FORMAT, funct + "ttttt sssss " + rm + " fffff 1010011");
     }
-    public void simulate(ProgramStatement statement) throws SimulationException{
+
+    public void simulate(ProgramStatement statement) throws SimulationException {
         int[] operands = statement.getOperands();
         Environment e = new Environment();
-        e.mode = getRoundingMode(operands[3],statement);
-        Float32 result = compute(new Float32(FloatingPointRegisterFile.getValue(operands[1])),new Float32(FloatingPointRegisterFile.getValue(operands[2])),e);
+        e.mode = getRoundingMode(operands[3], statement);
+        Float32 result = compute(new Float32(FloatingPointRegisterFile.getValue(operands[1])), new Float32(FloatingPointRegisterFile.getValue(operands[2])), e);
         setfflags(e);
         FloatingPointRegisterFile.updateRegister(operands[0], result.bits);
     }
 
-    public static void setfflags(Environment e){
-        int fflags =(e.flags.contains(Flags.inexact)?1:0)+
-                (e.flags.contains(Flags.underflow)?2:0)+
-                (e.flags.contains(Flags.overflow)?4:0)+
-                (e.flags.contains(Flags.divByZero)?8:0)+
-                (e.flags.contains(Flags.invalid)?16:0);
-        if(fflags != 0) ControlAndStatusRegisterFile.orRegister("fflags",fflags);
+    public static void setfflags(Environment e) {
+        int fflags = (e.flags.contains(Flags.inexact) ? 1 : 0) +
+                (e.flags.contains(Flags.underflow) ? 2 : 0) +
+                (e.flags.contains(Flags.overflow) ? 4 : 0) +
+                (e.flags.contains(Flags.divByZero) ? 8 : 0) +
+                (e.flags.contains(Flags.invalid) ? 16 : 0);
+        if (fflags != 0) ControlAndStatusRegisterFile.orRegister("fflags", fflags);
     }
 
     public static RoundingMode getRoundingMode(int RM, ProgramStatement statement) throws SimulationException {
         int rm = RM;
         int frm = ControlAndStatusRegisterFile.getValue("frm");
         if (rm == 7) rm = frm;
-        switch (rm){
+        switch (rm) {
             case 0: // RNE
                 return RoundingMode.even;
             case 1: // RTZ
@@ -86,13 +87,13 @@ public abstract class Floating extends BasicInstruction {
             case 4: // RMM
                 return RoundingMode.away;
             default:
-                throw new SimulationException(statement,"Invalid rounding mode. RM = " + RM +" and frm = " + frm);
+                throw new SimulationException(statement, "Invalid rounding mode. RM = " + RM + " and frm = " + frm);
         }
     }
 
     public abstract Float32 compute(Float32 f1, Float32 f2, Environment e);
 
-    public static Float32 getFloat(int num){
+    public static Float32 getFloat(int num) {
         return new Float32(FloatingPointRegisterFile.getValue(num));
     }
 }

@@ -59,16 +59,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public class EditPane extends JPanel implements Observer {
 
-    private TextEditingArea sourceCode;
-    private VenusUI mainUI;
-    private String currentDirectoryPath;
-    private JLabel caretPositionLabel;
-    private JCheckBox showLineNumbers;
-    private JLabel lineNumbers;
-    private static int count = 0;
-    private boolean isCompoundEdit = false;
+    private final TextEditingArea sourceCode;
+    private final VenusUI mainUI;
+    private final String currentDirectoryPath;
+    private final JLabel caretPositionLabel;
+    private final JCheckBox showLineNumbers;
+    private final JLabel lineNumbers;
+    private static final int count = 0;
+    private final boolean isCompoundEdit = false;
     private CompoundEdit compoundEdit;
-    private FileStatus fileStatus;
+    private final FileStatus fileStatus;
 
     /**
      * Constructor for the EditPane class.
@@ -246,11 +246,11 @@ public class EditPane extends JPanel implements Observer {
      * not end with newline character.
      */
 
-   	/*  IMPLEMENTATION NOTE:
-        * Tried repeatedly to use StringTokenizer to count lines but got bad results
-   	 * on empty lines (consecutive delimiters) even when returning delimiter as token.
-   	 * BufferedReader on StringReader seems to work better.
-   	 */
+    /*  IMPLEMENTATION NOTE:
+     * Tried repeatedly to use StringTokenizer to count lines but got bad results
+     * on empty lines (consecutive delimiters) even when returning delimiter as token.
+     * BufferedReader on StringReader seems to work better.
+     */
     public int getSourceLineCount() {
         BufferedReader bufStringReader = new BufferedReader(new StringReader(sourceCode.getText()));
         int lineNums = 0;

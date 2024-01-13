@@ -27,9 +27,9 @@
 
 /**
  * Instructions for use
- *
+ * <p>
  * This tool allows you to generate a trace by doing the following:
- *
+ * <p>
  * Open your source file in RARS.
  * Tools menu, Instruction/Memory Dump.
  * Change filename to a filename of your choice.
@@ -37,23 +37,23 @@
  * Run, Assemble.
  * Run, Go.
  * Go back to Instruction/Memory Dump window: click "Dump Log". This
- *   saves the dump to the file you specified in step 3.
- *
+ * saves the dump to the file you specified in step 3.
+ * <p>
  * These steps are pretty brittle (i.e., do them in this exact order)
- *   because the author doesn’t know how to use Swing very well.
- *
+ * because the author doesn’t know how to use Swing very well.
+ * <p>
  * The file you generate has one line per datum. The four kinds of
- *   data you will see in the trace are:
- *
+ * data you will see in the trace are:
+ * <p>
  * 'I': The address of an access into instruction memory
  * 'i': A 32-bit RISC-V instruction (the trace first dumps the address then
- *      the instruction)
+ * the instruction)
  * 'L': The address of a memory load into data memory
  * 'S': The address of a memory store into data memory (the contents of the
- *      memory load/store aren’t in the trace)
- *
+ * memory load/store aren’t in the trace)
+ * <p>
  * The trace is in "text" mode for readability reasons, but for reducing
- *   trace size, it would be possible to instead store it in a "binary" mode.
+ * trace size, it would be possible to instead store it in a "binary" mode.
  */
 
 package com.github.unaimillan.rars.tools;
@@ -85,9 +85,9 @@ import java.util.Observable;
  * @author John Owens <jowens@ece.ucdavis.edu>
  */
 public class InstructionMemoryDump extends AbstractToolAndApplication {
-    private static String name = "Instruction/Memory Dump";
-    private static String version = "Version 1.0 (John Owens)";
-    private static String heading = "Dumps every executed instruction and data memory access to a file";
+    private static final String name = "Instruction/Memory Dump";
+    private static final String version = "Version 1.0 (John Owens)";
+    private static final String heading = "Dumps every executed instruction and data memory access to a file";
 
     /**
      * The last address we saw. We ignore it because the only way for a
@@ -99,7 +99,7 @@ public class InstructionMemoryDump extends AbstractToolAndApplication {
     /**
      * Instructions and memory accesses get logged here
      */
-    private StringBuffer log = new StringBuffer("");
+    private final StringBuffer log = new StringBuffer();
 
     /**
      * Filename when we dump the log
@@ -134,11 +134,11 @@ public class InstructionMemoryDump extends AbstractToolAndApplication {
         JButton dumpLogButton = new JButton("Dump Log");
         dumpLogButton.setToolTipText("Dumps the log to a file");
         dumpLogButton.addActionListener(
-                                        new ActionListener() {
-                                            public void actionPerformed(ActionEvent e) {
-                                                dumpLog();
-                                            }
-                                        });
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        dumpLog();
+                    }
+                });
         dumpLogButton.addKeyListener(new EnterKeyListener(dumpLogButton));
 
         dumpLogFilename = new JTextField("dumplog.txt", 20);
@@ -159,8 +159,8 @@ public class InstructionMemoryDump extends AbstractToolAndApplication {
         return name;
     }
 
-    private int lowDataSegmentAddress = Memory.dataSegmentBaseAddress;
-    private int highDataSegmentAddress = Memory.stackBaseAddress;
+    private final int lowDataSegmentAddress = Memory.dataSegmentBaseAddress;
+    private final int highDataSegmentAddress = Memory.stackBaseAddress;
 
     @Override
     protected void addAsObserver() {
@@ -192,12 +192,12 @@ public class InstructionMemoryDump extends AbstractToolAndApplication {
                     BasicInstructionFormat format = instr.getInstructionFormat();
                     // First dump the instruction address, prefixed by "I:"
                     log.append("I: 0x"
-                               + Integer.toUnsignedString(a, 16)
-                               + "\n");
+                            + Integer.toUnsignedString(a, 16)
+                            + "\n");
                     // Then dump the instruction, prefixed by "i:"
                     log.append("i: 0x"
-                               + Integer.toUnsignedString(stmt.getBinaryStatement(), 16)
-                               + "\n");
+                            + Integer.toUnsignedString(stmt.getBinaryStatement(), 16)
+                            + "\n");
                 }
             } catch (AddressErrorException e) {
                 // TODO Auto-generated catch block
@@ -223,7 +223,7 @@ public class InstructionMemoryDump extends AbstractToolAndApplication {
         // TODO: handle ressizing the window if the logSuccess label is not visible
         try {
             String filename = dumpLogFilename.getText();
-            if (filename.equals("")){
+            if (filename.equals("")) {
                 logSuccess.setText("Enter a filename before trying to dump log");
                 return;
             }

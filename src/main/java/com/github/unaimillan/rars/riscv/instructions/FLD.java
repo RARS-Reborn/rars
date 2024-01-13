@@ -20,7 +20,7 @@ public class FLD extends BasicInstruction {
         operands[1] = (operands[1] << 20) >> 20;
         try {
             long low = Globals.memory.getWord(RegisterFile.getValue(operands[2]) + operands[1]);
-            long high = Globals.memory.getWord(RegisterFile.getValue(operands[2]) + operands[1]+4);
+            long high = Globals.memory.getWord(RegisterFile.getValue(operands[2]) + operands[1] + 4);
             FloatingPointRegisterFile.updateRegisterLong(operands[0], (high << 32) | (low & 0xFFFFFFFFL));
         } catch (AddressErrorException e) {
             throw new SimulationException(statement, e);

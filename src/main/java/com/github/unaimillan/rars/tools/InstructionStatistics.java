@@ -52,17 +52,17 @@ public class InstructionStatistics extends AbstractToolAndApplication {
     /**
      * name of the tool
      */
-    private static String NAME = "Instruction Statistics";
+    private static final String NAME = "Instruction Statistics";
 
     /**
      * version and author information of the tool
      */
-    private static String VERSION = "Version 1.0 (Ingo Kofler)";
+    private static final String VERSION = "Version 1.0 (Ingo Kofler)";
 
     /**
      * heading of the tool
      */
-    private static String HEADING = "";
+    private static final String HEADING = "";
 
 
     /**
@@ -120,12 +120,12 @@ public class InstructionStatistics extends AbstractToolAndApplication {
     /**
      * array of counter variables - one for each instruction category
      */
-    private int[] m_counters = new int[MAX_CATEGORY];
+    private final int[] m_counters = new int[MAX_CATEGORY];
 
     /**
      * names of the instruction categories as array
      */
-    private String[] m_categoryLabels = {"ALU", "Jump", "Branch", "Memory", "Other"};
+    private final String[] m_categoryLabels = {"ALU", "Jump", "Branch", "Memory", "Other"};
 
 
     // From Felipe Lessa's instruction counter.  Prevent double-counting of instructions 
@@ -230,12 +230,12 @@ public class InstructionStatistics extends AbstractToolAndApplication {
      *
      * @param instruction the instruction to decode
      * @return the category of the instruction
+     * @author Giancarlo Pernudi Segura
      * @see InstructionStatistics#CATEGORY_ALU
      * @see InstructionStatistics#CATEGORY_JUMP
      * @see InstructionStatistics#CATEGORY_BRANCH
      * @see InstructionStatistics#CATEGORY_MEM
      * @see InstructionStatistics#CATEGORY_OTHER
-     * @author Giancarlo Pernudi Segura
      */
     protected int getInstructionCategory(Instruction instruction) {
         if (instruction instanceof Arithmetic)
@@ -279,10 +279,9 @@ public class InstructionStatistics extends AbstractToolAndApplication {
             return;
 
         // check for a read access in the text segment
-        if (notice.getAccessType() == AccessNotice.READ && notice instanceof MemoryAccessNotice) {
+        if (notice.getAccessType() == AccessNotice.READ && notice instanceof MemoryAccessNotice memAccNotice) {
 
             // now it is safe to make a cast of the notice
-            MemoryAccessNotice memAccNotice = (MemoryAccessNotice) notice;
 
             // The next three statments are from Felipe Lessa's instruction counter.  Prevents double-counting.
             int a = memAccNotice.getAddress();

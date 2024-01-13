@@ -178,7 +178,7 @@ public class BHTSimulator extends AbstractToolAndApplication implements ActionLi
         m_gui.getTaLog().setText("");
         m_bhtModel.initBHT((Integer) m_gui.getCbBHTentries().getSelectedItem(),
                 (Integer) m_gui.getCbBHThistory().getSelectedItem(),
-                ((String) m_gui.getCbBHTinitVal().getSelectedItem()).equals(BHTSimGUI.BHT_TAKE_BRANCH));
+                m_gui.getCbBHTinitVal().getSelectedItem().equals(BHTSimGUI.BHT_TAKE_BRANCH));
 
         m_pendingBranchInstAddress = 0;
         m_lastBranchTaken = false;
@@ -250,7 +250,7 @@ public class BHTSimulator extends AbstractToolAndApplication implements ActionLi
      * @return the address of the instruction that is executed if the branch is taken
      */
     protected static int extractBranchAddress(ProgramStatement stmt) {
-        assert stmt.getInstruction() instanceof Branch: "Should only be called on branch instructions";
+        assert stmt.getInstruction() instanceof Branch : "Should only be called on branch instructions";
         int offset = stmt.getOperand(2);
 
         return stmt.getAddress() + (offset << 1);
@@ -272,10 +272,9 @@ public class BHTSimulator extends AbstractToolAndApplication implements ActionLi
         if (!notice.accessIsFromRISCV()) return;
 
 
-        if (notice.getAccessType() == AccessNotice.READ && notice instanceof MemoryAccessNotice) {
+        if (notice.getAccessType() == AccessNotice.READ && notice instanceof MemoryAccessNotice memAccNotice) {
 
             // now it is safe to make a cast of the notice
-            MemoryAccessNotice memAccNotice = (MemoryAccessNotice) notice;
 
             try {
                 // access the statement in the text segment without notifying other tools etc.

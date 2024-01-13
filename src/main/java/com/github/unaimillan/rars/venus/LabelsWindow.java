@@ -57,19 +57,20 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  **/
 
 public class LabelsWindow extends JInternalFrame {
-    private Container contentPane;
-    private JPanel labelPanel;      // holds J
-    private JCheckBox dataLabels, textLabels;
+    private final Container contentPane;
+    private final JPanel labelPanel;      // holds J
+    private final JCheckBox dataLabels;
+    private final JCheckBox textLabels;
     private ArrayList<LabelsForSymbolTable> listOfLabelsForSymbolTable;
-    private LabelsWindow labelsWindow;
+    private final LabelsWindow labelsWindow;
     private static final int MAX_DISPLAYED_CHARS = 24;
     private static final int PREFERRED_NAME_COLUMN_WIDTH = 60;
     private static final int PREFERRED_ADDRESS_COLUMN_WIDTH = 60;
     private static final int LABEL_COLUMN = 0;
     private static final int ADDRESS_COLUMN = 1;
     private static final String[] columnToolTips = {
-               /* LABEL_COLUMN */   "Programmer-defined label (identifier).",
-               /* ADDRESS_COLUMN */ "Text or data segment address at which label is defined."
+            /* LABEL_COLUMN */   "Programmer-defined label (identifier).",
+            /* ADDRESS_COLUMN */ "Text or data segment address at which label is defined."
     };
     private static String[] columnNames;
     private Comparator<Symbol> tableSortComparator;
@@ -90,39 +91,39 @@ public class LabelsWindow extends JInternalFrame {
     //////////////////////////////////////////////////////////////////////////////////////
     // The array of comparators; index corresponds to state in table above.
     private final ArrayList<Comparator<Symbol>> tableSortingComparators = new ArrayList<>(Arrays.asList(
-         /*  0  */  new LabelAddressAscendingComparator(),
-         /*  1  */  new DescendingComparator(new LabelAddressAscendingComparator()),
-         /*  2  */  new LabelAddressAscendingComparator(),
-         /*  3  */  new DescendingComparator(new LabelAddressAscendingComparator()),
-         /*  4  */  new LabelNameAscendingComparator(),
-         /*  5  */  new LabelNameAscendingComparator(),
-         /*  6  */  new DescendingComparator(new LabelNameAscendingComparator()),
-         /*  7  */  new DescendingComparator(new LabelNameAscendingComparator())
+            /*  0  */  new LabelAddressAscendingComparator(),
+            /*  1  */  new DescendingComparator(new LabelAddressAscendingComparator()),
+            /*  2  */  new LabelAddressAscendingComparator(),
+            /*  3  */  new DescendingComparator(new LabelAddressAscendingComparator()),
+            /*  4  */  new LabelNameAscendingComparator(),
+            /*  5  */  new LabelNameAscendingComparator(),
+            /*  6  */  new DescendingComparator(new LabelNameAscendingComparator()),
+            /*  7  */  new DescendingComparator(new LabelNameAscendingComparator())
     ));
     // The array of state transitions; primary index corresponds to state in table above,
     // secondary index corresponds to table columns (0==label name, 1==address).
     private static final int[][] sortStateTransitions = {
-         /*  0  */  {4, 1},
-         /*  1  */  {5, 0},
-         /*  2  */  {6, 3},
-         /*  3  */  {7, 2},
-         /*  4  */  {6, 0},
-         /*  5  */  {7, 1},
-         /*  6  */  {4, 2},
-         /*  7  */  {5, 3}
+            /*  0  */  {4, 1},
+            /*  1  */  {5, 0},
+            /*  2  */  {6, 3},
+            /*  3  */  {7, 2},
+            /*  4  */  {6, 0},
+            /*  5  */  {7, 1},
+            /*  6  */  {4, 2},
+            /*  7  */  {5, 3}
     };
     // The array of column headings; index corresponds to state in table above.
     private static final char ASCENDING_SYMBOL = '\u25b2'; //triangle with base at bottom ("points" up, to indicate ascending sort)
     private static final char DESCENDING_SYMBOL = '\u25bc';//triangle with base at top ("points" down, to indicate descending sort)
     private static final String[][] sortColumnHeadings = {
-         /*  0  */  {"Label", "Address  " + ASCENDING_SYMBOL},
-         /*  1  */  {"Label", "Address  " + DESCENDING_SYMBOL},
-         /*  2  */  {"Label", "Address  " + ASCENDING_SYMBOL},
-         /*  3  */  {"Label", "Address  " + DESCENDING_SYMBOL},
-         /*  4  */  {"Label  " + ASCENDING_SYMBOL, "Address"},
-         /*  5  */  {"Label  " + ASCENDING_SYMBOL, "Address"},
-         /*  6  */  {"Label  " + DESCENDING_SYMBOL, "Address"},
-         /*  7  */  {"Label  " + DESCENDING_SYMBOL, "Address"}
+            /*  0  */  {"Label", "Address  " + ASCENDING_SYMBOL},
+            /*  1  */  {"Label", "Address  " + DESCENDING_SYMBOL},
+            /*  2  */  {"Label", "Address  " + ASCENDING_SYMBOL},
+            /*  3  */  {"Label", "Address  " + DESCENDING_SYMBOL},
+            /*  4  */  {"Label  " + ASCENDING_SYMBOL, "Address"},
+            /*  5  */  {"Label  " + ASCENDING_SYMBOL, "Address"},
+            /*  6  */  {"Label  " + DESCENDING_SYMBOL, "Address"},
+            /*  7  */  {"Label  " + DESCENDING_SYMBOL, "Address"}
     };
 
     // Current sort state (0-7, see table above).  Will be set from saved Settings in construtor.
@@ -289,12 +290,12 @@ public class LabelsWindow extends JInternalFrame {
     ///////////////////////////////////////////////////////////////////
     // Represents one symbol table for the display.
     private class LabelsForSymbolTable {
-        private RISCVprogram program;
+        private final RISCVprogram program;
         private Object[][] labelData;
         private JTable labelTable;
         private ArrayList<Symbol> symbols;
-        private SymbolTable symbolTable;
-        private String tableName;
+        private final SymbolTable symbolTable;
+        private final String tableName;
 
         // Associated RISCVprogram object.  If null, this represents global symbol table.
         public LabelsForSymbolTable(RISCVprogram program) {
@@ -396,17 +397,17 @@ public class LabelsWindow extends JInternalFrame {
         }
 
         /*
-        * JTable uses this method to determine the default renderer/
-        * editor for each cell.
-        */
+         * JTable uses this method to determine the default renderer/
+         * editor for each cell.
+         */
         public Class getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
 
         /*
-        * Don't need to implement this method unless your table's
-        * data can change.
-        */
+         * Don't need to implement this method unless your table's
+         * data can change.
+         */
         public void setValueAt(Object value, int row, int col) {
             data[row][col] = value;
             fireTableCellUpdated(row, col);
@@ -447,8 +448,7 @@ public class LabelsWindow extends JInternalFrame {
         // Implement cell tool tips.  All of them are the same (although they could be customized).
         public Component prepareRenderer(TableCellRenderer renderer, int rowIndex, int vColIndex) {
             Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
-            if (c instanceof JComponent) {
-                JComponent jc = (JComponent) c;
+            if (c instanceof JComponent jc) {
                 jc.setToolTipText("Click on label or address to view it in Text/Data Segment");
             }
             return c;
@@ -546,7 +546,7 @@ public class LabelsWindow extends JInternalFrame {
     //  is implemented by returning the result of the Ascending comparator when
     //  arguments are reversed.
     private class DescendingComparator implements Comparator<Symbol> {
-        private Comparator<Symbol> opposite;
+        private final Comparator<Symbol> opposite;
 
         private DescendingComparator(Comparator<Symbol> opposite) {
             this.opposite = opposite;

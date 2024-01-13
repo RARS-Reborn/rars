@@ -18,10 +18,10 @@ public class FCVTWUD extends BasicInstruction {
     public void simulate(ProgramStatement statement) throws SimulationException {
         int[] operands = statement.getOperands();
         Environment e = new Environment();
-        e.mode = Floating.getRoundingMode(operands[2],statement);
+        e.mode = Floating.getRoundingMode(operands[2], statement);
         Float64 in = new Float64(FloatingPointRegisterFile.getValueLong(operands[1]));
-        int out = com.github.unaimillan.jsoftfloat.operations.Conversions.convertToUnsignedInt(in,e,false);
+        int out = com.github.unaimillan.jsoftfloat.operations.Conversions.convertToUnsignedInt(in, e, false);
         Floating.setfflags(e);
-        RegisterFile.updateRegister(operands[0],out);
+        RegisterFile.updateRegister(operands[0], out);
     }
 }

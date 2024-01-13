@@ -49,7 +49,7 @@ public class BHTEntry {
     /**
      * the history of the BHT entry. Each boolean value signals if the branch was taken or not. The value at index n-1 represents the most recent branch outcome.
      */
-    private boolean[] m_history;
+    private final boolean[] m_history;
 
     /**
      * the current prediction
@@ -123,8 +123,10 @@ public class BHTEntry {
             boolean changePrediction = true;
 
             for (boolean taken : m_history) {
-                if (taken != branchTaken)
+                if (taken != branchTaken) {
                     changePrediction = false;
+                    break;
+                }
             }
 
             if (changePrediction)

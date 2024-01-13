@@ -51,8 +51,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 public class MemoryReferenceVisualization extends AbstractToolAndApplication {
 
-    private static String version = "Version 1.0";
-    private static String heading = "Visualizing memory reference patterns";
+    private static final String version = "Version 1.0";
+    private static final String heading = "Visualizing memory reference patterns";
 
     // Major GUI components
     private JComboBox<String> wordsPerUnitSelector, visualizationUnitPixelWidthSelector, visualizationUnitPixelHeightSelector,
@@ -63,9 +63,9 @@ public class MemoryReferenceVisualization extends AbstractToolAndApplication {
     private JPanel results;
 
     // Some GUI settings
-    private EmptyBorder emptyBorder = new EmptyBorder(4, 4, 4, 4);
-    private Font countFonts = new Font("Times", Font.BOLD, 12);
-    private Color backgroundColor = Color.WHITE;
+    private final EmptyBorder emptyBorder = new EmptyBorder(4, 4, 4, 4);
+    private final Font countFonts = new Font("Times", Font.BOLD, 12);
+    private final Color backgroundColor = Color.WHITE;
 
     // Values for Combo Boxes
 
@@ -93,7 +93,7 @@ public class MemoryReferenceVisualization extends AbstractToolAndApplication {
 
     // This array of (count,color) pairs must be kept sorted! count is low end of subrange.
     // This array will grow if user adds colors at additional counter points (see below).
-    private CounterColor[] defaultCounterColors =
+    private final CounterColor[] defaultCounterColors =
             {new CounterColor(0, Color.black),
                     new CounterColor(1, Color.blue),
                     new CounterColor(2, Color.green),
@@ -105,7 +105,7 @@ public class MemoryReferenceVisualization extends AbstractToolAndApplication {
      *  colors can be assigned.  As you can see just above, not all these values are assigned
      *  a default color.
      */
-    private int[] countTable = {
+    private final int[] countTable = {
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,   // 0-10
             20, 30, 40, 50, 100, 200, 300, 400, 500, 1000,   // 11-20
             2000, 3000, 4000, 5000, 10000, 50000, 100000, 500000, 1000000          // 21-29
@@ -603,9 +603,9 @@ public class MemoryReferenceVisualization extends AbstractToolAndApplication {
     private class ColorChooserControls {
         private JLabel sliderLabel = null;
         private JSlider colorRangeSlider = null;
-        private JButton currentColorButton;
-        private JPanel colorChooserRow;
-        private JPanel countDisplayRow;
+        private final JButton currentColorButton;
+        private final JPanel colorChooserRow;
+        private final JPanel countDisplayRow;
         private volatile int counterIndex;
 
         private ColorChooserControls() {
@@ -732,8 +732,8 @@ public class MemoryReferenceVisualization extends AbstractToolAndApplication {
     // color for rendering the range.  High end of the range is defined as low end of the
     // next range minus 1.  For last range, high end is Integer.MAX_VALUE.
     private class CounterColor implements Comparable<CounterColor> {
-        private int colorRangeStart;
-        private Color associatedColor;
+        private final int colorRangeStart;
+        private final Color associatedColor;
 
         public CounterColor(int start, Color color) {
             this.colorRangeStart = start;

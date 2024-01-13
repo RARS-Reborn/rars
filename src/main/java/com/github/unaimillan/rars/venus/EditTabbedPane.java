@@ -57,9 +57,9 @@ public class EditTabbedPane extends JTabbedPane {
     EditPane editTab;
     MainPane mainPane;
 
-    private VenusUI mainUI;
-    private Editor editor;
-    private FileOpener fileOpener;
+    private final VenusUI mainUI;
+    private final Editor editor;
+    private final FileOpener fileOpener;
 
     /**
      * Constructor for the EditTabbedPane class.
@@ -448,6 +448,7 @@ public class EditTabbedPane extends JTabbedPane {
         }
         return tabs;
     }
+
     /**
      * Remove the pane and update menu status
      */
@@ -539,11 +540,11 @@ public class EditTabbedPane extends JTabbedPane {
 
     private class FileOpener {
         private File mostRecentlyOpenedFile;
-        private JFileChooser fileChooser;
+        private final JFileChooser fileChooser;
         private int fileFilterCount;
-        private ArrayList<FileFilter> fileFilterList;
-        private PropertyChangeListener listenForUserAddedFileFilter;
-        private Editor theEditor;
+        private final ArrayList<FileFilter> fileFilterList;
+        private final PropertyChangeListener listenForUserAddedFileFilter;
+        private final Editor theEditor;
 
         public FileOpener(Editor theEditor) {
             this.mostRecentlyOpenedFile = null;
@@ -592,10 +593,10 @@ public class EditTabbedPane extends JTabbedPane {
             }
             return true;
         }
-      
-       /*
-        * Open the specified file.  Return true if file opened, false otherwise
-        */
+
+        /*
+         * Open the specified file.  Return true if file opened, false otherwise
+         */
 
         private boolean openFile(File theFile) {
             try {

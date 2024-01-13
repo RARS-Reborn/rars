@@ -1,9 +1,12 @@
 package com.github.unaimillan.rars.simulator;
 
 import com.github.unaimillan.rars.*;
-import com.github.unaimillan.rars.riscv.hardware.*;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.Instruction;
+import com.github.unaimillan.rars.riscv.hardware.AddressErrorException;
+import com.github.unaimillan.rars.riscv.hardware.ControlAndStatusRegisterFile;
+import com.github.unaimillan.rars.riscv.hardware.InterruptController;
+import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 import com.github.unaimillan.rars.util.Binary;
 import com.github.unaimillan.rars.util.SystemIO;
 import com.github.unaimillan.rars.venus.run.RunSpeedPanel;
@@ -160,7 +163,7 @@ public class Simulator extends Observable {
         void stopped(Simulator s);
     }
 
-    private ArrayList<StopListener> stopListeners = new ArrayList<>(1);
+    private final ArrayList<StopListener> stopListeners = new ArrayList<>(1);
 
     public void addStopListener(StopListener l) {
         stopListeners.add(l);
@@ -196,7 +199,8 @@ public class Simulator extends Observable {
      */
 
     class SimThread implements Runnable {
-        private int pc, maxSteps;
+        private int pc;
+        private final int maxSteps;
         private int[] breakPoints;
         private boolean done;
         private SimulationException pe;
@@ -233,7 +237,7 @@ public class Simulator extends Observable {
 
         private void startExecution() {
             Simulator.getInstance().notifyObserversOfExecution(new SimulatorNotice(SimulatorNotice.SIMULATOR_START,
-                    maxSteps,(Globals.getGui() != null || Globals.runSpeedPanelExists)?RunSpeedPanel.getInstance().getRunSpeed():RunSpeedPanel.UNLIMITED_SPEED,
+                    maxSteps, (Globals.getGui() != null || Globals.runSpeedPanelExists) ? RunSpeedPanel.getInstance().getRunSpeed() : RunSpeedPanel.UNLIMITED_SPEED,
                     pc, null, pe, done));
         }
 
@@ -243,7 +247,7 @@ public class Simulator extends Observable {
             SystemIO.flush(true);
             if (done) SystemIO.resetFiles(); // close any files opened in the process of simulating
             Simulator.getInstance().notifyObserversOfExecution(new SimulatorNotice(SimulatorNotice.SIMULATOR_STOP,
-                    maxSteps, (Globals.getGui() != null || Globals.runSpeedPanelExists)?RunSpeedPanel.getInstance().getRunSpeed():RunSpeedPanel.UNLIMITED_SPEED,
+                    maxSteps, (Globals.getGui() != null || Globals.runSpeedPanelExists) ? RunSpeedPanel.getInstance().getRunSpeed() : RunSpeedPanel.UNLIMITED_SPEED,
                     pc, reason, pe, done));
         }
 
@@ -523,11 +527,11 @@ public class Simulator extends Observable {
 
                 // Update cycle(h) and instret(h)
                 long cycle = ControlAndStatusRegisterFile.getValueNoNotify("cycle"),
-                         instret = ControlAndStatusRegisterFile.getValueNoNotify("instret"),
-                         time = System.currentTimeMillis();;
-                ControlAndStatusRegisterFile.updateRegisterBackdoor("cycle",cycle+1);
-                ControlAndStatusRegisterFile.updateRegisterBackdoor("instret",instret+1);
-                ControlAndStatusRegisterFile.updateRegisterBackdoor("time",time);
+                        instret = ControlAndStatusRegisterFile.getValueNoNotify("instret"),
+                        time = System.currentTimeMillis();
+                ControlAndStatusRegisterFile.updateRegisterBackdoor("cycle", cycle + 1);
+                ControlAndStatusRegisterFile.updateRegisterBackdoor("instret", instret + 1);
+                ControlAndStatusRegisterFile.updateRegisterBackdoor("time", time);
 
                 //     Return if we've reached a breakpoint.
                 if (ebreak || (breakPoints != null) &&

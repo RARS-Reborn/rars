@@ -46,14 +46,14 @@ public class ControlAndStatusRegisterFile {
 
 
     public static final int INTERRUPT_ENABLE = 0x1;
-    
+
     private static final RegisterBlock instance;
 
     static {
         // TODO: consider making time, cycle and instret 64 bit registers which then are linked to by *h
         // Remember to update the window tooltips when adding a CSR
         Register[] tmp = {
-                new MaskedRegister("ustatus", 0x000, 0,~0x11),
+                new MaskedRegister("ustatus", 0x000, 0, ~0x11),
                 null, // fflags
                 null, // frm
                 new MaskedRegister("fcsr", 0x003, 0, ~0xFF),
@@ -66,7 +66,7 @@ public class ControlAndStatusRegisterFile {
                 new Register("uip", 0x044, 0),
                 new ReadOnlyRegister("cycle", 0xC00, 0),
                 new ReadOnlyRegister("time", 0xC01, 0),
-                new ReadOnlyRegister("instret",0xC02, 0),
+                new ReadOnlyRegister("instret", 0xC02, 0),
                 null, // cycleh
                 null, // timeh
                 null, // instreth
@@ -74,9 +74,9 @@ public class ControlAndStatusRegisterFile {
         tmp[1] = new LinkedRegister("fflags", 0x001, tmp[3], 0x1F);
         tmp[2] = new LinkedRegister("frm", 0x002, tmp[3], 0xE0);
 
-        tmp[14] = new LinkedRegister("cycleh", 0xC80,tmp[11], 0xFFFFFFFF_00000000L);
-        tmp[15] = new LinkedRegister("timeh", 0xC81, tmp[12],0xFFFFFFFF_00000000L);
-        tmp[16] = new LinkedRegister("instreth",0xC82, tmp[13],0xFFFFFFFF_00000000L);
+        tmp[14] = new LinkedRegister("cycleh", 0xC80, tmp[11], 0xFFFFFFFF_00000000L);
+        tmp[15] = new LinkedRegister("timeh", 0xC81, tmp[12], 0xFFFFFFFF_00000000L);
+        tmp[16] = new LinkedRegister("instreth", 0xC82, tmp[13], 0xFFFFFFFF_00000000L);
         instance = new RegisterBlock('_', tmp); // prefix not used
     }
 
@@ -118,7 +118,7 @@ public class ControlAndStatusRegisterFile {
      * This method updates the register value silently and bypasses read only
      *
      * @param num Number of register to set the value of.
-     * @param val  The desired value for the register.
+     * @param val The desired value for the register.
      * @return old value in register prior to update
      **/
     public static void updateRegisterBackdoor(int num, long val) {
@@ -188,7 +188,7 @@ public class ControlAndStatusRegisterFile {
      **/
 
     public static int getValue(int num) {
-        return (int)instance.getValue(num);
+        return (int) instance.getValue(num);
     }
 
     /**
@@ -201,6 +201,7 @@ public class ControlAndStatusRegisterFile {
     public static long getValueLong(int num) {
         return instance.getValue(num);
     }
+
     /**
      * Returns the value of the register
      *
@@ -209,7 +210,7 @@ public class ControlAndStatusRegisterFile {
      **/
 
     public static int getValue(String name) {
-        return (int)instance.getValue(name);
+        return (int) instance.getValue(name);
     }
 
     /**
@@ -251,7 +252,7 @@ public class ControlAndStatusRegisterFile {
         return -1;
     }
 
-    
+
     public static Register getRegister(String name) {
         return instance.getRegister(name);
     }

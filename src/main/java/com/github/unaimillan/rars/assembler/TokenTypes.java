@@ -107,13 +107,13 @@ public enum TokenTypes {
             }
         }
 
-        if(value.equals("%hi")){
+        if (value.equals("%hi")) {
             return TokenTypes.HI;
         }
-        if(value.equals("%lo")){
+        if (value.equals("%lo")) {
             return TokenTypes.LO;
         }
-        if(value.equals("rne") || value.equals("rtz") || value.equals("rdn") || value.equals("rup") || value.equals("rmm") || value.equals("dyn")){
+        if (value.equals("rne") || value.equals("rtz") || value.equals("rdn") || value.equals("rup") || value.equals("rmm") || value.equals("dyn")) {
             return TokenTypes.ROUNDING_MODE;
         }
 
@@ -136,7 +136,7 @@ public enum TokenTypes {
 
         // Little bit of a hack because CSRFile doesn't supoprt getRegister(strinug)
         Register[] regs = ControlAndStatusRegisterFile.getRegisters();
-        for(Register r : regs){
+        for (Register r : regs) {
             if (r.getName().equals(value))
                 return TokenTypes.CSR_NAME;
         }
@@ -182,7 +182,7 @@ public enum TokenTypes {
         // See if it is a real (fixed or floating point) number.  Note that parseDouble()
         // accepts integer values but if it were an integer literal we wouldn't get this far.
         if (value.equals("Inf") || value.equals("NaN")) return TokenTypes.REAL_NUMBER;
-        if(('0' <= value.charAt(0) && value.charAt(0) <= '9') || value.charAt(0) == '.' || value.charAt(0) == '-'){
+        if (('0' <= value.charAt(0) && value.charAt(0) <= '9') || value.charAt(0) == '.' || value.charAt(0) == '-') {
             try {
                 Double.parseDouble(value);
                 return TokenTypes.REAL_NUMBER;
@@ -190,7 +190,6 @@ public enum TokenTypes {
                 // NO ACTION -- exception suppressed
             }
         }
-
 
 
         // See if it is a directive
@@ -224,7 +223,7 @@ public enum TokenTypes {
      * @return true if type is an integer type, false otherwise.
      **/
     public static boolean isIntegerTokenType(TokenTypes type) {
-        return type == TokenTypes.INTEGER_5 ||  type == TokenTypes.INTEGER_6 || type == TokenTypes.INTEGER_12 ||
+        return type == TokenTypes.INTEGER_5 || type == TokenTypes.INTEGER_6 || type == TokenTypes.INTEGER_12 ||
                 type == TokenTypes.INTEGER_12U || type == TokenTypes.INTEGER_20 || type == TokenTypes.INTEGER_32 ||
                 type == TokenTypes.INTEGER_64;
     }

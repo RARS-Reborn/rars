@@ -4,10 +4,10 @@ import com.github.unaimillan.jsoftfloat.Environment;
 import com.github.unaimillan.jsoftfloat.types.Float32;
 import com.github.unaimillan.rars.ProgramStatement;
 import com.github.unaimillan.rars.SimulationException;
-import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
-import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
+import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
+import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 
 import java.math.BigInteger;
 
@@ -47,11 +47,11 @@ public class FCVTSW extends BasicInstruction {
     public void simulate(ProgramStatement statement) throws SimulationException {
         int[] operands = statement.getOperands();
         Environment e = new Environment();
-        e.mode = Floating.getRoundingMode(operands[2],statement);
+        e.mode = Floating.getRoundingMode(operands[2], statement);
         Float32 tmp = new Float32(0);
-        Float32 converted = com.github.unaimillan.jsoftfloat.operations.Conversions.convertFromInt(BigInteger.valueOf(RegisterFile.getValue(operands[1])),e,tmp);
+        Float32 converted = com.github.unaimillan.jsoftfloat.operations.Conversions.convertFromInt(BigInteger.valueOf(RegisterFile.getValue(operands[1])), e, tmp);
         Floating.setfflags(e);
-        FloatingPointRegisterFile.updateRegister(operands[0],converted.bits);
+        FloatingPointRegisterFile.updateRegister(operands[0], converted.bits);
     }
 }
 

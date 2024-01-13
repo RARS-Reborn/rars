@@ -2,9 +2,9 @@ package com.github.unaimillan.rars.riscv.syscalls;
 
 import com.github.unaimillan.rars.ExitingException;
 import com.github.unaimillan.rars.ProgramStatement;
+import com.github.unaimillan.rars.riscv.AbstractSyscall;
 import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
-import com.github.unaimillan.rars.riscv.AbstractSyscall;
 
 import javax.swing.*;
 

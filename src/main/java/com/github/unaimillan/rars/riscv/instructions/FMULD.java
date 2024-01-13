@@ -10,6 +10,6 @@ public class FMULD extends Double {
 
     @Override
     public Float64 compute(Float64 f1, Float64 f2, Environment e) {
-        return com.github.unaimillan.jsoftfloat.operations.Arithmetic.multiplication(f1,f2,e);
+        return com.github.unaimillan.jsoftfloat.operations.Arithmetic.multiplication(f1, f2, e);
     }
 }

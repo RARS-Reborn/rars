@@ -216,7 +216,7 @@ public abstract class AbstractFontSettingDialog extends JDialog {
     //
     /////////////////////////////////////////////////////////////////////
 
-    private static String SEPARATOR = "___SEPARATOR____";
+    private static final String SEPARATOR = "___SEPARATOR____";
 
     // Given an array of string arrays, will produce a Vector contenating
     // the arrays with a separator between each.

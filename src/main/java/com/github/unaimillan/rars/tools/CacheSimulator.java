@@ -72,9 +72,9 @@ public class CacheSimulator extends AbstractToolAndApplication {
     private JCheckBox logShow;
 
     // Some GUI settings
-    private EmptyBorder emptyBorder = new EmptyBorder(4, 4, 4, 4);
-    private Font countFonts = new Font("Times", Font.BOLD, 12);
-    private Color backgroundColor = Color.WHITE;
+    private final EmptyBorder emptyBorder = new EmptyBorder(4, 4, 4, 4);
+    private final Font countFonts = new Font("Times", Font.BOLD, 12);
+    private final Color backgroundColor = Color.WHITE;
 
     // Values for Combo Boxes
     private int[] cacheBlockSizeChoicesInt, cacheBlockCountChoicesInt;
@@ -97,7 +97,7 @@ public class CacheSimulator extends AbstractToolAndApplication {
     private double cacheHitRate;
 
     // RNG used for random replacement policy.  For testing, set seed for reproducible stream
-    private Random randu = new Random(0);
+    private final Random randu = new Random(0);
 
     /**
      * Simple constructor, likely used to run a stand-alone cache simulator.
@@ -511,9 +511,7 @@ public class CacheSimulator extends AbstractToolAndApplication {
                 break;
             case SET:
                 choices = new String[cacheBlockCountIndex - firstBlockCountIndex + 1];
-                for (int i = 0; i < choices.length; i++) {
-                    choices[i] = cacheBlockCountChoices[firstBlockCountIndex + i];
-                }
+                System.arraycopy(cacheBlockCountChoices, firstBlockCountIndex, choices, 0, choices.length);
                 break;
             case FULL:   // 1 set total, so set size fixed at current number of blocks
             default:
@@ -602,7 +600,7 @@ public class CacheSimulator extends AbstractToolAndApplication {
     private class CacheBlock {
         private boolean valid;
         private int tag;
-        private int sizeInWords;
+        private final int sizeInWords;
         private int mostRecentAccessTime;
 
         public CacheBlock(int sizeInWords) {
@@ -850,7 +848,7 @@ public class CacheSimulator extends AbstractToolAndApplication {
     //
     private class Animation {
 
-        private Box animation;
+        private final Box animation;
         private JTextField[] blocks;
         public final Color hitColor = Color.GREEN;
         public final Color missColor = Color.RED;

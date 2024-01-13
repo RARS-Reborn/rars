@@ -38,7 +38,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 
-
 /**
  * This class provides functionality to bring external Syscall definitions
  * into RARS.  This permits anyone with knowledge of the Rars public interfaces,
@@ -56,11 +55,11 @@ public class SyscallLoader {
     private static ArrayList<AbstractSyscall> syscallList;
 
     /*
-       *  Dynamically loads Syscalls into an ArrayList.  This method is adapted from
-       *  the loadGameControllers() method in Bret Barker's GameServer class.
-       *  Barker (bret@hypefiend.com) is co-author of the book "Developing Games
-       *  in Java".  Also see the "loadMarsTools()" method from ToolLoader class.
-       */
+     *  Dynamically loads Syscalls into an ArrayList.  This method is adapted from
+     *  the loadGameControllers() method in Bret Barker's GameServer class.
+     *  Barker (bret@hypefiend.com) is co-author of the book "Developing Games
+     *  in Java".  Also see the "loadMarsTools()" method from ToolLoader class.
+     */
     static {
         syscallList = new ArrayList<>();
         // grab all class files in the same directory as Syscall

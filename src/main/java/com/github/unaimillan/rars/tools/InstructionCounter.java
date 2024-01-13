@@ -27,12 +27,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 package com.github.unaimillan.rars.tools;
 
 import com.github.unaimillan.rars.ProgramStatement;
+import com.github.unaimillan.rars.riscv.BasicInstruction;
+import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
 import com.github.unaimillan.rars.riscv.hardware.AccessNotice;
 import com.github.unaimillan.rars.riscv.hardware.AddressErrorException;
 import com.github.unaimillan.rars.riscv.hardware.Memory;
 import com.github.unaimillan.rars.riscv.hardware.MemoryAccessNotice;
-import com.github.unaimillan.rars.riscv.BasicInstruction;
-import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,9 +47,9 @@ import java.util.Observable;
  * @author Felipe Lessa <felipe.lessa@gmail.com>
  */
 public class InstructionCounter extends AbstractToolAndApplication {
-    private static String name = "Instruction Counter";
-    private static String version = "Version 1.0 (Felipe Lessa)";
-    private static String heading = "Counting the number of instructions executed";
+    private static final String name = "Instruction Counter";
+    private static final String version = "Version 1.0 (Felipe Lessa)";
+    private static final String heading = "Counting the number of instructions executed";
 
     /**
      * Number of instructions executed until now.
@@ -63,7 +63,7 @@ public class InstructionCounter extends AbstractToolAndApplication {
     private int counterR = 0;
     private JTextField counterRField;
     private JProgressBar progressbarR;
-    
+
     /**
      * Number of instructions of type R4.
      */
@@ -91,7 +91,7 @@ public class InstructionCounter extends AbstractToolAndApplication {
     private int counterB = 0;
     private JTextField counterBField;
     private JProgressBar progressbarB;
-    
+
     /**
      * Number of instructions of type U.
      */
@@ -105,7 +105,7 @@ public class InstructionCounter extends AbstractToolAndApplication {
     private int counterJ = 0;
     private JTextField counterJField;
     private JProgressBar progressbarJ;
-    
+
     /**
      * The last address we saw. We ignore it because the only way for a
      * program to execute twice the same instruction is to enter an infinite
@@ -147,7 +147,7 @@ public class InstructionCounter extends AbstractToolAndApplication {
         counterRField.setEditable(false);
         progressbarR = new JProgressBar(JProgressBar.HORIZONTAL);
         progressbarR.setStringPainted(true);
-        
+
         counterR4Field = new JTextField("0", 10);
         counterR4Field.setEditable(false);
         progressbarR4 = new JProgressBar(JProgressBar.HORIZONTAL);
@@ -167,12 +167,12 @@ public class InstructionCounter extends AbstractToolAndApplication {
         counterBField.setEditable(false);
         progressbarB = new JProgressBar(JProgressBar.HORIZONTAL);
         progressbarB.setStringPainted(true);
-        
+
         counterUField = new JTextField("0", 10);
         counterUField.setEditable(false);
         progressbarU = new JProgressBar(JProgressBar.HORIZONTAL);
         progressbarU.setStringPainted(true);
-        
+
         counterJField = new JTextField("0", 10);
         counterJField.setEditable(false);
         progressbarJ = new JProgressBar(JProgressBar.HORIZONTAL);
@@ -195,19 +195,19 @@ public class InstructionCounter extends AbstractToolAndApplication {
 
         c.gridy++;
         panel.add(counterR4Field, c);
-        
+
         c.gridy++;
         panel.add(counterIField, c);
 
         c.gridy++;
         panel.add(counterSField, c);
-        
+
         c.gridy++;
         panel.add(counterBField, c);
 
         c.gridy++;
         panel.add(counterUField, c);
-        
+
         c.gridy++;
         panel.add(counterJField, c);
 
@@ -224,7 +224,7 @@ public class InstructionCounter extends AbstractToolAndApplication {
         c.gridwidth = 1;
         c.gridy++;
         panel.add(new JLabel("R-type: "), c);
-        
+
         c.gridy++;
         panel.add(new JLabel("R4-type: "), c);
 
@@ -233,13 +233,13 @@ public class InstructionCounter extends AbstractToolAndApplication {
 
         c.gridy++;
         panel.add(new JLabel("S-type: "), c);
-        
+
         c.gridy++;
         panel.add(new JLabel("B-type: "), c);
 
         c.gridy++;
         panel.add(new JLabel("U-type: "), c);
-        
+
         c.gridy++;
         panel.add(new JLabel("J-type: "), c);
 
@@ -251,19 +251,19 @@ public class InstructionCounter extends AbstractToolAndApplication {
 
         c.gridy++;
         panel.add(progressbarR4, c);
-        
+
         c.gridy++;
         panel.add(progressbarI, c);
 
         c.gridy++;
         panel.add(progressbarS, c);
-        
+
         c.gridy++;
         panel.add(progressbarB, c);
 
         c.gridy++;
         panel.add(progressbarU, c);
-        
+
         c.gridy++;
         panel.add(progressbarJ, c);
 
@@ -286,26 +286,26 @@ public class InstructionCounter extends AbstractToolAndApplication {
         counter++;
         try {
             ProgramStatement stmt = Memory.getInstance().getStatement(a);
-            
+
             // If the program is finished, getStatement() will return null,
             // a null statement will cause the simulator to stall.
-            if(stmt != null) {
-	            BasicInstruction instr = (BasicInstruction) stmt.getInstruction();
-	            BasicInstructionFormat format = instr.getInstructionFormat();
-	            if (format == BasicInstructionFormat.R_FORMAT)
-	                counterR++;
-	            else if (format == BasicInstructionFormat.R4_FORMAT)
-	                counterR4++;
-	            else if (format == BasicInstructionFormat.I_FORMAT)
-	                counterI++;
-	            else if (format == BasicInstructionFormat.S_FORMAT)
-	                counterS++;
-	            else if(format == BasicInstructionFormat.B_FORMAT)
-	            	counterB++;
-	            else if (format == BasicInstructionFormat.U_FORMAT)
-	                counterU++;
-	            else if(format == BasicInstructionFormat.J_FORMAT)
-	            	counterJ++;
+            if (stmt != null) {
+                BasicInstruction instr = (BasicInstruction) stmt.getInstruction();
+                BasicInstructionFormat format = instr.getInstructionFormat();
+                if (format == BasicInstructionFormat.R_FORMAT)
+                    counterR++;
+                else if (format == BasicInstructionFormat.R4_FORMAT)
+                    counterR4++;
+                else if (format == BasicInstructionFormat.I_FORMAT)
+                    counterI++;
+                else if (format == BasicInstructionFormat.S_FORMAT)
+                    counterS++;
+                else if (format == BasicInstructionFormat.B_FORMAT)
+                    counterB++;
+                else if (format == BasicInstructionFormat.U_FORMAT)
+                    counterU++;
+                else if (format == BasicInstructionFormat.J_FORMAT)
+                    counterJ++;
             }
         } catch (AddressErrorException e) {
             // TODO Auto-generated catch block
@@ -334,7 +334,7 @@ public class InstructionCounter extends AbstractToolAndApplication {
         counterRField.setText(String.valueOf(counterR));
         progressbarR.setMaximum(counter);
         progressbarR.setValue(counterR);
-        
+
         counterR4Field.setText(String.valueOf(counterR4));
         progressbarR4.setMaximum(counter);
         progressbarR4.setValue(counterR4);
@@ -346,7 +346,7 @@ public class InstructionCounter extends AbstractToolAndApplication {
         counterSField.setText(String.valueOf(counterS));
         progressbarS.setMaximum(counter);
         progressbarS.setValue(counterS);
-        
+
         counterBField.setText(String.valueOf(counterB));
         progressbarB.setMaximum(counter);
         progressbarB.setValue(counterB);
@@ -358,7 +358,7 @@ public class InstructionCounter extends AbstractToolAndApplication {
         counterJField.setText(String.valueOf(counterJ));
         progressbarJ.setMaximum(counter);
         progressbarJ.setValue(counterJ);
-        
+
         if (counter == 0) {
             progressbarR.setString("0%");
             progressbarR4.setString("0%");

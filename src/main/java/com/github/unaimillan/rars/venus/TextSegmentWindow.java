@@ -52,8 +52,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  **/
 
 public class TextSegmentWindow extends JInternalFrame implements Observer {
-    private JPanel programArgumentsPanel;  // DPS 17-July-2008
-    private JTextField programArgumentsTextField; // DPS 17-July-2008
+    private final JPanel programArgumentsPanel;  // DPS 17-July-2008
+    private final JTextField programArgumentsTextField; // DPS 17-July-2008
     private static final int PROGRAM_ARGUMENT_TEXTFIELD_COLUMNS = 40;
     private JTable table;
     private JScrollPane tableScroller;
@@ -68,15 +68,15 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
     private int[] intAddresses;      // index is table model row, value is text address
     private Hashtable<Integer, Integer> addressRows;   // key is text address, value is table model row
     private Hashtable<Integer, ModifiedCode> executeMods;   // key is table model row, value is original code, basic, source.
-    private Container contentPane;
+    private final Container contentPane;
     private TextTableModel tableModel;
-    private Font tableCellFont = new Font("Monospaced", Font.PLAIN, 12);
+    private final Font tableCellFont = new Font("Monospaced", Font.PLAIN, 12);
     private boolean codeHighlighting;
     private boolean breakpointsEnabled;  // Added 31 Dec 2009
     private int highlightAddress;
     private TableModelListener tableModelListener;
 
-    private static String[] columnNames = {"Bkpt", "Address", "Code", "Basic", "Source"};
+    private static final String[] columnNames = {"Bkpt", "Address", "Code", "Basic", "Source"};
     private static final int BREAK_COLUMN = 0;
     private static final int ADDRESS_COLUMN = 1;
     private static final int CODE_COLUMN = 2;
@@ -317,10 +317,9 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
                 addAsTextSegmentObserver();
             }
             updateRowHeight();
-        } else if (obj instanceof MemoryAccessNotice) {
+        } else if (obj instanceof MemoryAccessNotice access) {
             // NOTE: observable != Memory.getInstance() because Memory class delegates notification duty.
             // This will occur only if running program has written to text segment (self-modifying code)
-            MemoryAccessNotice access = (MemoryAccessNotice) obj;
             if (access.getAccessType() == AccessNotice.WRITE) {
                 int address = access.getAddress();
                 int value = access.getValue();
@@ -597,8 +596,8 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
     }
 
     /*
-      *  Little convenience method to add this as observer of text segment
-      */
+     *  Little convenience method to add this as observer of text segment
+     */
     private void addAsTextSegmentObserver() {
         try {
             Memory.getInstance().addObserver(this, Memory.textBaseAddress, Memory.dataSegmentBaseAddress);
@@ -607,15 +606,15 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
     }
 
     /*
-      *  Little convenience method to remove this as observer of text segment
-      */
+     *  Little convenience method to remove this as observer of text segment
+     */
     private void deleteAsTextSegmentObserver() {
         Memory.getInstance().deleteObserver(this);
     }
 
-      /*
-        *  Re-order the Text segment columns according to saved preferences.
-   	 */
+    /*
+     *  Re-order the Text segment columns according to saved preferences.
+     */
 
     private void reorderColumns() {
         TableColumnModel oldtcm = table.getColumnModel();
@@ -651,10 +650,10 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
         if (table == null) {
             return;
         }
-        Font possibleFonts[] = {
-            Globals.getSettings().getFontByPosition(Settings.TEXTSEGMENT_HIGHLIGHT_FONT),
-            Globals.getSettings().getFontByPosition(Settings.EVEN_ROW_FONT),
-            Globals.getSettings().getFontByPosition(Settings.ODD_ROW_FONT),
+        Font[] possibleFonts = {
+                Globals.getSettings().getFontByPosition(Settings.TEXTSEGMENT_HIGHLIGHT_FONT),
+                Globals.getSettings().getFontByPosition(Settings.EVEN_ROW_FONT),
+                Globals.getSettings().getFontByPosition(Settings.ODD_ROW_FONT),
         };
         int maxHeight = 0;
         for (int i = 0; i < possibleFonts.length; i++) {
@@ -754,7 +753,6 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
                 // somehow, user was able to display out-of-range address.  Most likely to occur between
                 // stack base and Kernel.  
                 catch (AddressErrorException aee) {
-                    return;
                 }
             } finally {
                 Globals.memoryAndRegistersLock.unlock();
@@ -778,8 +776,10 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
     }
 
     private class ModifiedCode {
-        private Integer row;
-        private Object code, basic, source;
+        private final Integer row;
+        private final Object code;
+        private final Object basic;
+        private final Object source;
 
         private ModifiedCode(Integer row, Object code, Object basic, Object source) {
             this.row = row;
@@ -806,8 +806,8 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
     }
 
     /*  a custom table cell renderer that we'll use to highlight the current line of
-      *  source code when executing using Step or breakpoint.
-      */
+     *  source code when executing using Step or breakpoint.
+     */
     class CodeCellRenderer extends DefaultTableCellRenderer {
 
         public Component getTableCellRendererComponent(JTable table, Object value,
@@ -838,9 +838,9 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
     }
 
     /*
-    * Cell renderer for Machine Code column.  Alternates background color by row but otherwise is
-    * same as MonoRightCellRenderer.
-    */
+     * Cell renderer for Machine Code column.  Alternates background color by row but otherwise is
+     * same as MonoRightCellRenderer.
+     */
     class MachineCodeCellRenderer extends DefaultTableCellRenderer {
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus, int row, int column) {
@@ -858,14 +858,14 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
             return cell;
         }
     }
-      
-   
-   /*
-   * Cell renderer for Breakpoint column.  We can use this to enable/disable breakpoint checkboxes with
-   * a single action.  This class blatantly copied/pasted from
-   * http://www.javakb.com/Uwe/Forum.aspx/java-gui/1451/Java-TableCellRenderer-for-a-boolean-checkbox-field
-   * Slightly customized.  DPS 31-Dec-2009
-   */
+
+
+    /*
+     * Cell renderer for Breakpoint column.  We can use this to enable/disable breakpoint checkboxes with
+     * a single action.  This class blatantly copied/pasted from
+     * http://www.javakb.com/Uwe/Forum.aspx/java-gui/1451/Java-TableCellRenderer-for-a-boolean-checkbox-field
+     * Slightly customized.  DPS 31-Dec-2009
+     */
 
     class CheckBoxTableCellRenderer extends JCheckBox implements TableCellRenderer {
 
@@ -905,7 +905,6 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
              the user clicks on a breakpoint checkbox!  Using this approach, the SimThread registers
              similarly.  A "GUI guard" is not needed in SimThread because it extends SwingWorker and
              thus is only invoked when the IDE is present (never when running MARS in command mode).
-
              *****************************************************/
         }
 
@@ -965,12 +964,12 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
             super(m);
         }
 
-        private String[] columnToolTips = {
-               /* break */   "If checked, will set an execution breakpoint. Click header to disable/enable breakpoints",
-               /* address */ "Text segment address of binary instruction code",
-               /* code */    "32-bit binary RISCV instruction",
+        private final String[] columnToolTips = {
+                /* break */   "If checked, will set an execution breakpoint. Click header to disable/enable breakpoints",
+                /* address */ "Text segment address of binary instruction code",
+                /* code */    "32-bit binary RISCV instruction",
                 /* basic */   "Basic assembler instruction",
-               /* source */  "Source code line"
+                /* source */  "Source code line"
         };
 
         //Implement table header tool tips.

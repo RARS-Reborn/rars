@@ -42,11 +42,11 @@ import com.github.unaimillan.rars.SimulationException;
 public abstract class BasicInstruction extends Instruction {
 
     private String instructionName;
-    private BasicInstructionFormat instructionFormat;
-    private String operationMask;
+    private final BasicInstructionFormat instructionFormat;
+    private final String operationMask;
 
-    private int opcodeMask;  // integer with 1's where constants required (0/1 become 1, f/s/t become 0)
-    private int opcodeMatch; // integer matching constants required (0/1 become 0/1, f/s/t become 0)
+    private final int opcodeMask;  // integer with 1's where constants required (0/1 become 1, f/s/t become 0)
+    private final int opcodeMatch; // integer matching constants required (0/1 become 0/1, f/s/t become 0)
 
     /**
      * BasicInstruction constructor.
@@ -57,18 +57,18 @@ public abstract class BasicInstruction extends Instruction {
      **/
     /* codes for operand positions are:
      * f == First operand
-	 * s == Second operand
-	 * t == Third operand
-	 * example: "add rd,rs,rt" is R format with fields in this order: opcode, rs, rt, rd, shamt, funct.
-	 *          Its opcode is 0, shamt is 0, funct is 0x40.  Based on operand order, its mask is
-	 *          "000000ssssstttttfffff00000100000", split into
-	 *          opcode |  rs   |  rt   |  rd   | shamt | funct
-	 *          000000 | sssss | ttttt | fffff | 00000 | 100000
-	 * This mask can be used at code generation time to map the assembly component to its
-	 * correct bit positions in the binary machine instruction.
-	 * It can also be used at runtime to match a binary machine instruction to the correct
-	 * instruction simulator -- it needs to match all and only the 0's and 1's.
-	 */
+     * s == Second operand
+     * t == Third operand
+     * example: "add rd,rs,rt" is R format with fields in this order: opcode, rs, rt, rd, shamt, funct.
+     *          Its opcode is 0, shamt is 0, funct is 0x40.  Based on operand order, its mask is
+     *          "000000ssssstttttfffff00000100000", split into
+     *          opcode |  rs   |  rt   |  rd   | shamt | funct
+     *          000000 | sssss | ttttt | fffff | 00000 | 100000
+     * This mask can be used at code generation time to map the assembly component to its
+     * correct bit positions in the binary machine instruction.
+     * It can also be used at runtime to match a binary machine instruction to the correct
+     * instruction simulator -- it needs to match all and only the 0's and 1's.
+     */
     public BasicInstruction(String example, String description, BasicInstructionFormat instrFormat,
                             String operMask) {
         this.exampleFormat = example;

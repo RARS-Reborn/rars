@@ -3,7 +3,7 @@ package com.github.unaimillan.rars.venus.registers;
 import com.github.unaimillan.rars.venus.VenusUI;
 
 import javax.swing.*;
-import java.awt.Color;
+import java.awt.*;
 
 /*
 Copyright (c) 2003-2006,  Pete Sanderson and Kenneth Vollmar
@@ -41,11 +41,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  **/
 
 public class RegistersPane extends JTabbedPane {
-    private RegistersWindow regsTab;
-    private FloatingPointWindow fpTab;
-    private ControlAndStatusWindow csrTab;
+    private final RegistersWindow regsTab;
+    private final FloatingPointWindow fpTab;
+    private final ControlAndStatusWindow csrTab;
 
-    private VenusUI mainUI;
+    private final VenusUI mainUI;
 
     /**
      * Constructor for the RegistersPane class.

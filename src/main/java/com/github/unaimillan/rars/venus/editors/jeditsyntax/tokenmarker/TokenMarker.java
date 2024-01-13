@@ -1,11 +1,11 @@
 /*
-* TokenMarker.java - Generic token marker
-* Copyright (C) 1998, 1999 Slava Pestov
-*
-* You may use and modify this package for any purpose. Redistribution is
-* permitted, in both source and binary form, provided that this notice
-* remains intact in all source distributions of this package.
-*/
+ * TokenMarker.java - Generic token marker
+ * Copyright (C) 1998, 1999 Slava Pestov
+ *
+ * You may use and modify this package for any purpose. Redistribution is
+ * permitted, in both source and binary form, provided that this notice
+ * remains intact in all source distributions of this package.
+ */
 
 package com.github.unaimillan.rars.venus.editors.jeditsyntax.tokenmarker;
 
@@ -55,41 +55,41 @@ public abstract class TokenMarker {
                 Token.NULL : prev.token, line, lineIndex);
 
         info.token = token;
-      
-      /*
-       * This is a foul hack. It stops nextLineRequested from being cleared if
-       * the same line is marked twice.
-       * 
-       * Why is this necessary? It's all JEditTextArea's fault. When something
-       * is inserted into the text, firing a document event, the
-       * insertUpdate() method shifts the caret (if necessary) by the amount
-       * inserted.
-       * 
-       * All caret movement is handled by the select() method, which
-       * eventually pipes the new position to scrollTo() and calls repaint().
-       * 
-       * Note that at this point in time, the new line hasn't yet been
-       * painted; the caret is moved first.
-       * 
-       * scrollTo() calls offsetToX(), which tokenizes the line unless it is
-       * being called on the last line painted (in which case it uses the text
-       * area's painter cached token list). What scrollTo() does next is
-       * irrelevant.
-       * 
-       * After scrollTo() has done it's job, repaint() is called, and
-       * eventually we end up in paintLine(), whose job is to paint the
-       * changed line. It, too, calls markTokens().
-       * 
-       * The problem was that if the line started a multiline token, the first
-       * markTokens() (done in offsetToX()) would set nextLineRequested
-       * (because the line end token had changed) but the second would clear
-       * it (because the line was the same that time) and therefore
-       * paintLine() would never know that it needed to repaint subsequent
-       * lines.
-       * 
-       * This bug took me ages to track down, that's why I wrote all the
-       * relevant info down so that others wouldn't duplicate it.
-       */
+
+        /*
+         * This is a foul hack. It stops nextLineRequested from being cleared if
+         * the same line is marked twice.
+         *
+         * Why is this necessary? It's all JEditTextArea's fault. When something
+         * is inserted into the text, firing a document event, the
+         * insertUpdate() method shifts the caret (if necessary) by the amount
+         * inserted.
+         *
+         * All caret movement is handled by the select() method, which
+         * eventually pipes the new position to scrollTo() and calls repaint().
+         *
+         * Note that at this point in time, the new line hasn't yet been
+         * painted; the caret is moved first.
+         *
+         * scrollTo() calls offsetToX(), which tokenizes the line unless it is
+         * being called on the last line painted (in which case it uses the text
+         * area's painter cached token list). What scrollTo() does next is
+         * irrelevant.
+         *
+         * After scrollTo() has done it's job, repaint() is called, and
+         * eventually we end up in paintLine(), whose job is to paint the
+         * changed line. It, too, calls markTokens().
+         *
+         * The problem was that if the line started a multiline token, the first
+         * markTokens() (done in offsetToX()) would set nextLineRequested
+         * (because the line end token had changed) but the second would clear
+         * it (because the line was the same that time) and therefore
+         * paintLine() would never know that it needed to repaint subsequent
+         * lines.
+         *
+         * This bug took me ages to track down, that's why I wrote all the
+         * relevant info down so that others wouldn't duplicate it.
+         */
         if (!(lastLine == lineIndex && nextLineRequested))
             nextLineRequested = (oldToken != token);
 
@@ -205,10 +205,10 @@ public abstract class TokenMarker {
      * This default definition returns null;
      * override it in language-specific subclasses.
      *
-     * @param line      String containing current line
-     * @param tokenList first Token on the current line
-     * @param tokenAtOffset     the pertinent Token object
-     * @param tokenText the source String that matched to the token
+     * @param line          String containing current line
+     * @param tokenList     first Token on the current line
+     * @param tokenAtOffset the pertinent Token object
+     * @param tokenText     the source String that matched to the token
      * @return ArrayList containing PopupHelpItem objects, one per match.
      */
     public ArrayList<PopupHelpItem> getTokenPrefixMatchHelp(String line, Token tokenList, Token tokenAtOffset, String tokenText) {

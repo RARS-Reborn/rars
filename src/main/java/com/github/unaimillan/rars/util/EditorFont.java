@@ -212,9 +212,9 @@ public class EditorFont {
     }
 
     /*
-   * We want to vett the above list against the actual available families and give
-   * our client only those that are actually available.
-   */
+     * We want to vett the above list against the actual available families and give
+     * our client only those that are actually available.
+     */
     private static final String[] commonFamilies = actualCommonFamilies();
 
     private static String[] actualCommonFamilies() {

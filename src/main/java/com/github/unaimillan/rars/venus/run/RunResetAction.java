@@ -44,7 +44,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * Action  for the Run -> Reset menu item
  */
 public class RunResetAction extends GuiAction {
-    private VenusUI mainUI;
+    private final VenusUI mainUI;
 
     public RunResetAction(String name, Icon icon, String descrip,
                           Integer mnemonic, KeyStroke accel, VenusUI gui) {

@@ -20,11 +20,11 @@ public class FCVTDW extends BasicInstruction {
     public void simulate(ProgramStatement statement) throws SimulationException {
         int[] operands = statement.getOperands();
         Environment e = new Environment();
-        e.mode = Floating.getRoundingMode(operands[2],statement);
+        e.mode = Floating.getRoundingMode(operands[2], statement);
         Float64 tmp = new Float64(0);
-        Float64 converted = com.github.unaimillan.jsoftfloat.operations.Conversions.convertFromInt(BigInteger.valueOf(RegisterFile.getValue(operands[1])),e,tmp);
+        Float64 converted = com.github.unaimillan.jsoftfloat.operations.Conversions.convertFromInt(BigInteger.valueOf(RegisterFile.getValue(operands[1])), e, tmp);
         Floating.setfflags(e);
-        FloatingPointRegisterFile.updateRegisterLong(operands[0],converted.bits);
+        FloatingPointRegisterFile.updateRegisterLong(operands[0], converted.bits);
     }
 }
 

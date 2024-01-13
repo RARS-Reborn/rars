@@ -51,8 +51,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * changing a few constants.
  */
 public class FloatRepresentation extends AbstractToolAndApplication {
-    private static String version = "Version 1.1";
-    private static String heading = "32-bit IEEE 754 Floating Point Representation";
+    private static final String version = "Version 1.1";
+    private static final String heading = "32-bit IEEE 754 Floating Point Representation";
     private static final String title = "Floating Point Representation, ";
 
     private static final String defaultHex = "00000000";
@@ -89,11 +89,11 @@ public class FloatRepresentation extends AbstractToolAndApplication {
             binarySignDisplay, binaryExponentDisplay, binaryFractionDisplay;
     // Non-editable fields to display formula translating binary to decimal.
     private JLabel expansionDisplay;
-    private JLabel significandLabel = new JLabel(denormalizedLabel, JLabel.CENTER);
+    private final JLabel significandLabel = new JLabel(denormalizedLabel, JLabel.CENTER);
     private BinaryToDecimalFormulaGraphic binaryToDecimalFormulaGraphic;
     // Non-editable field to display instructions
     private InstructionsPane instructions;
-    private String defaultInstructions = "Modify any value then press the Enter key to update all values.";
+    private final String defaultInstructions = "Modify any value then press the Enter key to update all values.";
 
     /**
      * Simple constructor, likely used to run a stand-alone memory reference visualizer.
@@ -170,7 +170,7 @@ public class FloatRepresentation extends AbstractToolAndApplication {
      */
     public void update(Observable register, Object accessNotice) {
         if (((AccessNotice) accessNotice).getAccessType() == AccessNotice.WRITE) {
-            updateDisplays(new FlavorsOfFloat().buildOneFromInt((int)attachedRegister.getValue()));
+            updateDisplays(new FlavorsOfFloat().buildOneFromInt((int) attachedRegister.getValue()));
         }
     }
 
@@ -203,7 +203,7 @@ public class FloatRepresentation extends AbstractToolAndApplication {
         hexDisplay.setFont(hexDisplayFont);
         hexDisplay.setForeground(hexDisplayColor);
         hexDisplay.setHorizontalAlignment(JTextField.RIGHT);
-        hexDisplay.setToolTipText("" + maxLengthHex + "-digit hexadecimal (base 16) display");
+        hexDisplay.setToolTipText(maxLengthHex + "-digit hexadecimal (base 16) display");
         hexDisplay.setEditable(true);
         hexDisplay.revalidate();
         hexDisplay.addKeyListener(new HexDisplayKeystrokeListener(8));
@@ -232,7 +232,7 @@ public class FloatRepresentation extends AbstractToolAndApplication {
         binaryExponentDisplay.setFont(binaryDisplayFont);
         binaryExponentDisplay.setForeground(binaryDisplayColor);
         binaryExponentDisplay.setHorizontalAlignment(JTextField.RIGHT);
-        binaryExponentDisplay.setToolTipText("" + maxLengthBinaryExponent + "-bit exponent");
+        binaryExponentDisplay.setToolTipText(maxLengthBinaryExponent + "-bit exponent");
         binaryExponentDisplay.setEditable(true);
         binaryExponentDisplay.revalidate();
 
@@ -240,7 +240,7 @@ public class FloatRepresentation extends AbstractToolAndApplication {
         binaryFractionDisplay.setFont(binaryDisplayFont);
         binaryFractionDisplay.setForeground(binaryDisplayColor);
         binaryFractionDisplay.setHorizontalAlignment(JTextField.RIGHT);
-        binaryFractionDisplay.setToolTipText("" + maxLengthBinaryFraction + "-bit fraction");
+        binaryFractionDisplay.setToolTipText(maxLengthBinaryFraction + "-bit fraction");
         binaryFractionDisplay.setEditable(true);
         binaryFractionDisplay.revalidate();
 
@@ -365,7 +365,7 @@ public class FloatRepresentation extends AbstractToolAndApplication {
                             instructions.setText("The program is not attached to any floating point registers.");
                         } else {
                             attachedRegister = fpRegisters[selectedIndex - 1];
-                            updateDisplays(new FlavorsOfFloat().buildOneFromInt((int)attachedRegister.getValue()));
+                            updateDisplays(new FlavorsOfFloat().buildOneFromInt((int) attachedRegister.getValue()));
                             if (isObserving()) {
                                 addAsObserver();
                             }
@@ -534,7 +534,7 @@ public class FloatRepresentation extends AbstractToolAndApplication {
             // stringExponent length will range from 1 to 4 (e.g. "0" to "-128") characters.
             // Right-pad with HTML spaces ("&nbsp;") to total length 5 displayed characters.
             return "<html><head></head><body>" + expansionFontTag
-                    + "-1<sup>" + binaryString.substring(0, maxLengthBinarySign) + "</sup> &nbsp;*&nbsp; 2<sup>"
+                    + "-1<sup>" + binaryString.charAt(0) + "</sup> &nbsp;*&nbsp; 2<sup>"
                     + stringExponent + HTMLspaces.substring(0, (5 - stringExponent.length()) * 6)
                     + "</sup> &nbsp;* &nbsp;"
                     + ((biasedExponent == 0) ? "&nbsp;." : "<u>1</u>.")
@@ -576,7 +576,7 @@ public class FloatRepresentation extends AbstractToolAndApplication {
     //
     private class HexDisplayKeystrokeListener extends KeyAdapter {
 
-        private int digitLength; // maximum number of digits long
+        private final int digitLength; // maximum number of digits long
 
         public HexDisplayKeystrokeListener(int length) {
             digitLength = length;
@@ -651,7 +651,7 @@ public class FloatRepresentation extends AbstractToolAndApplication {
     //
     private class BinaryDisplayKeystrokeListener extends KeyAdapter {
 
-        private int bitLength;  // maximum number of bits permitted
+        private final int bitLength;  // maximum number of bits permitted
 
         public BinaryDisplayKeystrokeListener(int length) {
             bitLength = length;
@@ -884,7 +884,7 @@ public class FloatRepresentation extends AbstractToolAndApplication {
 
         // format the label for a given integer exponent value...
         private String buildSubtractLabel(int value) {
-            return Integer.toString(value) + subtractLabelTrailer;
+            return value + subtractLabelTrailer;
         }
 
     }

@@ -44,9 +44,9 @@ public class FSQRTS extends BasicInstruction {
     public void simulate(ProgramStatement statement) throws SimulationException {
         int[] operands = statement.getOperands();
         Environment e = new Environment();
-        e.mode = Floating.getRoundingMode(operands[2],statement);
-        Float32 result = com.github.unaimillan.jsoftfloat.operations.Arithmetic.squareRoot(new Float32(FloatingPointRegisterFile.getValue(operands[1])),e);
+        e.mode = Floating.getRoundingMode(operands[2], statement);
+        Float32 result = com.github.unaimillan.jsoftfloat.operations.Arithmetic.squareRoot(new Float32(FloatingPointRegisterFile.getValue(operands[1])), e);
         Floating.setfflags(e);
-        FloatingPointRegisterFile.updateRegister(operands[0],result.bits);
+        FloatingPointRegisterFile.updateRegister(operands[0], result.bits);
     }
 }

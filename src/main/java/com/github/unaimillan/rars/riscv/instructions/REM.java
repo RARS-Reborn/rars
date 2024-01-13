@@ -1,7 +1,5 @@
 package com.github.unaimillan.rars.riscv.instructions;
 
-import com.github.unaimillan.rars.riscv.hardware.ControlAndStatusRegisterFile;
-
 /*
 Copyright (c) 2017,  Benjamin Landers
 

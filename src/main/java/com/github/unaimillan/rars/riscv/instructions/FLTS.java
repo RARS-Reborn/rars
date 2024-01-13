@@ -3,11 +3,9 @@ package com.github.unaimillan.rars.riscv.instructions;
 import com.github.unaimillan.jsoftfloat.Environment;
 import com.github.unaimillan.jsoftfloat.types.Float32;
 import com.github.unaimillan.rars.ProgramStatement;
-import com.github.unaimillan.rars.riscv.hardware.ControlAndStatusRegisterFile;
-import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
-import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
+import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -46,7 +44,7 @@ public class FLTS extends BasicInstruction {
         int[] operands = statement.getOperands();
         Float32 f1 = Floating.getFloat(operands[1]), f2 = Floating.getFloat(operands[2]);
         Environment e = new Environment();
-        boolean result = com.github.unaimillan.jsoftfloat.operations.Comparisons.compareSignalingLessThan(f1,f2,e);
+        boolean result = com.github.unaimillan.jsoftfloat.operations.Comparisons.compareSignalingLessThan(f1, f2, e);
         Floating.setfflags(e);
         RegisterFile.updateRegister(operands[0], result ? 1 : 0);
     }

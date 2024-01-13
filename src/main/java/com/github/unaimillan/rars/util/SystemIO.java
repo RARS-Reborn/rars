@@ -57,7 +57,7 @@ public class SystemIO {
     /**
      * String used for description of file error
      */
-    public static String fileErrorString = new String("File operation OK");
+    public static String fileErrorString = "File operation OK";
 
     private static final int O_RDONLY = 0x00000000;
     private static final int O_WRONLY = 0x00000001;
@@ -143,7 +143,7 @@ public class SystemIO {
             try {
                 SystemIO.getOutputWriter().write(string);
                 SystemIO.getOutputWriter().flush();
-            } catch (IOException e){
+            } catch (IOException e) {
             }
         } else {
             print2Gui(string);
@@ -187,7 +187,7 @@ public class SystemIO {
         // just propagating the runtime exception (the default behavior), but
         // I want to make it explicit.  The client needs to catch it.
         try {
-            returnValue = (int) (input.charAt(0)); // first character input
+            returnValue = input.charAt(0); // first character input
         } catch (IndexOutOfBoundsException e) // no chars present
         {
             throw e;  // was: returnValue = 0;
@@ -446,9 +446,10 @@ public class SystemIO {
         }
         return FileIOData.inputReader;
     }
-    private static BufferedWriter getOutputWriter(){
-        if (FileIOData.outputWriter==null){
-            FileIOData.outputWriter=new BufferedWriter(new OutputStreamWriter(System.out));
+
+    private static BufferedWriter getOutputWriter() {
+        if (FileIOData.outputWriter == null) {
+            FileIOData.outputWriter = new BufferedWriter(new OutputStreamWriter(System.out));
         }
         return FileIOData.outputWriter;
     }
@@ -457,30 +458,32 @@ public class SystemIO {
     // Currently it checks to flush every instruction run
     private static String buffer = "";
     private static long lasttime = 0;
-    private static void print2Gui(String output){
+
+    private static void print2Gui(String output) {
         long time = System.currentTimeMillis();
         if (time > lasttime) {
-            Globals.getGui().getMessagesPane().postRunMessage(buffer+output);
+            Globals.getGui().getMessagesPane().postRunMessage(buffer + output);
             buffer = "";
             lasttime = time + 100;
         } else {
             buffer += output;
         }
     }
+
     /**
      * Flush stdout cache
      * Makes sure that messages don't get stuck in the print2Gui buffer for too long.
      */
     public static void flush(boolean force) {
         long time = System.currentTimeMillis();
-        if (buffer != "" && (force || time > lasttime)){
+        if (buffer != "" && (force || time > lasttime)) {
             Globals.getGui().getMessagesPane().postRunMessage(buffer);
             buffer = "";
             lasttime = time + 100;
         }
     }
 
-    public static Data swapData(Data in){
+    public static Data swapData(Data in) {
         Data temp = new Data(false);
         temp.fileNames = FileIOData.fileNames;
         temp.fileFlags = FileIOData.fileFlags;
@@ -504,8 +507,9 @@ public class SystemIO {
         public BufferedReader inputReader;
         public BufferedWriter outputWriter;
         public BufferedWriter errorWriter;
-        public Data(boolean generate){
-            if(generate) {
+
+        public Data(boolean generate) {
+            if (generate) {
                 fileNames = new String[SYSCALL_MAXFILES];
                 fileFlags = new int[SYSCALL_MAXFILES];
                 streams = new Closeable[SYSCALL_MAXFILES];
@@ -521,14 +525,14 @@ public class SystemIO {
             }
         }
 
-        public Data(ByteArrayInputStream in, ByteArrayOutputStream out, ByteArrayOutputStream err){
+        public Data(ByteArrayInputStream in, ByteArrayOutputStream out, ByteArrayOutputStream err) {
             this(true);
-            this.streams[STDIN]=in;
-            this.streams[STDOUT]=out;
-            this.streams[STDERR]=err;
-            this.inputReader=new BufferedReader(new InputStreamReader(in));
-            this.outputWriter=new BufferedWriter(new OutputStreamWriter(out));
-            this.errorWriter=new BufferedWriter(new OutputStreamWriter(err));
+            this.streams[STDIN] = in;
+            this.streams[STDOUT] = out;
+            this.streams[STDERR] = err;
+            this.inputReader = new BufferedReader(new InputStreamReader(in));
+            this.outputWriter = new BufferedWriter(new OutputStreamWriter(out));
+            this.errorWriter = new BufferedWriter(new OutputStreamWriter(err));
         }
     }
 
@@ -549,18 +553,18 @@ public class SystemIO {
             for (int i = 0; i < SYSCALL_MAXFILES; i++) {
                 close(i);
             }
-            if (outputWriter!=null){
+            if (outputWriter != null) {
                 try {
                     outputWriter.close();
-                    outputWriter=null;
-                } catch (IOException e){
+                    outputWriter = null;
+                } catch (IOException e) {
                 }
             }
-            if (errorWriter!=null){
+            if (errorWriter != null) {
                 try {
                     errorWriter.close();
-                    errorWriter=null;
-                } catch (IOException e){
+                    errorWriter = null;
+                } catch (IOException e) {
                 }
             }
             setupStdio();
@@ -610,12 +614,10 @@ public class SystemIO {
         private static boolean fdInUse(int fd, int flag) {
             if (fd < 0 || fd >= SYSCALL_MAXFILES) {
                 return false;
-            } else if (fileNames[fd] != null && fileFlags[fd] == 0 && flag == 0) {  // O_RDONLY read-only
-                return true;
-            } else if (fileNames[fd] != null && ((fileFlags[fd] & flag & O_WRONLY) == O_WRONLY)) {  // O_WRONLY write-only
-                return true;
-            }
-            return false;
+            } else // O_WRONLY write-only
+                if (fileNames[fd] != null && fileFlags[fd] == 0 && flag == 0) {  // O_RDONLY read-only
+                    return true;
+                } else return fileNames[fd] != null && ((fileFlags[fd] & flag & O_WRONLY) == O_WRONLY);
 
         }
 
@@ -673,9 +675,9 @@ public class SystemIO {
             }
 
             // Must be OK -- put filename in table
-            fileNames[i] = new String(filename); // our table has its own copy of filename
+            fileNames[i] = filename; // our table has its own copy of filename
             fileFlags[i] = flag;
-            fileErrorString = new String("File operation OK");
+            fileErrorString = "File operation OK";
             return i;
         }
 

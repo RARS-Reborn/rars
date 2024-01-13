@@ -3,10 +3,10 @@ package com.github.unaimillan.rars.riscv.syscalls;
 import com.github.unaimillan.rars.ExitingException;
 import com.github.unaimillan.rars.Globals;
 import com.github.unaimillan.rars.ProgramStatement;
+import com.github.unaimillan.rars.riscv.AbstractSyscall;
 import com.github.unaimillan.rars.riscv.hardware.AddressErrorException;
 import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
-import com.github.unaimillan.rars.riscv.AbstractSyscall;
 
 import javax.swing.*;
 
@@ -48,7 +48,7 @@ public class SyscallMessageDialogDouble extends AbstractSyscall {
      */
     public SyscallMessageDialogDouble() {
         super("MessageDialogDouble", "Service to display message followed by a double",
-                "a0 = address of null-terminated string that is the message to user <br> fa0 = the double","N/A");
+                "a0 = address of null-terminated string that is the message to user <br> fa0 = the double", "N/A");
     }
 
     /**
@@ -56,9 +56,9 @@ public class SyscallMessageDialogDouble extends AbstractSyscall {
      */
     public void simulate(ProgramStatement statement) throws ExitingException {
         // TODO: maybe refactor this, other null strings are handled in a central place now
-        String message = new String(); // = "";
+        String message = ""; // = "";
         int byteAddress = RegisterFile.getValue("a0");
-        char ch[] = {' '}; // Need an array to convert to String
+        char[] ch = {' '}; // Need an array to convert to String
         try {
             ch[0] = (char) Globals.memory.getByte(byteAddress);
             while (ch[0] != 0) // only uses single location ch[0]

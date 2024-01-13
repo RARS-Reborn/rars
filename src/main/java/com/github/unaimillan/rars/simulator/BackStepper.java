@@ -2,10 +2,10 @@ package com.github.unaimillan.rars.simulator;
 
 import com.github.unaimillan.rars.Globals;
 import com.github.unaimillan.rars.ProgramStatement;
+import com.github.unaimillan.rars.riscv.Instruction;
 import com.github.unaimillan.rars.riscv.hardware.ControlAndStatusRegisterFile;
 import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
-import com.github.unaimillan.rars.riscv.Instruction;
 
 /*
 Copyright (c) 2003-2006,  Pete Sanderson and Kenneth Vollmar
@@ -137,31 +137,31 @@ public class BackStepper {
                 try {
                     switch (step.action) {
                         case MEMORY_RESTORE_RAW_WORD:
-                            Globals.memory.setRawWord(step.param1, (int)step.param2);
+                            Globals.memory.setRawWord(step.param1, (int) step.param2);
                             break;
                         case MEMORY_RESTORE_DOUBLE_WORD:
                             Globals.memory.setDoubleWord(step.param1, step.param2);
                             break;
                         case MEMORY_RESTORE_WORD:
-                            Globals.memory.setWord(step.param1, (int)step.param2);
+                            Globals.memory.setWord(step.param1, (int) step.param2);
                             break;
                         case MEMORY_RESTORE_HALF:
-                            Globals.memory.setHalf(step.param1, (int)step.param2);
+                            Globals.memory.setHalf(step.param1, (int) step.param2);
                             break;
                         case MEMORY_RESTORE_BYTE:
-                            Globals.memory.setByte(step.param1, (int)step.param2);
+                            Globals.memory.setByte(step.param1, (int) step.param2);
                             break;
                         case REGISTER_RESTORE:
                             RegisterFile.updateRegister(step.param1, step.param2);
                             break;
                         case FLOATING_POINT_REGISTER_RESTORE:
-                            FloatingPointRegisterFile.updateRegisterLong(step.param1,step.param2);
+                            FloatingPointRegisterFile.updateRegisterLong(step.param1, step.param2);
                             break;
                         case CONTROL_AND_STATUS_REGISTER_RESTORE:
-                            ControlAndStatusRegisterFile.updateRegister(step.param1,step.param2);
+                            ControlAndStatusRegisterFile.updateRegister(step.param1, step.param2);
                             break;
                         case CONTROL_AND_STATUS_REGISTER_BACKDOOR:
-                            ControlAndStatusRegisterFile.updateRegisterBackdoor(step.param1,step.param2);
+                            ControlAndStatusRegisterFile.updateRegisterBackdoor(step.param1, step.param2);
                             break;
                         case PC_RESTORE:
                             RegisterFile.setProgramCounter(step.param1);
@@ -178,11 +178,11 @@ public class BackStepper {
             engaged = true;  // RESET IT (was disabled at top of loop -- see comment)
         }
     }
-  
-     
-      /* Convenience method called below to get program counter value.  If it needs to be
-        * be modified (e.g. to subtract 4) that can be done here in one place.
-   	 */
+
+
+    /* Convenience method called below to get program counter value.  If it needs to be
+     * be modified (e.g. to subtract 4) that can be done here in one place.
+     */
 
     private int pc() {
         // PC incremented prior to instruction simulation, so need to adjust for that.

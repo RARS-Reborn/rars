@@ -1,9 +1,9 @@
 package com.github.unaimillan.rars.riscv.instructions;
 
 import com.github.unaimillan.rars.ProgramStatement;
-import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
+import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers

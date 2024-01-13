@@ -5,7 +5,6 @@ import com.github.unaimillan.rars.ProgramStatement;
 import com.github.unaimillan.rars.Settings;
 import com.github.unaimillan.rars.SimulationException;
 import com.github.unaimillan.rars.riscv.Instruction;
-import com.github.unaimillan.rars.util.Binary;
 
 import java.util.Collection;
 import java.util.Observable;
@@ -113,7 +112,7 @@ public class Memory extends Observable {
     /**
      * Current setting for endian (default LITTLE_ENDIAN)
      **/
-    private static boolean byteOrder = LITTLE_ENDIAN;
+    private static final boolean byteOrder = LITTLE_ENDIAN;
 
     public static int heapAddress;
 
@@ -220,53 +219,53 @@ public class Memory extends Observable {
 
 
     /*
-     * Private constructor for Memory.  Separate data structures for text and data segments. 
+     * Private constructor for Memory.  Separate data structures for text and data segments.
      **/
     public Memory() {
         initialize();
     }
 
-    public boolean copyFrom(Memory other){
-        if(textBlockTable.length != other.textBlockTable.length ||
+    public boolean copyFrom(Memory other) {
+        if (textBlockTable.length != other.textBlockTable.length ||
                 dataBlockTable.length != other.dataBlockTable.length ||
                 stackBlockTable.length != other.stackBlockTable.length ||
-                memoryMapBlockTable.length != other.memoryMapBlockTable.length){
+                memoryMapBlockTable.length != other.memoryMapBlockTable.length) {
             // The memory configurations don't match up
             return false;
         }
 
-        for(int i = 0; i < textBlockTable.length; i++){
-            if(other.textBlockTable[i] != null){
+        for (int i = 0; i < textBlockTable.length; i++) {
+            if (other.textBlockTable[i] != null) {
                 textBlockTable[i] = other.textBlockTable[i].clone(); // TODO: potentially make ProgramStatement clonable
-            }else{
+            } else {
                 textBlockTable[i] = null;
             }
         }
-        for(int i = 0; i < dataBlockTable.length; i++){
-            if(other.dataBlockTable[i] != null){
+        for (int i = 0; i < dataBlockTable.length; i++) {
+            if (other.dataBlockTable[i] != null) {
                 dataBlockTable[i] = other.dataBlockTable[i].clone();
-            }else{
+            } else {
                 dataBlockTable[i] = null;
             }
         }
-        for(int i = 0; i < stackBlockTable.length; i++){
-            if(other.stackBlockTable[i] != null){
+        for (int i = 0; i < stackBlockTable.length; i++) {
+            if (other.stackBlockTable[i] != null) {
                 stackBlockTable[i] = other.stackBlockTable[i].clone();
-            }else{
+            } else {
                 stackBlockTable[i] = null;
             }
         }
-        for(int i = 0; i < memoryMapBlockTable.length; i++){
-            if(other.memoryMapBlockTable[i] != null){
+        for (int i = 0; i < memoryMapBlockTable.length; i++) {
+            if (other.memoryMapBlockTable[i] != null) {
                 memoryMapBlockTable[i] = other.memoryMapBlockTable[i].clone();
-            }else{
+            } else {
                 memoryMapBlockTable[i] = null;
             }
         }
         return true;
     }
 
-    public static Memory swapInstance(Memory mem){
+    public static Memory swapInstance(Memory mem) {
         Memory temp = uniqueMemoryInstance;
         uniqueMemoryInstance = mem;
         Globals.memory = mem;
@@ -333,6 +332,7 @@ public class Memory extends Observable {
     }
 
     // TODO: add some heap managment so programs can malloc and free
+
     /**
      * Returns the next available word-aligned heap address.  There is no recycling and
      * no heap management!  There is however nearly 4MB of heap space available in Rars.
@@ -357,7 +357,7 @@ public class Memory extends Observable {
         return result;
     }
 
-   /*  *******************************  THE SETTER METHODS  ******************************/
+    /*  *******************************  THE SETTER METHODS  ******************************/
 
 
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -392,25 +392,25 @@ public class Memory extends Observable {
             // DPS adaptation 5-Jul-2013: either throw or call, depending on setting
 
             if (Globals.getSettings().getBooleanSetting(Settings.Bool.SELF_MODIFYING_CODE_ENABLED)) {
-                if(address%4+length > 4){
+                if (address % 4 + length > 4) {
                     // TODO: add checks for halfword load not aligned to halfword boundary
                     throw new AddressErrorException(
                             "Load address crosses word boundary",
                             SimulationException.LOAD_ADDRESS_MISALIGNED, address);
                 }
-                ProgramStatement oldStatement = getStatementNoNotify((address/4)*4);
+                ProgramStatement oldStatement = getStatementNoNotify((address / 4) * 4);
                 if (oldStatement != null) {
                     oldValue = oldStatement.getBinaryStatement();
                 }
 
                 // These manipulations set the bits in oldvalue to be like value was placed at address.
                 // TODO: like below, make this more clear
-                value <<= (address%4)*8;
-                int mask = length == 4 ? -1 : ((1<<(8*length))-1);
-                mask <<= (address%4)*8;
-                value = (value&mask) | (oldValue&~mask);
-                oldValue = (oldValue&mask) >> (address%4);
-                setStatement((address/4)*4, new ProgramStatement(value, (address/4)*4));
+                value <<= (address % 4) * 8;
+                int mask = length == 4 ? -1 : ((1 << (8 * length)) - 1);
+                mask <<= (address % 4) * 8;
+                value = (value & mask) | (oldValue & ~mask);
+                oldValue = (oldValue & mask) >> (address % 4);
+                setStatement((address / 4) * 4, new ProgramStatement(value, (address / 4) * 4));
             } else {
                 throw new AddressErrorException(
                         "Cannot write directly to text segment!",
@@ -553,7 +553,7 @@ public class Memory extends Observable {
         int oldHighOrder, oldLowOrder;
         oldHighOrder = set(address + 4, (int) (value >> 32), 4);
         oldLowOrder = set(address, (int) value, 4);
-        long old = ((long)oldHighOrder << 32) | (oldLowOrder & 0xFFFFFFFFL);
+        long old = ((long) oldHighOrder << 32) | (oldLowOrder & 0xFFFFFFFFL);
         return (Globals.getSettings().getBackSteppingEnabled())
                 ? Globals.program.getBackStepper().addMemoryRestoreDoubleWord(address, old)
                 : old;
@@ -573,7 +573,7 @@ public class Memory extends Observable {
     public double setDouble(int address, double value) throws AddressErrorException {
         int oldHighOrder, oldLowOrder;
         long longValue = Double.doubleToLongBits(value);
-        return Double.longBitsToDouble(setDoubleWord(address,longValue));
+        return Double.longBitsToDouble(setDoubleWord(address, longValue));
     }
 
 
@@ -639,16 +639,16 @@ public class Memory extends Observable {
             // Burch Mod (Jan 2013): replace throw with calls to getStatementNoNotify & getBinaryStatement
             // DPS adaptation 5-Jul-2013: either throw or call, depending on setting
             if (Globals.getSettings().getBooleanSetting(Settings.Bool.SELF_MODIFYING_CODE_ENABLED)) {
-                if(address%4+length > 4){
+                if (address % 4 + length > 4) {
                     // TODO: add checks for halfword load not aligned to halfword boundary
                     throw new AddressErrorException(
                             "Load address not aligned to word boundary ",
                             SimulationException.LOAD_ADDRESS_MISALIGNED, address);
                 }
-                ProgramStatement stmt = getStatementNoNotify((address/4)*4);
+                ProgramStatement stmt = getStatementNoNotify((address / 4) * 4);
                 // TODO: maybe find a way to make the bit manipulation more clear
                 // It just selects the right bytes from the word loaded
-                value = stmt == null ? 0 : length == 4 ? stmt.getBinaryStatement() : stmt.getBinaryStatement()>>(8*(address%4))&((1<<length*8)-1);
+                value = stmt == null ? 0 : length == 4 ? stmt.getBinaryStatement() : stmt.getBinaryStatement() >> (8 * (address % 4)) & ((1 << length * 8) - 1);
             } else {
                 throw new AddressErrorException(
                         "Cannot read directly from text segment!",
@@ -798,9 +798,9 @@ public class Memory extends Observable {
     public long getDoubleWord(int address) throws AddressErrorException {
         checkLoadWordAligned(address);
         int oldHighOrder, oldLowOrder;
-        oldHighOrder = get(address + 4,4);
-        oldLowOrder = get(address,  4);
-        return ((long)oldHighOrder << 32) | (oldLowOrder & 0xFFFFFFFFL);
+        oldHighOrder = get(address + 4, 4);
+        oldLowOrder = get(address, 4);
+        return ((long) oldHighOrder << 32) | (oldLowOrder & 0xFFFFFFFFL);
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -1109,7 +1109,8 @@ public class Memory extends Observable {
     // Private class whose objects will represent an observable-observer pair
     // for a given memory address or range.
     private class MemoryObservable extends Observable implements Comparable<MemoryObservable> {
-        private int lowAddress, highAddress;
+        private final int lowAddress;
+        private final int highAddress;
 
         public MemoryObservable(Observer obs, int startAddr, int endAddr) {
             lowAddress = startAddr;

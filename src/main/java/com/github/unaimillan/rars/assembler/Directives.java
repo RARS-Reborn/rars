@@ -42,7 +42,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public final class Directives {
 
-    private static ArrayList<Directives> directiveList = new ArrayList<>();
+    private static final ArrayList<Directives> directiveList = new ArrayList<>();
     public static final Directives DATA = new Directives(".data", "Subsequent items stored in Data segment at next available address");
     public static final Directives TEXT = new Directives(".text", "Subsequent items (instructions) stored in Text segment at next available address");
     public static final Directives WORD = new Directives(".word", "Store the listed value(s) as 32 bit words on word boundary");
@@ -68,8 +68,8 @@ public final class Directives {
     public static final Directives INCLUDE = new Directives(".include", "Insert the contents of the specified file.  Put filename in quotes.");
     public static final Directives SECTION = new Directives(".section", "Allows specifying sections without .text or .data directives. Included for gcc comparability");
 
-    private String descriptor;
-    private String description; // help text
+    private final String descriptor;
+    private final String description; // help text
 
     private Directives(String name, String description) {
         this.descriptor = name;

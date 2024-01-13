@@ -62,7 +62,7 @@ public class InstructionSet {
     private static final String CLASS_EXTENSION = "class";
     public static boolean rv64 = Globals.getSettings().getBooleanSetting(Settings.Bool.RV64_ENABLED);
 
-    private ArrayList<Instruction> instructionList;
+    private final ArrayList<Instruction> instructionList;
     private ArrayList<MatchMap> opcodeMatchMaps;
 
     /**
@@ -97,7 +97,7 @@ public class InstructionSet {
         addBasicInstructions();
 
         ////////////// READ PSEUDO-INSTRUCTION SPECS FROM DATA FILE AND ADD //////////////////////
-        if(rv64) {
+        if (rv64) {
             addPseudoInstructions("/PseudoOps-64.txt");
         }
 
@@ -111,8 +111,7 @@ public class InstructionSet {
         HashMap<Integer, HashMap<Integer, BasicInstruction>> maskMap = new HashMap<>();
         ArrayList<MatchMap> matchMaps = new ArrayList<>();
         for (Instruction inst : instructionList) {
-            if (inst instanceof BasicInstruction) {
-                BasicInstruction basic = (BasicInstruction) inst;
+            if (inst instanceof BasicInstruction basic) {
                 Integer mask = basic.getOpcodeMask();
                 Integer match = basic.getOpcodeMatch();
                 HashMap<Integer, BasicInstruction> matchMap = maskMap.get(mask);
@@ -159,8 +158,8 @@ public class InstructionSet {
                 }
                 try {
                     instructionList.add((BasicInstruction) clas.newInstance());
-                }catch (NullPointerException ne){
-                    if (ne.toString().contains("rv"))continue;
+                } catch (NullPointerException ne) {
+                    if (ne.toString().contains("rv")) continue;
                     throw ne;
                 }
             } catch (Exception e) {
@@ -169,8 +168,9 @@ public class InstructionSet {
             }
         }
     }
+
     /*  METHOD TO ADD PSEUDO-INSTRUCTIONS
-    */
+     */
     private void addPseudoInstructions(String file) {
         InputStream is = null;
         BufferedReader in = null;
@@ -246,6 +246,7 @@ public class InstructionSet {
 
 
     // TODO: check to see if autocomplete was accidentally removed
+
     /**
      * Given a string, will return the Instruction object(s) from the instruction
      * set whose operator mnemonic prefix matches it.  Case-insensitive.  For example
@@ -269,11 +270,11 @@ public class InstructionSet {
         return matchingInstructions;
     }
 
-   	/*
-        * Method to find and invoke a syscall given its service number.  Each syscall
-   	 * function is represented by an object in an array list.  Each object is of
-   	 * a class that implements Syscall or extends AbstractSyscall.
-   	 */
+    /*
+     * Method to find and invoke a syscall given its service number.  Each syscall
+     * function is represented by an object in an array list.  Each object is of
+     * a class that implements Syscall or extends AbstractSyscall.
+     */
 
     public static void findAndSimulateSyscall(int number, ProgramStatement statement)
             throws SimulationException {
@@ -301,46 +302,46 @@ public class InstructionSet {
                         number + " ", SimulationException.ENVIRONMENT_CALL);
     }
 
-   	/*
-        * Method to process a successful branch condition.  DO NOT USE WITH JUMP
-   	 * INSTRUCTIONS!  The branch operand is a relative displacement in words
-   	 * whereas the jump operand is an absolute address in bytes.
-   	 *
-   	 * The parameter is displacement operand from instruction.
-   	 */
+    /*
+     * Method to process a successful branch condition.  DO NOT USE WITH JUMP
+     * INSTRUCTIONS!  The branch operand is a relative displacement in words
+     * whereas the jump operand is an absolute address in bytes.
+     *
+     * The parameter is displacement operand from instruction.
+     */
 
     public static void processBranch(int displacement) {
         // Decrement needed because PC has already been incremented
         RegisterFile.setProgramCounter(RegisterFile.getProgramCounter() + displacement - Instruction.INSTRUCTION_LENGTH);
     }
 
-   	/*
-        * Method to process a jump.  DO NOT USE WITH BRANCH INSTRUCTIONS!
-   	 * The branch operand is a relative displacement in words
-   	 * whereas the jump operand is an absolute address in bytes.
-   	 *
-   	 * The parameter is jump target absolute byte address.
-   	 */
+    /*
+     * Method to process a jump.  DO NOT USE WITH BRANCH INSTRUCTIONS!
+     * The branch operand is a relative displacement in words
+     * whereas the jump operand is an absolute address in bytes.
+     *
+     * The parameter is jump target absolute byte address.
+     */
 
     public static void processJump(int targetAddress) {
         RegisterFile.setProgramCounter(targetAddress);
     }
 
-   	/*
-        * Method to process storing of a return address in the given
-   	 * register.  This is used only by the "and link"
-   	 * instructions: jal and jalr
-   	 * The parameter is register number to receive the return address.
-   	 */
+    /*
+     * Method to process storing of a return address in the given
+     * register.  This is used only by the "and link"
+     * instructions: jal and jalr
+     * The parameter is register number to receive the return address.
+     */
 
     public static void processReturnAddress(int register) {
         RegisterFile.updateRegister(register, RegisterFile.getProgramCounter());
     }
 
     private static class MatchMap implements Comparable<MatchMap> {
-        private int mask;
-        private int maskLength; // number of 1 bits in mask
-        private HashMap<Integer, BasicInstruction> matchMap;
+        private final int mask;
+        private final int maskLength; // number of 1 bits in mask
+        private final HashMap<Integer, BasicInstruction> matchMap;
 
         public MatchMap(int mask, HashMap<Integer, BasicInstruction> matchMap) {
             this.mask = mask;

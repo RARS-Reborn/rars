@@ -6,7 +6,8 @@ public class Options {
     public boolean startAtMain;       // Whether to start execution at statement labeled 'main'
     public boolean selfModifyingCode; // Whether to allow self-modifying code (e.g. write to text segment)
     public int maxSteps;
-    public Options(){
+
+    public Options() {
         pseudo = true;
         warningsAreErrors = false;
         startAtMain = false;

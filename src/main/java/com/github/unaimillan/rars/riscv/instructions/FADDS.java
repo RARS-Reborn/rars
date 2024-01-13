@@ -37,6 +37,6 @@ public class FADDS extends Floating {
 
     @Override
     public Float32 compute(Float32 f1, Float32 f2, Environment e) {
-        return com.github.unaimillan.jsoftfloat.operations.Arithmetic.add(f1,f2,e);
+        return com.github.unaimillan.jsoftfloat.operations.Arithmetic.add(f1, f2, e);
     }
 }

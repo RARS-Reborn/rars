@@ -53,7 +53,7 @@ public class RunStepAction extends GuiAction {
 
     private String name;
     private ExecutePane executePane;
-    private VenusUI mainUI;
+    private final VenusUI mainUI;
 
     public RunStepAction(String name, Icon icon, String descrip,
                          Integer mnemonic, KeyStroke accel, VenusUI gui) {

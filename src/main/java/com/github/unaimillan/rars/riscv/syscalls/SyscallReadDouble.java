@@ -2,8 +2,8 @@ package com.github.unaimillan.rars.riscv.syscalls;
 
 import com.github.unaimillan.rars.ExitingException;
 import com.github.unaimillan.rars.ProgramStatement;
-import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 import com.github.unaimillan.rars.riscv.AbstractSyscall;
+import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 import com.github.unaimillan.rars.util.SystemIO;
 
 /*
@@ -46,7 +46,7 @@ public class SyscallReadDouble extends AbstractSyscall {
      * is 7 and name is "ReadDouble".
      */
     public SyscallReadDouble() {
-        super("ReadDouble","Reads a double from input console", "N/A","fa0 = the double");
+        super("ReadDouble", "Reads a double from input console", "N/A", "fa0 = the double");
     }
 
     /**

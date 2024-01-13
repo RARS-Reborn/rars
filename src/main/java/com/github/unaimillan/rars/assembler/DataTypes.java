@@ -124,7 +124,7 @@ public final class DataTypes {
         else if (direct == Directives.DOUBLE)
             return DOUBLE_SIZE;
         else if (direct == Directives.DWORD)
-            return 2*WORD_SIZE;
+            return 2 * WORD_SIZE;
         else if (direct == Directives.WORD)
             return WORD_SIZE;
         else if (direct == Directives.HALF)

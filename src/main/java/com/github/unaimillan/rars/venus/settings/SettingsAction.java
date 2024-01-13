@@ -38,12 +38,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * Simple wrapper for boolean settings actions
  */
 public class SettingsAction extends GuiAction {
-    private Settings.Bool setting;
+    private final Settings.Bool setting;
 
     public SettingsAction(String name, String descrip, Settings.Bool setting) {
         super(name, null, descrip, null, null);
         this.setting = setting;
     }
+
     public void actionPerformed(ActionEvent e) {
         boolean value = ((JCheckBoxMenuItem) e.getSource()).isSelected();
         Globals.getSettings().setBooleanSetting(setting, value);

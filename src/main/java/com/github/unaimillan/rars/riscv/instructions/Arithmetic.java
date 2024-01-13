@@ -1,10 +1,10 @@
 package com.github.unaimillan.rars.riscv.instructions;
 
 import com.github.unaimillan.rars.ProgramStatement;
-import com.github.unaimillan.rars.riscv.InstructionSet;
-import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
+import com.github.unaimillan.rars.riscv.InstructionSet;
+import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -45,17 +45,18 @@ public abstract class Arithmetic extends BasicInstruction {
         super(usage, description, BasicInstructionFormat.R_FORMAT,
                 funct7 + " ttttt sssss " + funct3 + " fffff 0110011");
     }
-    public Arithmetic(String usage, String description, String funct7, String funct3, boolean rv64){
+
+    public Arithmetic(String usage, String description, String funct7, String funct3, boolean rv64) {
         super(usage, description, BasicInstructionFormat.R_FORMAT,
-                funct7 + " ttttt sssss " + funct3 + " fffff 0111011",rv64);
+                funct7 + " ttttt sssss " + funct3 + " fffff 0111011", rv64);
     }
 
     public void simulate(ProgramStatement statement) {
         int[] operands = statement.getOperands();
-        if (InstructionSet.rv64){
-            RegisterFile.updateRegister(operands[0], compute(RegisterFile.getValueLong(operands[1]),RegisterFile.getValueLong(operands[2])));
-        }else {
-            RegisterFile.updateRegister(operands[0], computeW(RegisterFile.getValue(operands[1]),RegisterFile.getValue(operands[2])));
+        if (InstructionSet.rv64) {
+            RegisterFile.updateRegister(operands[0], compute(RegisterFile.getValueLong(operands[1]), RegisterFile.getValueLong(operands[2])));
+        } else {
+            RegisterFile.updateRegister(operands[0], computeW(RegisterFile.getValue(operands[1]), RegisterFile.getValue(operands[2])));
         }
     }
 
@@ -68,11 +69,12 @@ public abstract class Arithmetic extends BasicInstruction {
 
     /**
      * A version for rv32 / W instructions in rv64, override if the default behaviour is not correct
+     *
      * @param value  the value from the first register truncated to 32 bits
      * @param value2 the value from the second register truncated to 32 bits
      * @return the result to be stored from the instruction
      */
-    protected int computeW(int value, int value2){
-        return (int) compute(value,value2);
+    protected int computeW(int value, int value2) {
+        return (int) compute(value, value2);
     }
 }

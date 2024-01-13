@@ -31,8 +31,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * A register which aliases a subset of another register
  */
 public class LinkedRegister extends Register {
-    private Register base;
-    private long mask;
+    private final Register base;
+    private final long mask;
     private int shift;
 
     /**

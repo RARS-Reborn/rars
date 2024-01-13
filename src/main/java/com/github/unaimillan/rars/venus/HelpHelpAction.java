@@ -54,7 +54,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * Action  for the Help -> Help menu item
  */
 public class HelpHelpAction extends GuiAction {
-    private VenusUI mainUI;
+    private final VenusUI mainUI;
 
     public HelpHelpAction(String name, Icon icon, String descrip,
                           Integer mnemonic, KeyStroke accel, VenusUI gui) {
@@ -156,7 +156,7 @@ public class HelpHelpAction extends GuiAction {
         JEditorPane copyrightDisplay;
         try {
             StringBuilder text = loadFiletoStringBuilder("/License.txt").append("</pre>");
-            copyrightDisplay = new JEditorPane("text/html", "<pre>" + text.toString());
+            copyrightDisplay = new JEditorPane("text/html", "<pre>" + text);
             copyrightDisplay.setEditable(false);
             copyrightDisplay.setCaretPosition(0); // assure top of document displayed
             copyrightScrollPane = new JScrollPane(copyrightDisplay, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -371,6 +371,7 @@ public class HelpHelpAction extends GuiAction {
         return out;
 
     }
+
     private class MyCellRenderer extends JLabel implements ListCellRenderer<String> {
         // This is the only method defined by ListCellRenderer.
         // We just reconfigure the JLabel each time we're called.
@@ -399,7 +400,7 @@ public class HelpHelpAction extends GuiAction {
     /*
      *  Determines MARS response when user click on hyperlink in displayed help page.
      *  The response will be to pop up a simple dialog with the page contents.  It
-     *  will not display URL, no navigation, nothing.  Just display the page and 
+     *  will not display URL, no navigation, nothing.  Just display the page and
      *  provide a Close button.
      */
     private class HelpHyperlinkListener implements HyperlinkListener {
@@ -411,8 +412,7 @@ public class HelpHelpAction extends GuiAction {
         public void hyperlinkUpdate(HyperlinkEvent e) {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                 JEditorPane pane = (JEditorPane) e.getSource();
-                if (e instanceof HTMLFrameHyperlinkEvent) {
-                    HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) e;
+                if (e instanceof HTMLFrameHyperlinkEvent evt) {
                     HTMLDocument doc = (HTMLDocument) pane.getDocument();
                     doc.processHTMLFrameHyperlinkEvent(evt);
                 } else {
@@ -430,8 +430,7 @@ public class HelpHelpAction extends GuiAction {
                                 public void hyperlinkUpdate(HyperlinkEvent e) {
                                     if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                                         JEditorPane pane = (JEditorPane) e.getSource();
-                                        if (e instanceof HTMLFrameHyperlinkEvent) {
-                                            HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) e;
+                                        if (e instanceof HTMLFrameHyperlinkEvent evt) {
                                             HTMLDocument doc = (HTMLDocument) pane.getDocument();
                                             doc.processHTMLFrameHyperlinkEvent(evt);
                                         } else {

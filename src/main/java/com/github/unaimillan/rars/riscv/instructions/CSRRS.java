@@ -2,10 +2,10 @@ package com.github.unaimillan.rars.riscv.instructions;
 
 import com.github.unaimillan.rars.ProgramStatement;
 import com.github.unaimillan.rars.SimulationException;
-import com.github.unaimillan.rars.riscv.hardware.ControlAndStatusRegisterFile;
-import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
+import com.github.unaimillan.rars.riscv.hardware.ControlAndStatusRegisterFile;
+import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -44,7 +44,7 @@ public class CSRRS extends BasicInstruction {
         try {
             long csr = ControlAndStatusRegisterFile.getValueLong(operands[1]);
             if (operands[2] != 0) {
-                if(ControlAndStatusRegisterFile.orRegister(operands[1], RegisterFile.getValueLong(operands[2]))) {
+                if (ControlAndStatusRegisterFile.orRegister(operands[1], RegisterFile.getValueLong(operands[2]))) {
                     throw new SimulationException(statement, "Attempt to write to read-only CSR", SimulationException.ILLEGAL_INSTRUCTION);
                 }
             }

@@ -81,7 +81,7 @@ public class JEditTextArea extends JComponent {
     }
 
 
-    private JScrollBar lineNumbersVertical;
+    private final JScrollBar lineNumbersVertical;
 
     /**
      * Creates a new JEditTextArea with the specified settings.
@@ -151,7 +151,7 @@ public class JEditTextArea extends JComponent {
                     public boolean dispatchKeyEvent(KeyEvent e) {
                         int modifiers = e.getModifiers();
                         if (JEditTextArea.this.isFocusOwner() && e.getKeyCode() == KeyEvent.VK_TAB
-                            && (modifiers == 0 || (modifiers & InputEvent.SHIFT_MASK) != 0)) {
+                                && (modifiers == 0 || (modifiers & InputEvent.SHIFT_MASK) != 0)) {
                             processKeyEvent(e);
                             return true;
                         } else {
@@ -497,23 +497,23 @@ public class JEditTextArea extends JComponent {
      */
     public int _offsetToX(int line, int offset) {
         TokenMarker tokenMarker = getTokenMarker();
-   
-   /* Use painter's cached info for speed */
+
+        /* Use painter's cached info for speed */
         FontMetrics fm = painter.getFontMetrics();
 
         getLineText(line, lineSegment);
 
         int segmentOffset = lineSegment.offset;
         int x = horizontalOffset;
-   
-   /* If syntax coloring is disabled, do simple translation */
+
+        /* If syntax coloring is disabled, do simple translation */
         if (tokenMarker == null) {
             lineSegment.count = offset;
             return x + Utilities.getTabbedTextWidth(lineSegment,
                     fm, x, painter, 0);
         }
-      /* If syntax coloring is enabled, we have to do this because
-      * tokens can vary in width */
+        /* If syntax coloring is enabled, we have to do this because
+         * tokens can vary in width */
         else {
             Token tokens;
             if (painter.currentLineIndex == line
@@ -565,8 +565,8 @@ public class JEditTextArea extends JComponent {
      */
     public int xToOffset(int line, int x) {
         TokenMarker tokenMarker = getTokenMarker();
-   
-   /* Use painter's cached info for speed */
+
+        /* Use painter's cached info for speed */
         FontMetrics fm = painter.getFontMetrics();
 
         getLineText(line, lineSegment);
@@ -1462,7 +1462,7 @@ public class JEditTextArea extends JComponent {
                 inputHandler.keyTyped(evt);
                 break;
             case KeyEvent.KEY_PRESSED:
-                if(!checkPopupCompletion(evt)) {
+                if (!checkPopupCompletion(evt)) {
                     inputHandler.keyPressed(evt);
                 }
                 checkPopupMenu(evt);
@@ -1687,7 +1687,7 @@ public class JEditTextArea extends JComponent {
         private Component center;
         private Component right;
         private Component bottom;
-        private Vector<Component> leftOfScrollBar = new Vector<>();
+        private final Vector<Component> leftOfScrollBar = new Vector<>();
     }
 
     static class CaretBlinker implements ActionListener {
@@ -1996,8 +1996,7 @@ public class JEditTextArea extends JComponent {
         }
 
         public boolean addEdit(UndoableEdit edit) {
-            if (edit instanceof CaretUndo) {
-                CaretUndo cedit = (CaretUndo) edit;
+            if (edit instanceof CaretUndo cedit) {
                 start = cedit.start;
                 end = cedit.end;
                 cedit.die();
@@ -2180,7 +2179,8 @@ public class JEditTextArea extends JComponent {
     // Carries out the instruction/directive completion when popup menu
     // item is selected.
     private class PopupHelpActionListener implements ActionListener {
-        private String tokenText, text;
+        private final String tokenText;
+        private final String text;
 
         public PopupHelpActionListener(String tokenText, String text) {
             this.tokenText = tokenText;

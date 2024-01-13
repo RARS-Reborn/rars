@@ -350,11 +350,11 @@ public class TextAreaPainter extends JComponent implements TabExpander {
         //             return highlights.getToolTipText(evt);
         //          else
         //             return null;
-        if (highlights != null){
+        if (highlights != null) {
             return highlights.getToolTipText(evt);
-        }else if (this.textArea.getTokenMarker() == null) {
+        } else if (this.textArea.getTokenMarker() == null) {
             return null;
-        }else {
+        } else {
             return this.textArea.getSyntaxSensitiveToolTipText(evt.getX(), evt.getY());
         }
         //           int line = yToLine(evt.getY());

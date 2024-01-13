@@ -2,7 +2,6 @@ package com.github.unaimillan.rars.riscv.instructions;
 
 import com.github.unaimillan.jsoftfloat.Environment;
 import com.github.unaimillan.jsoftfloat.types.Float32;
-import com.github.unaimillan.rars.riscv.hardware.ControlAndStatusRegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -38,6 +37,6 @@ public class FDIVS extends Floating {
 
     @Override
     public Float32 compute(Float32 f1, Float32 f2, Environment e) {
-        return com.github.unaimillan.jsoftfloat.operations.Arithmetic.division(f1,f2,e);
+        return com.github.unaimillan.jsoftfloat.operations.Arithmetic.division(f1, f2, e);
     }
 }

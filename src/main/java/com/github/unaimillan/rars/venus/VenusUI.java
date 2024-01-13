@@ -14,7 +14,10 @@ import com.github.unaimillan.rars.venus.settings.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -52,22 +55,23 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * @author Sanderson and Team JSpim
  **/
 
-	  /* Heavily modified by Pete Sanderson, July 2004, to incorporate JSPIMMenu and JSPIMToolbar
-       * not as subclasses of JMenuBar and JToolBar, but as instances of them.  They are both
-		* here primarily so both can share the Action objects.
-		*/
+/* Heavily modified by Pete Sanderson, July 2004, to incorporate JSPIMMenu and JSPIMToolbar
+ * not as subclasses of JMenuBar and JToolBar, but as instances of them.  They are both
+ * here primarily so both can share the Action objects.
+ */
 
 public class VenusUI extends JFrame {
     VenusUI mainUI;
     public JMenuBar menu;
-    private JToolBar toolbar;
-    private MainPane mainPane;
-    private RegistersPane registersPane;
-    private RegistersWindow registersTab;
-    private FloatingPointWindow fpTab;
-    private ControlAndStatusWindow csrTab;
-    private MessagesPane messagesPane;
-    private JSplitPane splitter, horizonSplitter;
+    private final JToolBar toolbar;
+    private final MainPane mainPane;
+    private final RegistersPane registersPane;
+    private final RegistersWindow registersTab;
+    private final FloatingPointWindow fpTab;
+    private final ControlAndStatusWindow csrTab;
+    private final MessagesPane messagesPane;
+    private final JSplitPane splitter;
+    private final JSplitPane horizonSplitter;
     JPanel north;
 
     private int frameState; // see windowActivated() and windowDeactivated()
@@ -117,7 +121,7 @@ public class VenusUI extends JFrame {
     /**
      * Constructor for the Class. Sets up a window object for the UI
      *
-     * @param name Name of the window to be created.
+     * @param name  Name of the window to be created.
      * @param paths File paths to open width
      **/
 
@@ -180,7 +184,6 @@ public class VenusUI extends JFrame {
         mainPane = new MainPane(mainUI, editor, registersTab, fpTab, csrTab);
         //UIManager.put("TabbedPane.tabInsets", defaultTabInsets);
 
-  
 
         mainPane.setPreferredSize(mainPanePreferredSize);
         messagesPane = new MessagesPane();
@@ -503,7 +506,7 @@ public class VenusUI extends JFrame {
             System.exit(0);
         }
     }
-   
+
     /*
      * build the menus and connect them to action objects (which serve as action listeners
      * shared between menu item and corresponding toolbar icon).
@@ -691,7 +694,7 @@ public class VenusUI extends JFrame {
 
         return menuBar;
     }
-   
+
     /*
      * build the toolbar and connect items to action objects (which serve as action listeners
      * shared between toolbar icon and corresponding menu item).
@@ -773,7 +776,7 @@ public class VenusUI extends JFrame {
     }
 
 
-    /* Determine from FileStatus what the menu state (enabled/disabled)should 
+    /* Determine from FileStatus what the menu state (enabled/disabled)should
      * be then call the appropriate method to set it.  Current states are:
      *
      * setMenuStateInitial: set upon startup and after File->Close
@@ -855,7 +858,7 @@ public class VenusUI extends JFrame {
         existing Run menu state (except Assemble, which is always true).
          Thus if there was a valid assembly it is retained. */
     void setMenuStateNotEdited() {
-      /* Note: undo and redo are handled separately by the undo manager*/
+        /* Note: undo and redo are handled separately by the undo manager*/
         fileNewAction.setEnabled(true);
         fileOpenAction.setEnabled(true);
         fileCloseAction.setEnabled(true);
@@ -891,7 +894,7 @@ public class VenusUI extends JFrame {
 
 
     void setMenuStateEditing() {
-      /* Note: undo and redo are handled separately by the undo manager*/
+        /* Note: undo and redo are handled separately by the undo manager*/
         fileNewAction.setEnabled(true);
         fileOpenAction.setEnabled(true);
         fileCloseAction.setEnabled(true);
@@ -924,7 +927,7 @@ public class VenusUI extends JFrame {
     /* Use this when "File -> New" is used
      */
     void setMenuStateEditingNew() {
-      /* Note: undo and redo are handled separately by the undo manager*/
+        /* Note: undo and redo are handled separately by the undo manager*/
         fileNewAction.setEnabled(true);
         fileOpenAction.setEnabled(true);
         fileCloseAction.setEnabled(true);
@@ -957,7 +960,7 @@ public class VenusUI extends JFrame {
     /* Use this upon successful assemble or reset
      */
     void setMenuStateRunnable() {
-      /* Note: undo and redo are handled separately by the undo manager */
+        /* Note: undo and redo are handled separately by the undo manager */
         fileNewAction.setEnabled(true);
         fileOpenAction.setEnabled(true);
         fileCloseAction.setEnabled(true);
@@ -990,7 +993,7 @@ public class VenusUI extends JFrame {
     /* Use this while program is running
      */
     void setMenuStateRunning() {
-      /* Note: undo and redo are handled separately by the undo manager */
+        /* Note: undo and redo are handled separately by the undo manager */
         fileNewAction.setEnabled(false);
         fileOpenAction.setEnabled(false);
         fileCloseAction.setEnabled(false);
@@ -1023,7 +1026,7 @@ public class VenusUI extends JFrame {
     /* Use this upon completion of execution
      */
     void setMenuStateTerminated() {
-      /* Note: undo and redo are handled separately by the undo manager */
+        /* Note: undo and redo are handled separately by the undo manager */
         fileNewAction.setEnabled(true);
         fileOpenAction.setEnabled(true);
         fileCloseAction.setEnabled(true);

@@ -69,7 +69,7 @@ public class FileDumpMemoryAction extends GuiAction {
     private JComboBox<String> segmentListSelector;
     private JComboBox formatListSelector;
 
-    private VenusUI mainUI;
+    private final VenusUI mainUI;
 
     public FileDumpMemoryAction(String name, Icon icon, String descrip,
                                 Integer mnemonic, KeyStroke accel, VenusUI gui) {
@@ -83,7 +83,7 @@ public class FileDumpMemoryAction extends GuiAction {
     }
 
     /* Save the memory segment in a supported format.
-   */
+     */
     private void dumpMemory() {
         dumpDialog = createDumpDialog();
         dumpDialog.pack();
@@ -256,7 +256,7 @@ public class FileDumpMemoryAction extends GuiAction {
             }
             if (operationOK) {
                 try {
-                    format.dumpMemoryRange(theFile, firstAddress, lastAddress,Globals.memory);
+                    format.dumpMemoryRange(theFile, firstAddress, lastAddress, Globals.memory);
                 } catch (AddressErrorException aee) {
 
                 } catch (IOException ioe) {
@@ -277,7 +277,7 @@ public class FileDumpMemoryAction extends GuiAction {
     // http://forum.java.sun.com/thread.jspa?threadID=488762&messageID=2292482
 
     private class DumpFormatComboBoxRenderer extends BasicComboBoxRenderer {
-        private JComboBox myMaster;
+        private final JComboBox myMaster;
 
         public DumpFormatComboBoxRenderer(JComboBox myMaster) {
             super();

@@ -4,7 +4,6 @@ import com.github.unaimillan.rars.ExitingException;
 import com.github.unaimillan.rars.ProgramStatement;
 import com.github.unaimillan.rars.riscv.AbstractSyscall;
 import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
-import com.github.unaimillan.rars.util.Binary;
 import com.github.unaimillan.rars.util.SystemIO;
 
 /*
@@ -41,7 +40,7 @@ public class SyscallPrintDouble extends AbstractSyscall {
      * is 3 and name is "PrintDouble".
      */
     public SyscallPrintDouble() {
-        super("PrintDouble","Prints a double precision floating point number","fa0 = double to print","N/A");
+        super("PrintDouble", "Prints a double precision floating point number", "fa0 = double to print", "N/A");
     }
 
     /**

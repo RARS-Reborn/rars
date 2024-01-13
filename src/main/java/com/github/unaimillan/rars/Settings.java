@@ -61,8 +61,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public class Settings extends Observable {
     /* Properties file used to hold default settings. */
-    private static String settingsFile = "Settings";
-    private ColorMode defaultColorMode = ColorMode.SYSTEM;
+    private static final String settingsFile = "Settings";
+    private final ColorMode defaultColorMode = ColorMode.SYSTEM;
 
     // BOOLEAN SETTINGS...
     public enum Bool {
@@ -77,7 +77,7 @@ public class Settings extends Observable {
          */
         ASSEMBLE_ON_OPEN("AssembleOnOpen", false),
         /**
-         *  Flag to determine whether all files open currently source file will be assembled when assembly is selected.
+         * Flag to determine whether all files open currently source file will be assembled when assembly is selected.
          */
         ASSEMBLE_OPEN("AssembleOpen", false),
         /**
@@ -157,11 +157,11 @@ public class Settings extends Observable {
         /**
          * Flag to determine whether to calculate relative paths from the current working directory
          * or from the RARS executable path.
-        */
+         */
         DERIVE_CURRENT_WORKING_DIRECTORY("DeriveCurrentWorkingDirectory", false);
 
         // TODO: add option for turning off user trap handling and interrupts
-        private String name;
+        private final String name;
         private boolean value;
 
         Bool(String n, boolean v) {
@@ -219,7 +219,7 @@ public class Settings extends Observable {
      * If you wish to change, do so before instantiating the Settings object.
      * Must match key by list position.
      */
-    private static String[] defaultStringSettingsValues = {"", "0 1 2 3 4", "0", "", "500", "8", "2"};
+    private static final String[] defaultStringSettingsValues = {"", "0 1 2 3 4", "0", "", "500", "8", "2"};
 
 
     // FONT SETTINGS.  Each array position has associated name.
@@ -363,7 +363,10 @@ public class Settings extends Observable {
         CUSTOM(null);
 
         public final String modeKey;
-        ColorMode(String modeKey) {this.modeKey = modeKey; }
+
+        ColorMode(String modeKey) {
+            this.modeKey = modeKey;
+        }
     }
 
     // Match the above by position.
@@ -380,21 +383,26 @@ public class Settings extends Observable {
      * If you wish to change, do so before instantiating the Settings object.
      * Must match key by list position.
      */
-    private static String[] defaultColorSettingsValues = {
+    private static final String[] defaultColorSettingsValues = {
             "0x00e0e0e0", "0", "0x00ffffff", "0", "0x00ffff99", "0", "0x0033ff00", "0", "0x0099ccff", "0", "0x0099cc55", "0", "0x00ffffff", "0x00000000", "0x00eeeeee", "0x00ccccff", "0x00000000"};
 
-    interface SystemColorProvider { Color getColor();}
+    interface SystemColorProvider {
+        Color getColor();
+    }
+
     private SystemColorProvider[] systemColors;
 
-    private HashMap<Bool, Boolean> booleanSettingsValues;
-    private String[] stringSettingsValues;
-    private String[] fontFamilySettingsValues;
-    private String[] fontStyleSettingsValues;
-    private String[] fontSizeSettingsValues;
-    /** Color settings, either a hex-encoded value or a value of {@link ColorMode#modeKey} */
-    private String[] colorSettingsValues;
+    private final HashMap<Bool, Boolean> booleanSettingsValues;
+    private final String[] stringSettingsValues;
+    private final String[] fontFamilySettingsValues;
+    private final String[] fontStyleSettingsValues;
+    private final String[] fontSizeSettingsValues;
+    /**
+     * Color settings, either a hex-encoded value or a value of {@link ColorMode#modeKey}
+     */
+    private final String[] colorSettingsValues;
 
-    private Preferences preferences;
+    private final Preferences preferences;
 
     /**
      * Create Settings object and set to saved values.  If saved values not found, will set
@@ -509,7 +517,7 @@ public class Settings extends Observable {
     // to be created!  It is possible but a real pain in the rear to avoid using
     // Color objects totally.  Requires new methods for the SyntaxUtilities class.
     private void initializeEditorSyntaxStyles() {
-        SyntaxStyle syntaxStyle[] = SyntaxUtilities.getDefaultSyntaxStyles();
+        SyntaxStyle[] syntaxStyle = SyntaxUtilities.getDefaultSyntaxStyles();
         int tokens = syntaxStyle.length;
         syntaxStyleColorSettingsKeys = new String[tokens];
         syntaxStyleBoldSettingsKeys = new String[tokens];
@@ -766,7 +774,7 @@ public class Settings extends Observable {
      * Returns null if argument invalid or its value is not a valid color encoding.
      *
      * @param position the Setting name (see list of static constants)
-     * @param mode The color-mode to preview
+     * @param mode     The color-mode to preview
      * @return The color to preview
      */
     public Color previewColorModeByPosition(int position, ColorMode mode) {
@@ -786,7 +794,7 @@ public class Settings extends Observable {
      * Set value of a boolean setting given its id and the value.
      *
      * @param setting setting to set the value of
-     * @param value boolean value to store
+     * @param value   boolean value to store
      * @throws IllegalArgumentException if identifier is not valid.
      */
     public void setBooleanSetting(Bool setting, boolean value) {
@@ -802,7 +810,7 @@ public class Settings extends Observable {
      * store!  Currently this is used only when running RARS from the command line
      *
      * @param setting the setting to set the value of
-     * @param value True to enable the setting, false otherwise.
+     * @param value   True to enable the setting, false otherwise.
      */
     public void setBooleanSettingNonPersistent(Bool setting, boolean value) {
         if (booleanSettingsValues.containsKey(setting)) {
@@ -901,7 +909,7 @@ public class Settings extends Observable {
     public void setTextColumnOrder(int[] columnOrder) {
         String stringifiedOrder = "";
         for (int column : columnOrder) {
-            stringifiedOrder += Integer.toString(column) + " ";
+            stringifiedOrder += column + " ";
         }
         setStringSetting(TEXT_COLUMN_ORDER, stringifiedOrder);
     }
@@ -947,7 +955,7 @@ public class Settings extends Observable {
      * Set Color-Mode for specified settings name (a static constant). Has no effect if invalid.
      *
      * @param position the Setting name (see list of static constants)
-     * @param mode    the color-mode to set
+     * @param mode     the color-mode to set
      */
     public void setColorSettingByPosition(int position, ColorMode mode) {
         setColorSetting(position, mode.modeKey);
@@ -985,9 +993,7 @@ public class Settings extends Observable {
         for (Bool setting : Bool.values()) {
             booleanSettingsValues.put(setting, setting.getDefault());
         }
-        for (int i = 0; i < stringSettingsValues.length; i++) {
-            stringSettingsValues[i] = defaultStringSettingsValues[i];
-        }
+        System.arraycopy(defaultStringSettingsValues, 0, stringSettingsValues, 0, stringSettingsValues.length);
         for (int i = 0; i < fontFamilySettingsValues.length; i++) {
             fontFamilySettingsValues[i] = defaultFontFamilySettingsValues[i];
             fontStyleSettingsValues[i] = defaultFontStyleSettingsValues[i];
@@ -999,10 +1005,16 @@ public class Settings extends Observable {
         initializeEditorSyntaxStyles();
     }
 
-    /** Takes a color from the LookAndFeel */
+    /**
+     * Takes a color from the LookAndFeel
+     */
     static class LookAndFeelColor implements SystemColorProvider {
         private final String key;
-        public LookAndFeelColor(String key) {this.key = key; }
+
+        public LookAndFeelColor(String key) {
+            this.key = key;
+        }
+
         public Color getColor() {
             // Deep copy, because using the color directly in UI caused problems
             return new Color(UIManager.getLookAndFeel().getDefaults().getColor(key).getRGB());
@@ -1011,21 +1023,26 @@ public class Settings extends Observable {
 
     private static Color mixColors(Color a, Color b, float ratio) {
         return new Color(
-                ((float) a.getRed())/256*ratio + ((float) b.getRed())/256*(1-ratio),
-                ((float) a.getGreen())/256*ratio + ((float) b.getGreen())/256*(1-ratio),
-                ((float) a.getBlue())/256*ratio + ((float) b.getBlue())/256*(1-ratio),
-                ((float) a.getAlpha())/256*ratio + ((float) b.getAlpha())/256*(1-ratio)
+                ((float) a.getRed()) / 256 * ratio + ((float) b.getRed()) / 256 * (1 - ratio),
+                ((float) a.getGreen()) / 256 * ratio + ((float) b.getGreen()) / 256 * (1 - ratio),
+                ((float) a.getBlue()) / 256 * ratio + ((float) b.getBlue()) / 256 * (1 - ratio),
+                ((float) a.getAlpha()) / 256 * ratio + ((float) b.getAlpha()) / 256 * (1 - ratio)
         );
     }
 
-    /** Mixes two other setting-colors */
+    /**
+     * Mixes two other setting-colors
+     */
     @SuppressWarnings("unused")
     class ColorSettingMix implements SystemColorProvider {
         private final int posA;
         private final int posB;
         private final float ratio;
+
         public ColorSettingMix(int posA, int posB, float ratio) {
-            this.posA = posA; this.posB = posB; this.ratio = ratio;
+            this.posA = posA;
+            this.posB = posB;
+            this.ratio = ratio;
         }
 
         public Color getColor() {
@@ -1033,13 +1050,18 @@ public class Settings extends Observable {
         }
     }
 
-    /** Mixes color of two providers */
+    /**
+     * Mixes color of two providers
+     */
     static class ColorProviderMix implements SystemColorProvider {
         private final SystemColorProvider proA;
         private final SystemColorProvider proB;
         private final float ratio;
+
         public ColorProviderMix(SystemColorProvider proA, SystemColorProvider proB, float ratio) {
-            this.proA = proA; this.proB = proB; this.ratio = ratio;
+            this.proA = proA;
+            this.proB = proB;
+            this.ratio = ratio;
         }
 
         public Color getColor() {
@@ -1063,7 +1085,7 @@ public class Settings extends Observable {
     private void internalSetBooleanSetting(Bool setting, boolean value) {
         if (value != booleanSettingsValues.get(setting)) {
             booleanSettingsValues.put(setting, value);
-            saveBooleanSetting(setting.getName(),value);
+            saveBooleanSetting(setting.getName(), value);
             setChanged();
             notifyObservers();
         }
@@ -1142,6 +1164,7 @@ public class Settings extends Observable {
         if (position >= 0 && position < values.length) return values[position];
         return null;
     }
+
     private Color getSystemColorByPosition(int position, SystemColorProvider[] providers) {
         if (position >= 0 && position < providers.length) {
             SystemColorProvider provider = providers[position];
@@ -1230,7 +1253,7 @@ public class Settings extends Observable {
 
 
     // Save the key-value pair in the Properties object and assure it is written to persisent storage.
-    private void saveBooleanSetting(String name,boolean value) {
+    private void saveBooleanSetting(String name, boolean value) {
         try {
             preferences.putBoolean(name, value);
             preferences.flush();

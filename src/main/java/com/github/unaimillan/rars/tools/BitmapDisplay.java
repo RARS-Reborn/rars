@@ -48,8 +48,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 public class BitmapDisplay extends AbstractToolAndApplication {
 
-    private static String version = "Version 1.0";
-    private static String heading = "Bitmap Display";
+    private static final String version = "Version 1.0";
+    private static final String heading = "Bitmap Display";
 
     // Major GUI components
     private JComboBox<String> visualizationUnitPixelWidthSelector, visualizationUnitPixelHeightSelector,
@@ -59,9 +59,9 @@ public class BitmapDisplay extends AbstractToolAndApplication {
     private JPanel results;
 
     // Some GUI settings
-    private EmptyBorder emptyBorder = new EmptyBorder(4, 4, 4, 4);
-    private Font countFonts = new Font("Times", Font.BOLD, 12);
-    private Color backgroundColor = Color.WHITE;
+    private final EmptyBorder emptyBorder = new EmptyBorder(4, 4, 4, 4);
+    private final Font countFonts = new Font("Times", Font.BOLD, 12);
+    private final Color backgroundColor = Color.WHITE;
 
     // Values for Combo Boxes
 

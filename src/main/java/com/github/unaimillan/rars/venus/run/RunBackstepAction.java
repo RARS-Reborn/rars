@@ -48,7 +48,7 @@ public class RunBackstepAction extends GuiAction {
 
     private String name;
     private ExecutePane executePane;
-    private VenusUI mainUI;
+    private final VenusUI mainUI;
 
     public RunBackstepAction(String name, Icon icon, String descrip,
                              Integer mnemonic, KeyStroke accel, VenusUI gui) {

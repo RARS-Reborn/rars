@@ -192,8 +192,8 @@ public class TextUtilities {
 
     /**
      * Prefix all lines with the specified prefix.
-     * 
-     * @param text The text
+     *
+     * @param text   The text
      * @param prefix The prefix
      */
     public static String addLinePrefixes(String text, String prefix) {
@@ -208,8 +208,8 @@ public class TextUtilities {
 
     /**
      * Delete all lines of the specified prefix.
-     * 
-     * @param text The text
+     *
+     * @param text   The text
      * @param prefix The prefix
      */
     public static String deleteLinePrefixes(String text, String prefix) {

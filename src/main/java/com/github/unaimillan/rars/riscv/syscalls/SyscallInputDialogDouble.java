@@ -1,12 +1,12 @@
 package com.github.unaimillan.rars.riscv.syscalls;
 
-import com.github.unaimillan.rars.Globals;
 import com.github.unaimillan.rars.ExitingException;
+import com.github.unaimillan.rars.Globals;
 import com.github.unaimillan.rars.ProgramStatement;
+import com.github.unaimillan.rars.riscv.AbstractSyscall;
 import com.github.unaimillan.rars.riscv.hardware.AddressErrorException;
 import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
-import com.github.unaimillan.rars.riscv.AbstractSyscall;
 
 import javax.swing.*;
 
@@ -64,9 +64,9 @@ public class SyscallInputDialogDouble extends AbstractSyscall {
         //       -3: OK was chosen but no data had been input into field
 
 
-        String message = new String(); // = "";
+        String message = ""; // = "";
         int byteAddress = RegisterFile.getValue(4);
-        char ch[] = {' '}; // Need an array to convert to String
+        char[] ch = {' '}; // Need an array to convert to String
         try {
             ch[0] = (char) Globals.memory.getByte(byteAddress);
             while (ch[0] != 0) // only uses single location ch[0]
@@ -102,7 +102,7 @@ public class SyscallInputDialogDouble extends AbstractSyscall {
                 RegisterFile.updateRegister("a1", 0);  // set $a1 to valid flag
 
             }
-        }catch (NumberFormatException e)    // Unsuccessful parse of input data
+        } catch (NumberFormatException e)    // Unsuccessful parse of input data
         {
             RegisterFile.updateRegister("a1", -1);  // set $a1 to -1 flag
         }

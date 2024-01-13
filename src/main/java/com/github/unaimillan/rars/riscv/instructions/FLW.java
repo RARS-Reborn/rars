@@ -3,11 +3,11 @@ package com.github.unaimillan.rars.riscv.instructions;
 import com.github.unaimillan.rars.Globals;
 import com.github.unaimillan.rars.ProgramStatement;
 import com.github.unaimillan.rars.SimulationException;
+import com.github.unaimillan.rars.riscv.BasicInstruction;
+import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
 import com.github.unaimillan.rars.riscv.hardware.AddressErrorException;
 import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
-import com.github.unaimillan.rars.riscv.BasicInstruction;
-import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
 
 /*
 Copyright (c) 2017,  Benjamin Landers

@@ -4,14 +4,10 @@ import com.github.unaimillan.jsoftfloat.Environment;
 import com.github.unaimillan.jsoftfloat.types.Float32;
 import com.github.unaimillan.rars.ProgramStatement;
 import com.github.unaimillan.rars.SimulationException;
-import com.github.unaimillan.rars.assembler.DataTypes;
-import com.github.unaimillan.rars.riscv.hardware.ControlAndStatusRegisterFile;
-import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
-import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
-
-import java.math.BigInteger;
+import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
+import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -49,11 +45,11 @@ public class FCVTWS extends BasicInstruction {
     public void simulate(ProgramStatement statement) throws SimulationException {
         int[] operands = statement.getOperands();
         Environment e = new Environment();
-        e.mode = Floating.getRoundingMode(operands[2],statement);
+        e.mode = Floating.getRoundingMode(operands[2], statement);
         Float32 in = new Float32(FloatingPointRegisterFile.getValue(operands[1]));
-        int out = com.github.unaimillan.jsoftfloat.operations.Conversions.convertToInt(in,e,false);
+        int out = com.github.unaimillan.jsoftfloat.operations.Conversions.convertToInt(in, e, false);
         Floating.setfflags(e);
-        RegisterFile.updateRegister(operands[0],out);
+        RegisterFile.updateRegister(operands[0], out);
     }
 }
 

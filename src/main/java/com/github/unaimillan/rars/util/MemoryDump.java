@@ -2,7 +2,7 @@ package com.github.unaimillan.rars.util;
 
 import com.github.unaimillan.rars.riscv.hardware.Memory;
 
-	/*
+/*
 Copyright (c) 2003-2009,  Pete Sanderson and Kenneth Vollmar
 
 Developed by Pete Sanderson (psanderson@otterbein.edu)
@@ -28,12 +28,12 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (MIT license, http://www.opensource.org/licenses/mit-license.html)
- */
+*/
 // TODO: refactor this out of existance
 public class MemoryDump {
     private static final String[] segmentNames = {".text", ".data"};
-    private static int[] baseAddresses = new int[2];
-    private static int[] limitAddresses = new int[2];
+    private static final int[] baseAddresses = new int[2];
+    private static final int[] limitAddresses = new int[2];
 
     /**
      * Return array with segment address bounds for specified segment.

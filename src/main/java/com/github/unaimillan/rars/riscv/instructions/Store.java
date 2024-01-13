@@ -2,10 +2,10 @@ package com.github.unaimillan.rars.riscv.instructions;
 
 import com.github.unaimillan.rars.ProgramStatement;
 import com.github.unaimillan.rars.SimulationException;
-import com.github.unaimillan.rars.riscv.hardware.AddressErrorException;
-import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
+import com.github.unaimillan.rars.riscv.hardware.AddressErrorException;
+import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
@@ -45,9 +45,10 @@ public abstract class Store extends BasicInstruction {
         super(usage, description, BasicInstructionFormat.S_FORMAT,
                 "sssssss fffff ttttt " + funct + " sssss 0100011");
     }
+
     public Store(String usage, String description, String funct, boolean rv64) {
         super(usage, description, BasicInstructionFormat.S_FORMAT,
-                "sssssss fffff ttttt " + funct + " sssss 0100011",rv64);
+                "sssssss fffff ttttt " + funct + " sssss 0100011", rv64);
     }
 
     public void simulate(ProgramStatement statement) throws SimulationException {

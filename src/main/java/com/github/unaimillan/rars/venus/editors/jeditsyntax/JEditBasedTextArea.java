@@ -32,12 +32,12 @@ import java.awt.*;
 public class JEditBasedTextArea extends JEditTextArea implements TextEditingArea, CaretListener {
 
     private final JComponent lineNumbers;
-    private EditPane editPane;
-    private UndoManager undoManager;
-    private UndoableEditListener undoableEditListener;
+    private final EditPane editPane;
+    private final UndoManager undoManager;
+    private final UndoableEditListener undoableEditListener;
     private boolean isCompoundEdit = false;
     private CompoundEdit compoundEdit;
-    private JEditBasedTextArea sourceCode;
+    private final JEditBasedTextArea sourceCode;
 
 
     public JEditBasedTextArea(EditPane editPain, JComponent lineNumbers) {
@@ -186,7 +186,7 @@ public class JEditBasedTextArea extends JEditTextArea implements TextEditingArea
      */
 
     public void caretUpdate(CaretEvent e) {
-        editPane.displayCaretPosition(((MutableCaretEvent) e).getDot());
+        editPane.displayCaretPosition(e.getDot());
     }
 
 

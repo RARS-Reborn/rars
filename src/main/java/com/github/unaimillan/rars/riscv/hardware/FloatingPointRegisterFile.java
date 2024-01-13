@@ -112,6 +112,7 @@ public class FloatingPointRegisterFile {
             instance.updateRegister(num, val);
         }
     }
+
     /**
      * Gets the raw int value actually stored in a Register.  If you need a
      * float, use Float.intBitsToFloat() to get the equivent float.
@@ -122,9 +123,9 @@ public class FloatingPointRegisterFile {
 
     public static int getValue(int num) {
         long lval = instance.getValue(num);
-        if((lval & 0xFFFFFFFF_00000000L) == 0xFFFFFFFF_00000000L){
-            return (int)lval; // If NaN-Boxed return value
-        }else{
+        if ((lval & 0xFFFFFFFF_00000000L) == 0xFFFFFFFF_00000000L) {
+            return (int) lval; // If NaN-Boxed return value
+        } else {
             return 0x7FC00000; // Otherwise NaN
         }
     }
@@ -143,9 +144,9 @@ public class FloatingPointRegisterFile {
 
     public static int getValue(String name) {
         long lval = instance.getValue(name);
-        if((lval & 0xFFFFFFFF_00000000L) == 0xFFFFFFFF_00000000L){
-            return (int)lval;
-        }else{
+        if ((lval & 0xFFFFFFFF_00000000L) == 0xFFFFFFFF_00000000L) {
+            return (int) lval;
+        } else {
             return 0x7FC00000;
         }
     }
