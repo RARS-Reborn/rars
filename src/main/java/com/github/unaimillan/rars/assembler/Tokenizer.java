@@ -1,6 +1,9 @@
 package com.github.unaimillan.rars.assembler;
 
 import com.github.unaimillan.rars.*;
+import com.github.unaimillan.rars.errors.AssemblyException;
+import com.github.unaimillan.rars.errors.ErrorList;
+import com.github.unaimillan.rars.errors.ErrorMessage;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package com.github.unaimillan.rars.riscv;
 
-import com.github.unaimillan.rars.ExitingException;
+import com.github.unaimillan.rars.errors.ExitingException;
 import com.github.unaimillan.rars.ProgramStatement;
 /*
 Copyright (c) 2003-2006,  Pete Sanderson and Kenneth Vollmar

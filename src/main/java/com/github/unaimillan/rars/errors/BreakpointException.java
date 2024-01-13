@@ -1,4 +1,4 @@
-package com.github.unaimillan.rars;
+package com.github.unaimillan.rars.errors;
 
 /**
  * This exception is only used to trigger breakpoints for ebreak.

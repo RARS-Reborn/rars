@@ -29,7 +29,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 import com.github.unaimillan.rars.ProgramStatement;
-import com.github.unaimillan.rars.SimulationException;
+import com.github.unaimillan.rars.errors.SimulationException;
 
 /**
  * Class to represent a basic instruction in the MIPS instruction set.

@@ -3,7 +3,7 @@ package com.github.unaimillan.rars.riscv.hardware;
 import com.github.unaimillan.rars.Globals;
 import com.github.unaimillan.rars.ProgramStatement;
 import com.github.unaimillan.rars.Settings;
-import com.github.unaimillan.rars.SimulationException;
+import com.github.unaimillan.rars.errors.SimulationException;
 import com.github.unaimillan.rars.riscv.Instruction;
 
 import java.util.Collection;

@@ -4,7 +4,7 @@ import com.github.unaimillan.jsoftfloat.Environment;
 import com.github.unaimillan.jsoftfloat.RoundingMode;
 import com.github.unaimillan.jsoftfloat.types.Float32;
 import com.github.unaimillan.rars.ProgramStatement;
-import com.github.unaimillan.rars.SimulationException;
+import com.github.unaimillan.rars.errors.SimulationException;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
 import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;

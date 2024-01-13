@@ -1,4 +1,6 @@
-package com.github.unaimillan.rars;
+package com.github.unaimillan.rars.errors;
+
+import com.github.unaimillan.rars.Globals;
 
 import java.util.ArrayList;
 /*

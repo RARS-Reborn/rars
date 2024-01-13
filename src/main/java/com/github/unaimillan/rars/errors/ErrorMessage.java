@@ -1,5 +1,7 @@
-package com.github.unaimillan.rars;
+package com.github.unaimillan.rars.errors;
 
+import com.github.unaimillan.rars.ProgramStatement;
+import com.github.unaimillan.rars.RISCVprogram;
 import com.github.unaimillan.rars.assembler.SourceLine;
 
 import java.io.File;

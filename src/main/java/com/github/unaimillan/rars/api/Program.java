@@ -1,6 +1,9 @@
 package com.github.unaimillan.rars.api;
 
 import com.github.unaimillan.rars.*;
+import com.github.unaimillan.rars.errors.AssemblyException;
+import com.github.unaimillan.rars.errors.ErrorList;
+import com.github.unaimillan.rars.errors.SimulationException;
 import com.github.unaimillan.rars.riscv.hardware.*;
 import com.github.unaimillan.rars.simulator.ProgramArgumentList;
 import com.github.unaimillan.rars.simulator.Simulator;

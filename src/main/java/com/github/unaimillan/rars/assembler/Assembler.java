@@ -1,6 +1,9 @@
 package com.github.unaimillan.rars.assembler;
 
 import com.github.unaimillan.rars.*;
+import com.github.unaimillan.rars.errors.AssemblyException;
+import com.github.unaimillan.rars.errors.ErrorList;
+import com.github.unaimillan.rars.errors.ErrorMessage;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.ExtendedInstruction;
 import com.github.unaimillan.rars.riscv.Instruction;

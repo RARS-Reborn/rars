@@ -4,6 +4,8 @@ import com.github.unaimillan.rars.assembler.SymbolTable;
 import com.github.unaimillan.rars.assembler.Token;
 import com.github.unaimillan.rars.assembler.TokenList;
 import com.github.unaimillan.rars.assembler.TokenTypes;
+import com.github.unaimillan.rars.errors.ErrorList;
+import com.github.unaimillan.rars.errors.ErrorMessage;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
 import com.github.unaimillan.rars.riscv.Instruction;

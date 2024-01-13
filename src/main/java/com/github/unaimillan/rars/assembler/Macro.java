@@ -1,7 +1,7 @@
 package com.github.unaimillan.rars.assembler;
 
-import com.github.unaimillan.rars.ErrorList;
-import com.github.unaimillan.rars.ErrorMessage;
+import com.github.unaimillan.rars.errors.ErrorList;
+import com.github.unaimillan.rars.errors.ErrorMessage;
 import com.github.unaimillan.rars.RISCVprogram;
 import com.github.unaimillan.rars.riscv.hardware.FloatingPointRegisterFile;
 import com.github.unaimillan.rars.riscv.hardware.RegisterFile;

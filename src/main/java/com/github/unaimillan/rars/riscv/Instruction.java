@@ -1,6 +1,6 @@
 package com.github.unaimillan.rars.riscv;
 
-import com.github.unaimillan.rars.AssemblyException;
+import com.github.unaimillan.rars.errors.AssemblyException;
 import com.github.unaimillan.rars.assembler.TokenList;
 import com.github.unaimillan.rars.assembler.Tokenizer;
 

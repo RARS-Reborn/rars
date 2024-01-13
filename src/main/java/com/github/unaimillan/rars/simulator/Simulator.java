@@ -1,6 +1,10 @@
 package com.github.unaimillan.rars.simulator;
 
 import com.github.unaimillan.rars.*;
+import com.github.unaimillan.rars.errors.BreakpointException;
+import com.github.unaimillan.rars.errors.ExitingException;
+import com.github.unaimillan.rars.errors.SimulationException;
+import com.github.unaimillan.rars.errors.WaitException;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.Instruction;
 import com.github.unaimillan.rars.riscv.hardware.AddressErrorException;

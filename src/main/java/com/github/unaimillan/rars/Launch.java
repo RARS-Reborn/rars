@@ -2,6 +2,9 @@ package com.github.unaimillan.rars;
 
 import com.github.unaimillan.rars.api.Options;
 import com.github.unaimillan.rars.api.Program;
+import com.github.unaimillan.rars.errors.AssemblyException;
+import com.github.unaimillan.rars.errors.ErrorList;
+import com.github.unaimillan.rars.errors.SimulationException;
 import com.github.unaimillan.rars.riscv.InstructionSet;
 import com.github.unaimillan.rars.riscv.dump.DumpFormat;
 import com.github.unaimillan.rars.riscv.dump.DumpFormatLoader;

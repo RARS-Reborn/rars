@@ -2,7 +2,7 @@ package com.github.unaimillan.rars.riscv.instructions;
 
 import com.github.unaimillan.rars.Globals;
 import com.github.unaimillan.rars.ProgramStatement;
-import com.github.unaimillan.rars.SimulationException;
+import com.github.unaimillan.rars.errors.SimulationException;
 import com.github.unaimillan.rars.riscv.BasicInstruction;
 import com.github.unaimillan.rars.riscv.BasicInstructionFormat;
 import com.github.unaimillan.rars.riscv.hardware.AddressErrorException;

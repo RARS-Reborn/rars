@@ -2,6 +2,9 @@ package com.github.unaimillan.rars;
 
 import com.github.unaimillan.rars.api.Options;
 import com.github.unaimillan.rars.api.Program;
+import com.github.unaimillan.rars.errors.AssemblyException;
+import com.github.unaimillan.rars.errors.ErrorMessage;
+import com.github.unaimillan.rars.errors.SimulationException;
 import com.github.unaimillan.rars.riscv.*;
 import com.github.unaimillan.rars.simulator.Simulator;
 import org.junit.jupiter.api.Test;

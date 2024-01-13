@@ -1,6 +1,6 @@
 package com.github.unaimillan.rars.riscv.hardware;
 
-import com.github.unaimillan.rars.SimulationException;
+import com.github.unaimillan.rars.errors.SimulationException;
 import com.github.unaimillan.rars.riscv.Instruction;
 import com.github.unaimillan.rars.simulator.Simulator;
 

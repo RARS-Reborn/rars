@@ -1,5 +1,6 @@
-package com.github.unaimillan.rars;
+package com.github.unaimillan.rars.errors;
 
+import com.github.unaimillan.rars.ProgramStatement;
 import com.github.unaimillan.rars.riscv.Instruction;
 import com.github.unaimillan.rars.riscv.hardware.AddressErrorException;
 import com.github.unaimillan.rars.riscv.hardware.RegisterFile;

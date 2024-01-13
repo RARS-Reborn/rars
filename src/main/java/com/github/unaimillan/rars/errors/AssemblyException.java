@@ -1,4 +1,4 @@
-package com.github.unaimillan.rars;
+package com.github.unaimillan.rars.errors;
 
 /*
 Copyright (c) 2017,  Benjamin Landers
