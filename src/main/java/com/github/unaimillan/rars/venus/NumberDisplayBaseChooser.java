@@ -1,13 +1,6 @@
 package com.github.unaimillan.rars.venus;
 
-import com.github.unaimillan.rars.Globals;
 import com.github.unaimillan.rars.util.Binary;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 	/*
 Copyright (c) 2003-2006,  Pete Sanderson and Kenneth Vollmar
@@ -44,12 +37,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * is added later, the Component will need to change.
  */
 
-public class NumberDisplayBaseChooser extends JCheckBox {
+public class NumberDisplayBaseChooser {
     public static final int DECIMAL = 10;
     public static final int HEXADECIMAL = 16;
     public static final int ASCII = 0;
     private int base;
-    private JCheckBoxMenuItem settingMenuItem;
 
     /**
      * constructor. It assumes the text will be worded
@@ -59,30 +51,7 @@ public class NumberDisplayBaseChooser extends JCheckBox {
      * @param displayInHex Currently either DECIMAL or HEXADECIMAL
      */
     public NumberDisplayBaseChooser(String text, boolean displayInHex) {
-        super(text, displayInHex);
         base = getBase(displayInHex);
-        addItemListener(
-                new ItemListener() {
-                    public void itemStateChanged(ItemEvent ie) {
-                        NumberDisplayBaseChooser choose = (NumberDisplayBaseChooser) ie.getItem();
-                        if (ie.getStateChange() == ItemEvent.SELECTED) {
-                            choose.setBase(NumberDisplayBaseChooser.HEXADECIMAL);
-                        } else {
-                            choose.setBase(NumberDisplayBaseChooser.DECIMAL);
-                        }
-                        // Better to use notify, but I am tired...
-                        if (settingMenuItem != null) {
-                            settingMenuItem.setSelected(choose.isSelected());
-                            ActionListener[] listeners = settingMenuItem.getActionListeners();
-                            ActionEvent event = new ActionEvent(settingMenuItem, 0, "chooser");
-                            for (ActionListener listener : listeners) {
-                                listener.actionPerformed(event);
-                            }
-                        }
-                        // Better to use notify, but I am tired...
-                        Globals.getGui().getMainPane().getExecutePane().numberDisplayBaseChanged(choose);
-                    }
-                });
     }
 
     /**
@@ -291,19 +260,6 @@ public class NumberDisplayBaseChooser extends JCheckBox {
             return Double.toString(Double.longBitsToDouble(value));
         }
     }
-
-
-    /**
-     * Set the menu item from Settings menu that corresponds to this chooser.
-     * It is the responsibility of that item to register here, because this
-     * one is created first (before the menu item).  They need to communicate
-     * with each other so that whenever one changes, so does the other.  They
-     * cannot be the same object (one is JCheckBox, the other is JCheckBoxMenuItem).
-     */
-    public void setSettingsMenuItem(JCheckBoxMenuItem setter) {
-        settingMenuItem = setter;
-    }
-
 
     /**
      * Return the number base corresponding to the specified setting.

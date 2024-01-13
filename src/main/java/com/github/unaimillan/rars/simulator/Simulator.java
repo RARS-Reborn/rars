@@ -11,7 +11,6 @@ import com.github.unaimillan.rars.util.Binary;
 import com.github.unaimillan.rars.util.SystemIO;
 import com.github.unaimillan.rars.venus.run.RunSpeedPanel;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Observable;
@@ -54,7 +53,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 public class Simulator extends Observable {
     private SimThread simulatorThread;
     private static Simulator simulator = null;  // Singleton object
-    private static Runnable interactiveGUIUpdater = null;
 
     /**
      * various reasons for simulate to end...
@@ -87,9 +85,6 @@ public class Simulator extends Observable {
 
     private Simulator() {
         simulatorThread = null;
-        if (Globals.getGui() != null) {
-            interactiveGUIUpdater = new UpdateGUI();
-        }
     }
 
     /**
@@ -237,17 +232,16 @@ public class Simulator extends Observable {
 
         private void startExecution() {
             Simulator.getInstance().notifyObserversOfExecution(new SimulatorNotice(SimulatorNotice.SIMULATOR_START,
-                    maxSteps, (Globals.getGui() != null || Globals.runSpeedPanelExists) ? RunSpeedPanel.getInstance().getRunSpeed() : RunSpeedPanel.UNLIMITED_SPEED,
+                    maxSteps, (Globals.runSpeedPanelExists) ? RunSpeedPanel.getInstance().getRunSpeed() : RunSpeedPanel.UNLIMITED_SPEED,
                     pc, null, pe, done));
         }
 
         private void stopExecution(boolean done, Reason reason) {
             this.done = done;
             this.constructReturnReason = reason;
-            SystemIO.flush(true);
             if (done) SystemIO.resetFiles(); // close any files opened in the process of simulating
             Simulator.getInstance().notifyObserversOfExecution(new SimulatorNotice(SimulatorNotice.SIMULATOR_STOP,
-                    maxSteps, (Globals.getGui() != null || Globals.runSpeedPanelExists) ? RunSpeedPanel.getInstance().getRunSpeed() : RunSpeedPanel.UNLIMITED_SPEED,
+                    maxSteps, (Globals.runSpeedPanelExists) ? RunSpeedPanel.getInstance().getRunSpeed() : RunSpeedPanel.UNLIMITED_SPEED,
                     pc, reason, pe, done));
         }
 
@@ -391,7 +385,6 @@ public class Simulator extends Observable {
             // Volatile variable initialized false but can be set true by the main thread.
             // Used to stop or pause a running program.  See stopSimulation() above.
             while (!stop) {
-                SystemIO.flush(false);
                 // Perform the RISCV instruction in synchronized block.  If external threads agree
                 // to access memory and registers only through synchronized blocks on same
                 // lock variable, then full (albeit heavy-handed) protection of memory and
@@ -554,14 +547,7 @@ public class Simulator extends Observable {
                     waiting = false;
                 }
 
-                // schedule GUI update only if: there is in fact a GUI! AND
-                //                              using Run,  not Step (maxSteps != 1) AND
-                //                              running slowly enough for GUI to keep up
-                if (interactiveGUIUpdater != null && maxSteps != 1 &&
-                        RunSpeedPanel.getInstance().getRunSpeed() < RunSpeedPanel.UNLIMITED_SPEED) {
-                    SwingUtilities.invokeLater(interactiveGUIUpdater);
-                }
-                if (Globals.getGui() != null || Globals.runSpeedPanelExists) { // OR added by DPS 24 July 2008 to enable speed control by stand-alone tool
+                if (Globals.runSpeedPanelExists) { // OR added by DPS 24 July 2008 to enable speed control by stand-alone tool
                     if (maxSteps != 1 &&
                             RunSpeedPanel.getInstance().getRunSpeed() < RunSpeedPanel.UNLIMITED_SPEED) {
                         try {
@@ -573,20 +559,6 @@ public class Simulator extends Observable {
                 }
             }
             stopExecution(false, constructReturnReason);
-        }
-    }
-
-    private class UpdateGUI implements Runnable {
-        public void run() {
-            if (Globals.getGui().getRegistersPane().getSelectedComponent() ==
-                    Globals.getGui().getMainPane().getExecutePane().getRegistersWindow()) {
-                Globals.getGui().getMainPane().getExecutePane().getRegistersWindow().updateRegisters();
-            } else {
-                Globals.getGui().getMainPane().getExecutePane().getFloatingPointWindow().updateRegisters();
-            }
-            Globals.getGui().getMainPane().getExecutePane().getDataSegmentWindow().updateValues();
-            Globals.getGui().getMainPane().getExecutePane().getTextSegmentWindow().setCodeHighlighting(true);
-            Globals.getGui().getMainPane().getExecutePane().getTextSegmentWindow().highlightStepAtPC();
         }
     }
 }

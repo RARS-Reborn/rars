@@ -2,11 +2,6 @@ package com.github.unaimillan.rars.venus.run;
 
 import com.github.unaimillan.rars.Globals;
 
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
-
 	/*
 Copyright (c) 2003-2006,  Pete Sanderson and Kenneth Vollmar
 
@@ -43,7 +38,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * @version August 2005
  */
 
-public class RunSpeedPanel extends JPanel {
+public class RunSpeedPanel {
     /**
      * Constant that represents unlimited run speed.  Compare with return value of
      * getRunSpeed() to determine if set to unlimited.  At the unlimited setting, the GUI
@@ -63,8 +58,6 @@ public class RunSpeedPanel extends JPanel {
             26, 27, 28, 29, 30, UNLIMITED_SPEED, UNLIMITED_SPEED, // 31-37
             UNLIMITED_SPEED, UNLIMITED_SPEED, UNLIMITED_SPEED // 38-40
     };
-    private JLabel sliderLabel = null;
-    private JSlider runSpeedSlider = null;
     private static RunSpeedPanel runSpeedPanel = null;
     private volatile int runSpeedIndex = SPEED_INDEX_MAX;
 
@@ -80,27 +73,6 @@ public class RunSpeedPanel extends JPanel {
             Globals.runSpeedPanelExists = true; // DPS 24 July 2008 (needed for standalone tools)
         }
         return runSpeedPanel;
-    }
-
-    /*
-     * private constructor (this is a singleton class)
-     */
-    private RunSpeedPanel() {
-        super(new BorderLayout());
-        runSpeedSlider = new JSlider(JSlider.HORIZONTAL, SPEED_INDEX_MIN, SPEED_INDEX_MAX, SPEED_INDEX_INIT);
-        runSpeedSlider.setSize(new Dimension(100, (int) runSpeedSlider.getSize().getHeight()));
-        runSpeedSlider.setMaximumSize(runSpeedSlider.getSize());
-        runSpeedSlider.setMajorTickSpacing(5);
-        runSpeedSlider.setPaintTicks(true); //Create the label table
-        runSpeedSlider.addChangeListener(new RunSpeedListener());
-        sliderLabel = new JLabel(setLabel(runSpeedIndex));
-        sliderLabel.setHorizontalAlignment(JLabel.CENTER);
-        sliderLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.add(sliderLabel, BorderLayout.NORTH);
-        this.add(runSpeedSlider, BorderLayout.CENTER);
-        this.setToolTipText("Simulation speed for \"Go\".  At " +
-                ((int) speedTable[SPEED_INDEX_INTERACTION_LIMIT]) + " inst/sec or less, tables updated " +
-                "after each instruction.");
     }
 
     /**
@@ -130,21 +102,5 @@ public class RunSpeedPanel extends JPanel {
             result += ("at max (no interaction)");
         }
         return result;
-    }
-
-
-    /*
-     *  Both revises label as user slides and updates current index when sliding stops.
-     */
-
-    private class RunSpeedListener implements ChangeListener {
-        public void stateChanged(ChangeEvent e) {
-            JSlider source = (JSlider) e.getSource();
-            if (!source.getValueIsAdjusting()) {
-                runSpeedIndex = source.getValue();
-            } else {
-                sliderLabel.setText(setLabel(source.getValue()));
-            }
-        }
     }
 }

@@ -10,9 +10,7 @@ import com.github.unaimillan.rars.simulator.Simulator;
 import com.github.unaimillan.rars.util.Binary;
 import com.github.unaimillan.rars.util.FilenameFinder;
 import com.github.unaimillan.rars.util.MemoryDump;
-import com.github.unaimillan.rars.venus.VenusUI;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -156,15 +154,8 @@ public class Launch {
             System.exit(Globals.exitCode);
         }
 
-        if (gui) {
-            launchIDE();
-        } else { // running from command line.
-            // assure command mode works in headless environment (generates exception if not)
-            System.setProperty("java.awt.headless", "true");
-
-            dumpSegments(runCommand());
-            System.exit(Globals.exitCode);
-        }
+        dumpSegments(runCommand());
+        System.exit(Globals.exitCode);
     }
 
     private void displayAllPostMortem(Program program) {
@@ -221,24 +212,6 @@ public class Launch {
             }
         }
     }
-
-
-    /////////////////////////////////////////////////////////////////
-    // There are no command arguments, so run in interactive mode by
-    // launching the GUI-fronted integrated development environment.
-
-    private void launchIDE() {
-        // System.setProperty("apple.laf.useScreenMenuBar", "true"); // Puts RARS menu on Mac OS menu bar
-        SwingUtilities.invokeLater(
-                new Runnable() {
-                    public void run() {
-                        //Turn off metal's use of bold fonts
-                        //UIManager.put("swing.boldMetal", Boolean.FALSE);
-                        new VenusUI("RARS " + Globals.version, filenameList);
-                    }
-                });
-    }
-
 
     //////////////////////////////////////////////////////////////////////
     // Parse command line arguments.  The initial parsing has already been

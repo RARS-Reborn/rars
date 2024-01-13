@@ -7,7 +7,6 @@ import com.github.unaimillan.rars.SimulationException;
 import com.github.unaimillan.rars.riscv.hardware.RegisterFile;
 import com.github.unaimillan.rars.riscv.syscalls.*;
 import com.github.unaimillan.rars.util.FilenameFinder;
-import com.github.unaimillan.rars.util.SystemIO;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -291,9 +290,9 @@ public class InstructionSet {
                     service instanceof SyscallPrintIntUnsigned ||
                     service instanceof SyscallPrintString ||
                     service instanceof SyscallWrite;
-            if (!is_writing) {
-                SystemIO.flush(true);
-            }
+//            if (!is_writing) {
+//                System.out.println("Should flush the gui's stdin/stdout");
+//            }
             service.simulate(statement);
             return;
         }

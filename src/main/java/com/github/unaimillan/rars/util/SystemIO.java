@@ -5,7 +5,6 @@ import com.github.unaimillan.rars.Settings;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
 
 	/*
 Copyright (c) 2003-2013,  Pete Sanderson and Kenneth Vollmar
@@ -92,19 +91,11 @@ public class SystemIO {
 
     private static String readStringInternal(String init, String prompt, int maxlength) {
         String input = init;
-        if (Globals.getGui() == null) {
-            try {
-                input = getInputReader().readLine();
-                if (input == null)
-                    input = "";
-            } catch (IOException e) {
-            }
-        } else {
-            if (Globals.getSettings().getBooleanSetting(Settings.Bool.POPUP_SYSCALL_INPUT)) {
-                input = Globals.getGui().getMessagesPane().getInputString(prompt);
-            } else {
-                input = Globals.getGui().getMessagesPane().getInputString(maxlength);
-            }
+        try {
+            input = getInputReader().readLine();
+            if (input == null)
+                input = "";
+        } catch (IOException e) {
         }
         return input;
     }
@@ -139,14 +130,10 @@ public class SystemIO {
      * Implements syscall having 4 in $v0, to print a string.
      */
     public static void printString(String string) {
-        if (Globals.getGui() == null) {
-            try {
-                SystemIO.getOutputWriter().write(string);
-                SystemIO.getOutputWriter().flush();
-            } catch (IOException e) {
-            }
-        } else {
-            print2Gui(string);
+        try {
+            SystemIO.getOutputWriter().write(string);
+            SystemIO.getOutputWriter().flush();
+        } catch (IOException e) {
         }
     }
 
@@ -208,13 +195,6 @@ public class SystemIO {
      */
 
     public static int writeToFile(int fd, byte[] myBuffer, int lengthRequested) {
-        /////////////// DPS 8-Jan-2013  ////////////////////////////////////////////////////
-        /// Write to STDOUT or STDERR file descriptor while using IDE - write to Messages pane.
-        if ((fd == STDOUT || fd == STDERR) && Globals.getGui() != null) {
-            String data = new String(myBuffer, StandardCharsets.UTF_8); //decode the bytes using UTF-8 charset
-            print2Gui(data);
-            return myBuffer.length; // data.length would not count multi-byte characters
-        }
         ///////////////////////////////////////////////////////////////////////////////////
         //// When running in command mode, code below works for either regular file or STDOUT/STDERR
 
@@ -265,17 +245,6 @@ public class SystemIO {
      */
     public static int readFromFile(int fd, byte[] myBuffer, int lengthRequested) {
         int retValue = -1;
-        /////////////// DPS 8-Jan-2013  //////////////////////////////////////////////////
-        /// Read from STDIN file descriptor while using IDE - get input from Messages pane.
-        if (fd == STDIN && Globals.getGui() != null) {
-            String input = Globals.getGui().getMessagesPane().getInputString(lengthRequested);
-            byte[] bytesRead = input.getBytes();
-
-            for (int i = 0; i < myBuffer.length; i++) {
-                myBuffer[i] = (i < bytesRead.length) ? bytesRead[i] : 0;
-            }
-            return Math.min(myBuffer.length, bytesRead.length);
-        }
         ////////////////////////////////////////////////////////////////////////////////////
         //// When running in command mode, code below works for either regular file or STDIN
 
@@ -452,35 +421,6 @@ public class SystemIO {
             FileIOData.outputWriter = new BufferedWriter(new OutputStreamWriter(System.out));
         }
         return FileIOData.outputWriter;
-    }
-
-    // The GUI doesn't handle lots of small messages well so I added this hacky way of buffering
-    // Currently it checks to flush every instruction run
-    private static String buffer = "";
-    private static long lasttime = 0;
-
-    private static void print2Gui(String output) {
-        long time = System.currentTimeMillis();
-        if (time > lasttime) {
-            Globals.getGui().getMessagesPane().postRunMessage(buffer + output);
-            buffer = "";
-            lasttime = time + 100;
-        } else {
-            buffer += output;
-        }
-    }
-
-    /**
-     * Flush stdout cache
-     * Makes sure that messages don't get stuck in the print2Gui buffer for too long.
-     */
-    public static void flush(boolean force) {
-        long time = System.currentTimeMillis();
-        if (buffer != "" && (force || time > lasttime)) {
-            Globals.getGui().getMessagesPane().postRunMessage(buffer);
-            buffer = "";
-            lasttime = time + 100;
-        }
     }
 
     public static Data swapData(Data in) {

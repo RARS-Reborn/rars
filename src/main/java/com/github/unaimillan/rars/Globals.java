@@ -5,7 +5,6 @@ import com.github.unaimillan.rars.riscv.InstructionSet;
 import com.github.unaimillan.rars.riscv.SyscallNumberOverride;
 import com.github.unaimillan.rars.riscv.hardware.Memory;
 import com.github.unaimillan.rars.util.PropertiesFile;
-import com.github.unaimillan.rars.venus.VenusUI;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -112,8 +111,6 @@ public class Globals {
     public static final String helpPath = "/help/";
     /* Flag that indicates whether or not instructionSet has been initialized. */
     private static boolean initialized = false;
-    /* The GUI being used (if any) with this simulator. */
-    static VenusUI gui = null;
     /**
      * The current version number. Can't wait for "initialize()" call to get it.
      */
@@ -163,14 +160,6 @@ public class Globals {
 
     private static String getCopyrightHolders() {
         return "Pete Sanderson and Kenneth Vollmar";
-    }
-
-    public static void setGui(VenusUI g) {
-        gui = g;
-    }
-
-    public static VenusUI getGui() {
-        return gui;
     }
 
     public static Settings getSettings() {
