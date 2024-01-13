@@ -56,7 +56,7 @@ public class Globals {
      **/
     public static InstructionSet instructionSet;
     /**
-     * the program currently being worked with.  Used by GUI only, not command line.
+     * the program currently being worked with.
      **/
     public static RISCVprogram program;
     /**
@@ -79,10 +79,6 @@ public class Globals {
      * Object that contains various settings that can be accessed modified internally.
      **/
     static Settings settings;
-    /**
-     * String to GUI's RunI/O text area when echoing user input from pop-up dialog.
-     */
-    public static String userInputAlert = "**** user input : ";
 
     /**
      * Special constant for proper resource loading from the ClassPath.
@@ -119,10 +115,6 @@ public class Globals {
      * List of accepted file extensions for RISCV assembly source files.
      */
     public static final ArrayList<String> fileExtensions = getFileExtensions();
-    /**
-     * Maximum length of scrolled message window (RARS Messages and Run I/O)
-     */
-    public static final int maximumMessageCharacters = getMessageLimit();
     /**
      * Maximum number of assembler errors produced by one assemble operation
      */

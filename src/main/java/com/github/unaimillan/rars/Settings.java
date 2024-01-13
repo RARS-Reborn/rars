@@ -2,7 +2,6 @@ package com.github.unaimillan.rars;
 
 import java.util.HashMap;
 import java.util.Observable;
-import java.util.StringTokenizer;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -55,7 +54,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 public class Settings extends Observable {
     /* Properties file used to hold default settings. */
     private static final String settingsFile = "Settings";
-    private final ColorMode defaultColorMode = ColorMode.SYSTEM;
 
     // BOOLEAN SETTINGS...
     public enum Bool {
@@ -180,29 +178,9 @@ public class Settings extends Observable {
      */
     public static final int EXCEPTION_HANDLER = 0;
     /**
-     * Order of text segment table columns
-     */
-    public static final int TEXT_COLUMN_ORDER = 1;
-    /**
-     * State for sorting label window display
-     */
-    public static final int LABEL_SORT_STATE = 2;
-    /**
      * Identifier of current memory configuration
      */
     public static final int MEMORY_CONFIGURATION = 3;
-    /**
-     * Caret blink rate in milliseconds, 0 means don't blink.
-     */
-    public static final int CARET_BLINK_RATE = 4;
-    /**
-     * Editor tab size in characters.
-     */
-    public static final int EDITOR_TAB_SIZE = 5;
-    /**
-     * Number of letters to be matched by editor's instruction guide before popup generated (if popup enabled)
-     */
-    public static final int EDITOR_POPUP_PREFIX_LENGTH = 6;
     // Match the above by position.
     private static final String[] stringSettingsKeys = {"ExceptionHandler", "TextColumnOrder", "LabelSortState", "MemoryConfiguration", "CaretBlinkRate", "EditorTabSize", "EditorPopupPrefixLength"};
 
@@ -213,154 +191,6 @@ public class Settings extends Observable {
      * Must match key by list position.
      */
     private static final String[] defaultStringSettingsValues = {"", "0 1 2 3 4", "0", "", "500", "8", "2"};
-
-
-    // FONT SETTINGS.  Each array position has associated name.
-    /**
-     * Font for the text editor
-     */
-    public static final int EDITOR_FONT = 0;
-    /**
-     * Font for table even row background (text, data, register displays)
-     */
-    public static final int EVEN_ROW_FONT = 1;
-    /**
-     * Font for table odd row background (text, data, register displays)
-     */
-    public static final int ODD_ROW_FONT = 2;
-    /**
-     * Font for table odd row foreground (text, data, register displays)
-     */
-    public static final int TEXTSEGMENT_HIGHLIGHT_FONT = 3;
-    /**
-     * Font for text segment delay slot highlighted background
-     */
-    public static final int TEXTSEGMENT_DELAYSLOT_HIGHLIGHT_FONT = 4;
-    /**
-     * Font for text segment highlighted background
-     */
-    public static final int DATASEGMENT_HIGHLIGHT_FONT = 5;
-    /**
-     * Font for register highlighted background
-     */
-    public static final int REGISTER_HIGHLIGHT_FONT = 6;
-
-    private static final String[] fontFamilySettingsKeys = {"EditorFontFamily", "EvenRowFontFamily",
-            "OddRowFontFamily", " TextSegmentHighlightFontFamily", "TextSegmentDelayslotHighightFontFamily",
-            "DataSegmentHighlightFontFamily", "RegisterHighlightFontFamily"
-    };
-    private static final String[] fontStyleSettingsKeys = {"EditorFontStyle", "EvenRowFontStyle",
-            "OddRowFontStyle", " TextSegmentHighlightFontStyle", "TextSegmentDelayslotHighightFontStyle",
-            "DataSegmentHighlightFontStyle", "RegisterHighlightFontStyle"
-    };
-    private static final String[] fontSizeSettingsKeys = {"EditorFontSize", "EvenRowFontSize",
-            "OddRowFontSize", " TextSegmentHighlightFontSize", "TextSegmentDelayslotHighightFontSize",
-            "DataSegmentHighlightFontSize", "RegisterHighlightFontSize"
-    };
-
-
-    /**
-     * Last resort default values for Font settings;
-     * will use only if neither the Preferences nor the properties file work.
-     * If you wish to change, do so before instantiating the Settings object.
-     * Must match key by list position shown above.
-     */
-
-    // DPS 3-Oct-2012
-    // Changed default font family from "Courier New" to "Monospaced" after receiving reports that Mac were not
-    // correctly rendering the left parenthesis character in the editor or text segment display.
-    // See http://www.mirthcorp.com/community/issues/browse/MIRTH-1921?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel
-    private static final String[] defaultFontFamilySettingsValues = {"Monospaced", "Monospaced", "Monospaced",
-            "Monospaced", "Monospaced", "Monospaced", "Monospaced"
-    };
-    private static final String[] defaultFontStyleSettingsValues = {"Plain", "Plain", "Plain", "Plain",
-            "Plain", "Plain", "Plain"
-    };
-    private static final String[] defaultFontSizeSettingsValues = {"12", "12", "12", "12", "12", "12", "12",
-    };
-
-
-    // COLOR SETTINGS.  Each array position has associated name.
-    /**
-     * RGB color for table even row background (text, data, register displays)
-     */
-    public static final int EVEN_ROW_BACKGROUND = 0;
-    /**
-     * RGB color for table even row foreground (text, data, register displays)
-     */
-    public static final int EVEN_ROW_FOREGROUND = 1;
-    /**
-     * RGB color for table odd row background (text, data, register displays)
-     */
-    public static final int ODD_ROW_BACKGROUND = 2;
-    /**
-     * RGB color for table odd row foreground (text, data, register displays)
-     */
-    public static final int ODD_ROW_FOREGROUND = 3;
-    /**
-     * RGB color for text segment highlighted background
-     */
-    public static final int TEXTSEGMENT_HIGHLIGHT_BACKGROUND = 4;
-    /**
-     * RGB color for text segment highlighted foreground
-     */
-    public static final int TEXTSEGMENT_HIGHLIGHT_FOREGROUND = 5;
-    /**
-     * RGB color for text segment delay slot highlighted background
-     */
-    public static final int TEXTSEGMENT_DELAYSLOT_HIGHLIGHT_BACKGROUND = 6;
-    /**
-     * RGB color for text segment delay slot highlighted foreground
-     */
-    public static final int TEXTSEGMENT_DELAYSLOT_HIGHLIGHT_FOREGROUND = 7;
-    /**
-     * RGB color for text segment highlighted background
-     */
-    public static final int DATASEGMENT_HIGHLIGHT_BACKGROUND = 8;
-    /**
-     * RGB color for text segment highlighted foreground
-     */
-    public static final int DATASEGMENT_HIGHLIGHT_FOREGROUND = 9;
-    /**
-     * RGB color for register highlighted background
-     */
-    public static final int REGISTER_HIGHLIGHT_BACKGROUND = 10;
-    /**
-     * RGB color for register highlighted foreground
-     */
-    public static final int REGISTER_HIGHLIGHT_FOREGROUND = 11;
-    /**
-     * RGB background color of Editor
-     */
-    public static final int EDITOR_BACKGROUND = 12;
-    /**
-     * RGB foreground color of Editor
-     */
-    public static final int EDITOR_FOREGROUND = 13;
-    /**
-     * RGB line-highlight color of Editor
-     */
-    public static final int EDITOR_LINE_HIGHLIGHT = 14;
-    /**
-     * RGB color of text-selection in Editor
-     */
-    public static final int EDITOR_SELECTION_COLOR = 15;
-    /**
-     * RGB color of caret in Editor
-     */
-    public static final int EDITOR_CARET_COLOR = 16;
-
-    public enum ColorMode {
-        DEFAULT("DEF"),
-        SYSTEM("SYS"),
-        CUSTOM(null);
-
-        public final String modeKey;
-
-        ColorMode(String modeKey) {
-            this.modeKey = modeKey;
-        }
-    }
 
     private final HashMap<Bool, Boolean> booleanSettingsValues;
     private final String[] stringSettingsValues;
@@ -389,7 +219,6 @@ public class Settings extends Observable {
         initialize();
     }
 
-
     /**
      * Return whether backstepping is permitted at this time.  Backstepping is ability to undo execution
      * steps one at a time.  Available only in the IDE.  This is not a persistent setting and is not under
@@ -401,49 +230,11 @@ public class Settings extends Observable {
         return (Globals.program != null && Globals.program.getBackStepper() != null && Globals.program.getBackStepper().enabled());
     }
 
-
     /**
      * Reset settings to default values, as described in the constructor comments.
      */
     public void reset() {
         initialize();
-    }
-
-
-    /* **************************************************************************
-     This section contains all code related to syntax highlighting styles settings.
-     A style includes 3 components: color, bold (t/f), italic (t/f)
-
-    The fallback defaults will come not from an array here, but from the
-    existing static method SyntaxUtilities.getDefaultSyntaxStyles()
-    in the rars.venus.editors.jeditsyntax package.  It returns an array
-    of SyntaxStyle objects.
-
-    */
-    private String[] syntaxStyleColorSettingsValues;
-    private boolean[] syntaxStyleBoldSettingsValues;
-    private boolean[] syntaxStyleItalicSettingsValues;
-
-    private static final String SYNTAX_STYLE_COLOR_PREFIX = "SyntaxStyleColor_";
-    private static final String SYNTAX_STYLE_BOLD_PREFIX = "SyntaxStyleBold_";
-    private static final String SYNTAX_STYLE_ITALIC_PREFIX = "SyntaxStyleItalic_";
-
-    private static String[] syntaxStyleColorSettingsKeys, syntaxStyleBoldSettingsKeys, syntaxStyleItalicSettingsKeys;
-    private static String[] defaultSyntaxStyleColorSettingsValues;
-    private static boolean[] defaultSyntaxStyleBoldSettingsValues;
-    private static boolean[] defaultSyntaxStyleItalicSettingsValues;
-
-    private void saveEditorSyntaxStyle(int index) {
-        try {
-            preferences.put(syntaxStyleColorSettingsKeys[index], syntaxStyleColorSettingsValues[index]);
-            preferences.putBoolean(syntaxStyleBoldSettingsKeys[index], syntaxStyleBoldSettingsValues[index]);
-            preferences.putBoolean(syntaxStyleItalicSettingsKeys[index], syntaxStyleItalicSettingsValues[index]);
-            preferences.flush();
-        } catch (SecurityException se) {
-            // cannot write to persistent storage for security reasons
-        } catch (BackingStoreException bse) {
-            // unable to communicate with persistent storage (strange days)
-        }
     }
 
     // *********************************************************************************
@@ -452,7 +243,6 @@ public class Settings extends Observable {
     ////////////////////////////////////////////////////////////////////////
     //  Setting Getters
     ////////////////////////////////////////////////////////////////////////
-
 
     /**
      * Fetch value of a boolean setting given its identifier.
@@ -487,48 +277,9 @@ public class Settings extends Observable {
         return stringSettingsValues[MEMORY_CONFIGURATION];
     }
 
-    /**
-     * Get number of letters to be matched by editor's instruction guide before popup generated (if popup enabled).
-     * Should be 1 or 2.  If 1, the popup will be generated after first letter typed, based on all matches; if 2,
-     * the popup will be generated after second letter typed.
-     *
-     * @return number of letters (should be 1 or 2).
-     */
-    public int getEditorPopupPrefixLength() {
-        int length = 2;
-        try {
-            length = Integer.parseInt(stringSettingsValues[EDITOR_POPUP_PREFIX_LENGTH]);
-        } catch (NumberFormatException nfe) {
-
-        }
-        return length;
-    }
-
-
-    /**
-     * Get the text editor default tab size in characters
-     *
-     * @return tab size in characters
-     */
-    public int getDefaultEditorTabSize() {
-        return Integer.parseInt(defaultStringSettingsValues[EDITOR_TAB_SIZE]);
-    }
-
-    /**
-     * Get the saved state of the Labels Window sorting  (can sort by either
-     * label or address and either ascending or descending order).
-     * Default state is 0, by ascending addresses.
-     *
-     * @return State value 0-7, as a String.
-     */
-    public String getLabelSortState() {
-        return stringSettingsValues[LABEL_SORT_STATE];
-    }
-
     ////////////////////////////////////////////////////////////////////////
     //  Setting Setters
     ////////////////////////////////////////////////////////////////////////
-
 
     /**
      * Set value of a boolean setting given its id and the value.
@@ -577,43 +328,6 @@ public class Settings extends Observable {
 
     public void setMemoryConfiguration(String config) {
         setStringSetting(MEMORY_CONFIGURATION, config);
-    }
-
-    /**
-     * Set number of letters to be matched by editor's instruction guide before popup generated (if popup enabled).
-     * Should be 1 or 2.  If 1, the popup will be generated after first letter typed, based on all matches; if 2,
-     * the popup will be generated after second letter typed.
-     *
-     * @param length of letters (should be 1 or 2).
-     */
-    public void setEditorPopupPrefixLength(int length) {
-        setStringSetting(EDITOR_POPUP_PREFIX_LENGTH, "" + length);
-    }
-
-    /**
-     * Store the current order of Text Segment window table columns, so the ordering
-     * can be preserved and restored.
-     *
-     * @param columnOrder An array of int indicating column order.
-     */
-
-    public void setTextColumnOrder(int[] columnOrder) {
-        String stringifiedOrder = "";
-        for (int column : columnOrder) {
-            stringifiedOrder += column + " ";
-        }
-        setStringSetting(TEXT_COLUMN_ORDER, stringifiedOrder);
-    }
-
-    /**
-     * Store the current state of the Labels Window sorter.  There are 8 possible states
-     * as described in LabelsWindow.java
-     *
-     * @param state The current labels window sorting state, as a String.
-     */
-
-    public void setLabelSortState(String state) {
-        setStringSetting(LABEL_SORT_STATE, state);
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -722,7 +436,6 @@ public class Settings extends Observable {
         }
     }
 
-
     // Save the key-value pair in the Properties object and assure it is written to persisent storage.
     private void saveStringSetting(int index) {
         try {
@@ -735,7 +448,6 @@ public class Settings extends Observable {
         }
     }
 
-
     // Save the key-value pair in the Properties object and assure it is written to persisent storage.
     private void saveFontSetting(int index, String[] settingsKeys, String[] settingsValues) {
         try {
@@ -747,32 +459,4 @@ public class Settings extends Observable {
             // unable to communicate with persistent storage (strange days)
         }
     }
-
-    /*
-     *  Private helper to do the work of converting a string containing Text
-     *  Segment window table column order into int array and returning it.
-     *  If a problem occurs with the parameter string, will fall back to the
-     *  default defined above.
-     */
-    private int[] getTextSegmentColumnOrder(String stringOfColumnIndexes) {
-        StringTokenizer st = new StringTokenizer(stringOfColumnIndexes);
-        int[] list = new int[st.countTokens()];
-        int index = 0, value;
-        boolean valuesOK = true;
-        while (st.hasMoreTokens()) {
-            try {
-                value = Integer.parseInt(st.nextToken());
-            } // could be either NumberFormatException or NoSuchElementException
-            catch (Exception e) {
-                valuesOK = false;
-                break;
-            }
-            list[index++] = value;
-        }
-        if (!valuesOK && !stringOfColumnIndexes.equals(defaultStringSettingsValues[TEXT_COLUMN_ORDER])) {
-            return getTextSegmentColumnOrder(defaultStringSettingsValues[TEXT_COLUMN_ORDER]);
-        }
-        return list;
-    }
-
 }
