@@ -40,6 +40,7 @@ public class LUI extends BasicInstruction {
 
     public void simulate(ProgramStatement statement) {
         int[] operands = statement.getOperands();
-        RegisterFile.updateRegister(operands[0], (long) operands[1] << 12);
+        // Shift implicitly casts to (long) type, but it should be here to sign-extend the value
+        RegisterFile.updateRegister(operands[0], operands[1] << 12);
     }
 }

@@ -36,7 +36,8 @@ public class LH extends Load {
     }
 
     public long load(int address) throws AddressErrorException {
-        return ((long) Globals.memory.getHalf(address) << 16) >> 16; // Shifting sign extends
+        // Shift implicitly casts to (long) type, but it should be here to sign-extend the value
+        return (Globals.memory.getHalf(address) << 16) >> 16; // Shifting sign extends
     }
 }
 

@@ -41,6 +41,7 @@ public class SLLI extends BasicInstruction {
 
     public void simulate(ProgramStatement statement) {
         int[] operands = statement.getOperands();
-        RegisterFile.updateRegister(operands[0], (long) RegisterFile.getValue(operands[1]) << operands[2]);
+        // Shift implicitly casts to (long) type, but it should be here to sign-extend the value
+        RegisterFile.updateRegister(operands[0], RegisterFile.getValue(operands[1]) << operands[2]);
     }
 }
